@@ -1,5 +1,5 @@
 "use client";
-import { Code, PanelRight, Plus, Sparkles } from "lucide-react";
+import { Code, Key, PanelRight, Plus, Sparkles, Zap } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 
@@ -7,17 +7,157 @@ export default function Sidebar() {
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
   const [showAiPanel, setShowAiPanel] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
+
+  const [selectedType, setSelectedType] = useState("");
+  const [componentTypes, setComponentTypes] = useState([
+    {
+      name: "Button",
+      icon: "square",
+      description: "Clickable UI element for actions",
+    },
+    {
+      name: "Card",
+      icon: "layout",
+      description: "Container with title, text, and actions",
+    },
+    {
+      name: "Navbar",
+      icon: "menu",
+      description: "Top or side navigation bar",
+    },
+    {
+      name: "Modal",
+      icon: "maximize",
+      description: "Popup overlay for alerts or input",
+    },
+    {
+      name: "Form",
+      icon: "file-text",
+      description: "Input fields grouped for submission",
+    },
+    {
+      name: "Input Field",
+      icon: "type",
+      description: "Basic text input element",
+    },
+    {
+      name: "Dropdown",
+      icon: "chevron-down",
+      description: "Expandable menu for options",
+    },
+    {
+      name: "Checkbox",
+      icon: "check-square",
+      description: "Binary toggle input for selections",
+    },
+    {
+      name: "Radio Group",
+      icon: "dot",
+      description: "Exclusive choice among options",
+    },
+    {
+      name: "Tabs",
+      icon: "columns",
+      description: "Switch between multiple views",
+    },
+    {
+      name: "Tooltip",
+      icon: "help-circle",
+      description: "Info popup on hover or focus",
+    },
+    {
+      name: "Accordion",
+      icon: "chevrons-down-up",
+      description: "Expandable content sections",
+    },
+    {
+      name: "Toast Notification",
+      icon: "bell",
+      description: "Auto-dismissable alerts/messages",
+    },
+    {
+      name: "Avatar",
+      icon: "user",
+      description: "Profile or identity thumbnail",
+    },
+    {
+      name: "Pagination",
+      icon: "more-horizontal",
+      description: "Navigate between data pages",
+    },
+    {
+      name: "Breadcrumbs",
+      icon: "navigation",
+      description: "Hierarchy-based page trail",
+    },
+  ]);
+
+  const [styleOptions, setStyleOptions] = useState([
+    {
+      name: "Material UI",
+      icon: "circle",
+      description: "Google's standard design system",
+    },
+    {
+      name: "Glassmorphism",
+      icon: "layers",
+      description: "Frosted, transparent glass effect",
+    },
+    {
+      name: "Neumorphism",
+      icon: "shapes",
+      description: "Soft, extruded 3D surfaces",
+    },
+    {
+      name: "Flat Design",
+      icon: "square",
+      description: "Minimalist, no depth or gradients",
+    },
+    {
+      name: "Skeuomorphic",
+      icon: "archive",
+      description: "Real-world textures and metaphors",
+    },
+    {
+      name: "Minimal",
+      icon: "minimize",
+      description: "Clean and distraction-free UI",
+    },
+    {
+      name: "Retro",
+      icon: "cpu",
+      description: "Old-school colors and pixel art",
+    },
+    {
+      name: "Brutalist",
+      icon: "slash",
+      description: "Raw, intentionally rough aesthetics",
+    },
+    {
+      name: "Dark Theme",
+      icon: "moon",
+      description: "UI with dark background and light text",
+    },
+    {
+      name: "Light Theme",
+      icon: "sun",
+      description: "Default light-based appearance",
+    },
+  ]);
+
+  const [selectedStyle, setSelectedStyle] = useState("");
+  const [aiDescription, setAiDescription] = useState("");
+
   const [components, setComponents] = useState([]);
   return (
     <aside
       className={`bg-gray-800 text-white h-full transition-all duration-200 ${
-        collapsed ? "w-12" : "w-72"
+        collapsed ? "w-12" : "w-80"
       }`}
     >
       <div
-        className={`${
-          collapsed ? "justify-end" : " justify-between pr-2"
-        } flex items-center h-14 border-b border-gray-700`}
+        className={`justify-between pr-2" flex items-center h-14 border-b border-gray-700`}
       >
         <button
           onClick={() => {
@@ -75,37 +215,44 @@ export default function Sidebar() {
             />
           </svg>
         </button>
-        {!collapsed && (
-          <button
-            onClick={() => {
-              setCollapsed(!collapsed);
-            }}
-            className="text-sm text-white cursor-pointer"
-          >
-            <PanelRight width={"28px"} height={"28px"} />
-          </button>
-        )}
+        {/* {!collapsed && ( */}
+        <button
+          onClick={() => {
+            setCollapsed(!collapsed);
+          }}
+          className={`${
+            collapsed ? "opacity-0" : "opacity-100"
+          } pr-3 text-sm text-white cursor-pointer transition-all duration-200`}
+        >
+          <PanelRight width={"28px"} height={"28px"} />
+        </button>
+        {/* )} */}
       </div>
 
       <div
-        className={`${
-          collapsed ? "opacity-0" : "opacity-100"
-        } p-4 border-b border-gray-700 transition-all duration-200`}
+        className={`py-4 px-2 border-b border-gray-700 transition-all duration-200`}
       >
-        <div className="flex gap-2">
+        <div
+          className={`${
+            collapsed ? "justify-center items-center" : ""
+          } flex gap-2`}
+        >
           <button
-            // onClick={() => setShowAiPanel(!showAiPanel)}
-            className="bg-purple-600 hover:bg-purple-700 px-3 py-2 rounded text-sm flex items-center gap-2"
+            onClick={() => setShowAiPanel(!showAiPanel)}
+            className={`${
+              collapsed ? "opacity-0 hidden" : "flex-1 opacity-100"
+            } flex items-center justify-centers gap-2 bg-purple-600 hover:bg-purple-700 px-3 py-2 rounded text-sm cursor-pointer`}
           >
             <Sparkles className="w-4 h-4" />
-            AI
+            Generate AI Template
           </button>
           <button
             // onClick={createNewComponent}
-            className="flex-1 bg-blue-600 hover:bg-blue-700 px-3 py-2 rounded text-sm flex items-center gap-2"
+            className={`${
+              collapsed ? "py-2" : ""
+            } bg-gray-800 hover:bg-gray-700 px-2 rounded text-sm flex items-center gap-2 cursor-pointer`}
           >
-            <Plus className="w-4 h-4" />
-            New
+            <Plus className="w-6 h-6" />
           </button>
         </div>
       </div>
@@ -121,65 +268,19 @@ export default function Sidebar() {
             AI Generator
           </h3>
 
-          {/* API Key Setup */}
-          {showApiKeyInput && (
-            <div className="mb-4 p-3 bg-gray-600 rounded-lg">
-              <div className="flex items-center gap-2 mb-2">
-                <Key className="w-4 h-4 text-yellow-400" />
-                <span className="text-sm font-medium">API Key Required</span>
-              </div>
-              <div className="space-y-2">
-                <select
-                  value={aiProvider}
-                  onChange={(e) => setAiProvider(e.target.value)}
-                  className="w-full bg-gray-700 border border-gray-500 rounded px-2 py-1 text-sm"
-                >
-                  <option value="openai">OpenAI (GPT-4)</option>
-                  <option value="claude">Anthropic (Claude)</option>
-                </select>
-                <input
-                  type="password"
-                  value={apiKey}
-                  onChange={(e) => setApiKey(e.target.value)}
-                  placeholder={`Enter your ${
-                    aiProvider === "openai" ? "OpenAI" : "Anthropic"
-                  } API key`}
-                  className="w-full bg-gray-700 border border-gray-500 rounded px-2 py-1 text-sm"
-                />
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => setShowApiKeyInput(false)}
-                    className="flex-1 bg-gray-700 hover:bg-gray-600 px-2 py-1 rounded text-xs"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    onClick={() => {
-                      if (apiKey.trim()) {
-                        setShowApiKeyInput(false);
-                        console.log("API key saved for", aiProvider);
-                      }
-                    }}
-                    className="flex-1 bg-green-600 hover:bg-green-700 px-2 py-1 rounded text-xs"
-                  >
-                    Save
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
-
           <div className="space-y-3">
             <div>
-              <label className="block text-xs text-gray-400 mb-1">Type</label>
+              <label className="block text-xs text-gray-400 mb-1">
+                Component
+              </label>
               <select
                 value={selectedType}
                 onChange={(e) => setSelectedType(e.target.value)}
                 className="w-full bg-gray-600 border border-gray-500 rounded px-2 py-1 text-sm"
               >
                 {componentTypes.map((type) => (
-                  <option key={type.value} value={type.value}>
-                    {type.label}
+                  <option key={type.value} value={type.name}>
+                    {type.name}
                   </option>
                 ))}
               </select>
@@ -192,24 +293,9 @@ export default function Sidebar() {
                 onChange={(e) => setSelectedStyle(e.target.value)}
                 className="w-full bg-gray-600 border border-gray-500 rounded px-2 py-1 text-sm"
               >
-                {styleThemes.map((style) => (
-                  <option key={style.value} value={style.value}>
-                    {style.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-xs text-gray-400 mb-1">Layout</label>
-              <select
-                value={selectedLayout}
-                onChange={(e) => setSelectedLayout(e.target.value)}
-                className="w-full bg-gray-600 border border-gray-500 rounded px-2 py-1 text-sm"
-              >
-                {layoutOptions.map((layout) => (
-                  <option key={layout.value} value={layout.value}>
-                    {layout.label}
+                {styleOptions.map((style) => (
+                  <option key={style.value} value={style.name}>
+                    {style.name}
                   </option>
                 ))}
               </select>
@@ -228,15 +314,15 @@ export default function Sidebar() {
             </div>
 
             <div className="flex gap-2">
-              <button
+              {/* <button
                 onClick={() => setShowApiKeyInput(true)}
                 className="flex items-center gap-1 bg-gray-600 hover:bg-gray-700 px-2 py-1 rounded text-xs"
               >
                 <Key className="w-3 h-3" />
                 API Key
-              </button>
+              </button> */}
               <button
-                onClick={generateAIComponent}
+                // onClick={generateAIComponent}
                 disabled={isGenerating}
                 className="flex-1 bg-purple-600 hover:bg-purple-700 disabled:opacity-50 px-3 py-2 rounded text-sm flex items-center justify-center gap-2"
               >
@@ -253,13 +339,6 @@ export default function Sidebar() {
                 )}
               </button>
             </div>
-
-            {apiKey && (
-              <div className="text-xs text-green-400 flex items-center gap-1">
-                <div className="w-2 h-2 bg-green-400 rounded-full"></div>
-                {aiProvider === "openai" ? "OpenAI" : "Claude"} API connected
-              </div>
-            )}
           </div>
         </div>
       )}
