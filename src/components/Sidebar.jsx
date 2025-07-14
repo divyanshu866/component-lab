@@ -31,11 +31,9 @@ export default function Sidebar() {
             viewBox="0 0 100 100"
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
+            strokeWidth="5"
           >
-            {/* Purple Square */}
             <rect x="20" y="20" width="60" height="60" rx="12" fill="#8B5CF6" />
-
-            {/* "<" Bracket */}
 
             <line
               x1="38"
@@ -43,7 +41,7 @@ export default function Sidebar() {
               x2="44"
               y2="42"
               stroke="white"
-              strokeWidth="4"
+              strokeWidth=""
               strokeLinecap="round"
             />
             <line
@@ -52,7 +50,7 @@ export default function Sidebar() {
               x2="44"
               y2="58"
               stroke="white"
-              strokeWidth="4"
+              strokeWidth=""
               strokeLinecap="round"
             />
 
@@ -62,7 +60,7 @@ export default function Sidebar() {
               x2="62"
               y2="50"
               stroke="white"
-              strokeWidth="4"
+              strokeWidth=""
               strokeLinecap="round"
             />
 
@@ -72,7 +70,7 @@ export default function Sidebar() {
               x2="62"
               y2="50"
               stroke="white"
-              strokeWidth="4"
+              strokeWidth=""
               strokeLinecap="round"
             />
           </svg>
