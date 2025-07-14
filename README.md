@@ -19,11 +19,15 @@ ComponentLab is a real-time UI code lab where developers design and iterate on i
 
 ## 🚀 Getting Started
 
-### 1. Install dependencies
+### 1. Download/Clone repository
+
+cd into the directory
+
+### 2. Install dependencies
 
 npm install
 
-### 1. Install dependencies
+### 3. Start the dev server
 
 npm run dev
 
