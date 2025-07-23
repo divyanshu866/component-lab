@@ -1,9 +1,7 @@
 // app/workspace/layout.tsx
 "use client";
-import Navbar from "@/components/Navbar";
 import Sidebar from "@/components/Sidebar";
 import { ConsoleProvider } from "@/context/ConsoleContext";
-import { useConsole } from "@/context/ConsoleContext";
 import { EditorProvider } from "@/context/EditorContext";
 import { SaveProvider } from "@/context/SaveContext";
 export default function WorkspaceLayout({

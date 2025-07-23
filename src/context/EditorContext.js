@@ -1,7 +1,6 @@
 "use client";
 
-import { create } from "domain";
-import { createContext, useState, useContext, useEffect } from "react";
+import { createContext, useState, useContext } from "react";
 
 const EditorContext = createContext();
 
