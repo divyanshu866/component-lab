@@ -4,21 +4,24 @@ import Navbar from "@/components/Navbar";
 import Sidebar from "@/components/Sidebar";
 import { ConsoleProvider } from "@/context/ConsoleContext";
 import { useConsole } from "@/context/ConsoleContext";
+import { EditorProvider } from "@/context/EditorContext";
+import { SaveProvider } from "@/context/SaveContext";
 export default function WorkspaceLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <main className="w-full h-full flex flex-row bg-neutral-900 text-white">
-      <Sidebar />
+    <EditorProvider>
+      <SaveProvider>
+        <main className="w-full h-full flex flex-row bg-neutral-900 text-white">
+          <Sidebar />
 
-      <div className="h-full w-full flex flex-col">
-        <ConsoleProvider>
-          <Navbar />
-          {children}
-        </ConsoleProvider>
-      </div>
-    </main>
+          <div className="h-full w-full flex flex-col">
+            <ConsoleProvider>{children}</ConsoleProvider>
+          </div>
+        </main>
+      </SaveProvider>
+    </EditorProvider>
   );
 }

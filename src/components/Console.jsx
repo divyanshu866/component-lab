@@ -1,8 +1,10 @@
 "use client";
+import { useConsole } from "@/context/ConsoleContext";
 import { Terminal, X } from "lucide-react";
 import React, { useEffect, useState } from "react";
-const Console = ({ showConsole, setShowConsole }) => {
-  const [consoleLogs, setConsoleLogs] = useState([]);
+const Console = () => {
+  const { showConsole, setShowConsole, consoleLogs, setConsoleLogs } =
+    useConsole();
   // Listen for console messages from iframe
   useEffect(() => {
     const handleMessage = (event) => {
@@ -29,8 +31,8 @@ const Console = ({ showConsole, setShowConsole }) => {
   return (
     <div
       className={`${
-        showConsole ? "flex" : "hidden"
-      } flex-col h-48 border-t border-gray-700 bg-[#1e1e1e]`}
+        showConsole ? "" : "hidden"
+      } h-48 border-t border-gray-700 bg-[#1e1e1e] transition-all duration-75`}
     >
       <div className="bg-gray-900 border-b border-gray-700 px-4 py-2 flex items-center justify-between">
         <div className="flex items-center gap-2">

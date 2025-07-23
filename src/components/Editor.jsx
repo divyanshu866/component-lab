@@ -4,115 +4,35 @@ import ComponentEditor from "@/components/ComponentEditor";
 
 import { useEffect, useRef, useState } from "react";
 import { Code, FileText, Palette } from "lucide-react";
+import { useEditorContext } from "@/context/EditorContext";
+import { useConsole } from "@/context/ConsoleContext";
 
-const Editor = ({ showConsole, setShowConsole }) => {
-  const [css, setCss] = useState(`.btn {
-  background: linear-gradient(135deg, #3b82f6, #2563eb);
-  color: white;
-  padding: 0.6rem 1.2rem;
-  border: none;
-  border-radius: 0.5rem;
-  font-size: 1rem;
-  font-weight: 500;
-  cursor: pointer;
-  box-shadow: 0 4px 14px rgba(59, 130, 246, 0.25);
-  transition: transform 0.1s ease, box-shadow 0.2s ease;
-}
-
-.btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.35);
-}
-
-.btn:active {
-  transform: scale(0.97);
-  box-shadow: 0 2px 10px rgba(59, 130, 246, 0.2);
-}
-`);
-  const [html, setHtml] = useState(
-    `<button onclick="handleclick()" class="btn">test</button>`
-  );
-  const [js, setJs] = useState(`function handleclick() {
-  console.log("clicked");
-}
-`);
-
-  const [code, setCode] = useState("");
-
+const Editor = () => {
+  const {
+    activeComponent,
+    setActiveComponent,
+    previewCode,
+    updatePreview,
+    components,
+    activeComponentIndex,
+  } = useEditorContext();
+  const { consoleLogs, setConsoleLogs } = useConsole();
   useEffect(() => {
-    console.log("html");
+    if (activeComponentIndex != null && components[activeComponentIndex]) {
+      console.log("compIndex", activeComponentIndex);
+      const c = components[activeComponentIndex];
 
-    const finalHtml = `
- <!DOCTYPE html>
-        <html>
-          <head>
-            <style>
-              body { 
-                margin: 0; 
-                padding: 20px; 
-                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-                background: #f8fafc;
-                min-height: 100vh;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-              }
-              ${css}
-            </style>
-          </head>
-          <body>
-            ${html}
-            <script>
-              // Override console methods to send messages to parent
-              const originalLog = console.log;
-              const originalError = console.error;
-              const originalWarn = console.warn;
-              
-              console.log = function(...args) {
-                window.parent.postMessage({
-                  type: 'console',
-                  level: 'log',
-                  message: args.map(arg => typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)).join(' ')
-                }, '*');
-                originalLog.apply(console, args);
-              };
-              
-              console.error = function(...args) {
-                window.parent.postMessage({
-                  type: 'console',
-                  level: 'error',
-                  message: args.map(arg => typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)).join(' ')
-                }, '*');
-                originalError.apply(console, args);
-              };
-              
-              console.warn = function(...args) {
-                window.parent.postMessage({
-                  type: 'console',
-                  level: 'warn',
-                  message: args.map(arg => typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)).join(' ')
-                }, '*');
-                originalWarn.apply(console, args);
-              };
-              
-              // Catch unhandled errors
-              window.addEventListener('error', function(e) {
-                console.error('Error:', e.message, 'at', e.filename + ':' + e.lineno);
-              });
-              
-              try {
-                ${js}
-              } catch (e) {
-                console.error('JavaScript error:', e.message);
-              }
-            </script>
-          </body>
-        </html>
-`;
-
-    setCode(finalHtml);
-    console.log(finalHtml);
-  }, [html, css, js]);
+      setActiveComponent({
+        id: c.id,
+        name: c.name,
+        html: c.html,
+        css: c.css,
+        js: c.js,
+      });
+      setConsoleLogs([]);
+      updatePreview(c.html, c.css, c.js);
+    }
+  }, [activeComponentIndex, components]);
 
   return (
     <div className="flex flex-1 h-0 overflow-hidden">
@@ -126,8 +46,10 @@ const Editor = ({ showConsole, setShowConsole }) => {
             </div>
             <div className="flex-1 h-0">
               <ComponentEditor
-                code={html}
-                onChange={(val) => setHtml(val || "")}
+                code={activeComponent.html}
+                onChange={(val) =>
+                  setActiveComponent((prev) => ({ ...prev, html: val }))
+                }
                 language="html"
               />
             </div>
@@ -140,8 +62,10 @@ const Editor = ({ showConsole, setShowConsole }) => {
             </div>
             <div className="flex-1 h-0">
               <ComponentEditor
-                code={css}
-                onChange={(val) => setCss(val || "")}
+                code={activeComponent.css}
+                onChange={(val) =>
+                  setActiveComponent((prev) => ({ ...prev, css: val }))
+                }
                 language="css"
               />
             </div>
@@ -154,8 +78,10 @@ const Editor = ({ showConsole, setShowConsole }) => {
             </div>
             <div className="flex-1 h-0">
               <ComponentEditor
-                code={js}
-                onChange={(val) => setJs(val || "")}
+                code={activeComponent.js}
+                onChange={(val) =>
+                  setActiveComponent((prev) => ({ ...prev, js: val }))
+                }
                 language="javascript"
               />
             </div>
@@ -164,7 +90,7 @@ const Editor = ({ showConsole, setShowConsole }) => {
       </div>
 
       {/*preview window  */}
-      <Preview finalHtml={code} />
+      <Preview finalHtml={previewCode} />
     </div>
   );
 };

@@ -1,15 +1,25 @@
 "use client";
 import { Code, Key, PanelRight, Plus, Sparkles, Zap } from "lucide-react";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
-
+import { useEffect, useState } from "react";
+import { useEditorContext } from "@/context/EditorContext";
 export default function Sidebar() {
-  const pathname = usePathname();
+  // const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
   const [showAiPanel, setShowAiPanel] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
 
   const [selectedType, setSelectedType] = useState("");
+  const {
+    components,
+    setComponents,
+    activeComponent,
+    setActiveComponent,
+    activeComponentIndex,
+    setActiveComponentIndex,
+    updatePreview,
+  } = useEditorContext();
+
   const [componentTypes, setComponentTypes] = useState([
     {
       name: "Button",
@@ -148,16 +158,46 @@ export default function Sidebar() {
 
   const [selectedStyle, setSelectedStyle] = useState("");
   const [aiDescription, setAiDescription] = useState("");
+  function onClickNew() {
+    if (true) {
+      createNewComponent();
+    }
+  }
+  useEffect(() => {
+    async function fetchComponents() {
+      const res = await fetch("/api/components");
+      if (res.ok) {
+        const data = await res.json();
+        setComponents(data);
+      } else {
+        console.error("Failed to fetch components");
+      }
+    }
+    fetchComponents();
+  }, []);
+  const createNewComponent = () => {
+    console.log("cleared");
+    setActiveComponentIndex(null);
 
-  const [components, setComponents] = useState([]);
+    if (activeComponent.html || activeComponent.css || activeComponent.js) {
+      setActiveComponent({
+        id: "",
+        name: "",
+        html: "",
+        css: "",
+        js: "",
+      });
+    }
+    updatePreview();
+  };
   return (
     <aside
-      className={`bg-gray-800 text-white h-full transition-all duration-200 ${
+      className={`bg-gray-800 text-white h-full transition-all duration-100 ${
         collapsed ? "w-12" : "w-80"
       }`}
     >
       <div
-        className={`justify-between pr-2" flex items-center h-14 border-b border-gray-700`}
+        className={`justify-between pr-2" flex items-center h-14 border-b border-neutral-500`}
       >
         <button
           onClick={() => {
@@ -222,7 +262,7 @@ export default function Sidebar() {
           }}
           className={`${
             collapsed ? "opacity-0" : "opacity-100"
-          } pr-3 text-sm text-white cursor-pointer transition-all duration-200`}
+          } pr-3 text-sm text-white cursor-pointer transition-all duration-100`}
         >
           <PanelRight width={"28px"} height={"28px"} />
         </button>
@@ -230,7 +270,7 @@ export default function Sidebar() {
       </div>
 
       <div
-        className={`py-4 px-2 border-b border-gray-700 transition-all duration-200`}
+        className={`py-4 px-2 border-b border-gray-700 transition-all duration-100`}
       >
         <div
           className={`${
@@ -247,7 +287,7 @@ export default function Sidebar() {
             Generate AI Template
           </button>
           <button
-            // onClick={createNewComponent}
+            onClick={onClickNew}
             className={`${
               collapsed ? "py-2" : ""
             } bg-gray-800 hover:bg-gray-700 px-2 rounded text-sm flex items-center gap-2 cursor-pointer`}
@@ -261,7 +301,7 @@ export default function Sidebar() {
         <div
           className={`${
             collapsed ? "opacity-0" : "opacity-100"
-          } p-4 border-b border-gray-700 bg-gray-750 transition-all duration-200`}
+          } p-4 border-b border-gray-700 bg-gray-750 transition-all duration-100`}
         >
           <h3 className="text-sm font-semibold mb-3 flex items-center gap-2">
             <Sparkles className="w-4 h-4 text-purple-400" />
@@ -346,59 +386,26 @@ export default function Sidebar() {
       <div
         className={`${
           collapsed ? "opacity-0" : "opacity-100"
-        } flex-1 overflow-y-auto transition-all duration-200`}
+        } flex-1 overflow-y-auto transition-all duration-100`}
       >
         <div className="p-4">
           <h3 className="text-sm font-semibold text-gray-400 mb-2">
             Components
           </h3>
           <div className="space-y-1">
-            {components.map((component) => (
-              <div
-                key={component.id}
-                className={`p-2 rounded cursor-pointer group flex items-center justify-between ${
-                  activeComponent?.id === component.id
-                    ? "bg-blue-600"
-                    : "hover:bg-gray-700"
-                }`}
-                onClick={() => switchComponent(component)}
-              >
-                <div className="flex-1 min-w-0">
-                  {editingId === component.id ? (
-                    <input
-                      value={editingName}
-                      onChange={(e) => setEditingName(e.target.value)}
-                      onBlur={saveEdit}
-                      onKeyPress={(e) => e.key === "Enter" && saveEdit()}
-                      className="w-full bg-gray-600 border border-gray-500 rounded px-2 py-1 text-sm"
-                      autoFocus
-                    />
-                  ) : (
-                    <div className="text-sm truncate">{component.name}</div>
-                  )}
-                </div>
-                <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      startEditing(component.id, component.name);
-                    }}
-                    className="p-1 hover:bg-gray-600 rounded"
-                  >
-                    <Edit3 className="w-3 h-3" />
-                  </button>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      deleteComponent(component.id);
-                    }}
-                    className="p-1 hover:bg-red-600 rounded"
-                  >
-                    <Trash2 className="w-3 h-3" />
-                  </button>
-                </div>
-              </div>
-            ))}
+            <ul>
+              {components.map((c, i) => (
+                <li
+                  key={i}
+                  onClick={() => setActiveComponentIndex(i)}
+                  className={`p-2 cursor-pointer ${
+                    i === activeComponentIndex ? "bg-gray-700 rounded-lg" : ""
+                  }`}
+                >
+                  {c.name}
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
       </div>

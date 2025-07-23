@@ -1,15 +1,20 @@
-"use client";
 import Editor from "@/components/Editor";
 import Console from "@/components/Console";
-import { useConsole } from "@/context/ConsoleContext";
+import Navbar from "@/components/Navbar";
+// import { useState } from "react";
+import { auth } from "@/lib/auth";
+import { redirect } from "next/navigation";
 
-export default function workspace() {
-  const { showConsole, setShowConsole } = useConsole();
+export default async function workspace() {
+  const session = await auth();
 
+  if (!session) redirect("/sign-in");
+  console.log(session);
   return (
     <>
-      <Editor showConsole={showConsole} setShowConsole={setShowConsole} />
-      <Console showConsole={showConsole} setShowConsole={setShowConsole} />
+      <Navbar />
+      <Editor />
+      <Console />
     </>
   );
 }
