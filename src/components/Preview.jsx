@@ -8,7 +8,7 @@ const Preview = ({ finalHtml }) => {
     >
       <iframe
         srcDoc={finalHtml}
-        sandbox="allow-scripts"
+        sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-presentation"
         className="w-full h-full"
       />
     </div>

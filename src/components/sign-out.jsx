@@ -7,7 +7,7 @@ function SIGNOUT() {
   return (
     <div className="flex justify-center">
       <button
-        className="bg-red-700 p-2 rounded-lg cursor-pointer"
+        className="bg-red-700 px-2 py-1 rounded-sm cursor-pointer"
         onClick={handleSignOut}
       >
         Sign Out

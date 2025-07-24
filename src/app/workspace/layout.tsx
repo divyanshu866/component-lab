@@ -12,13 +12,13 @@ export default function WorkspaceLayout({
   return (
     <EditorProvider>
       <SaveProvider>
-        <main className="w-full h-full flex flex-row bg-neutral-900 text-white">
-          <Sidebar />
+        <ConsoleProvider>
+          <main className="w-full h-full flex flex-row bg-neutral-900 text-white">
+            <Sidebar />
 
-          <div className="h-full w-full flex flex-col">
-            <ConsoleProvider>{children}</ConsoleProvider>
-          </div>
-        </main>
+            <div className="h-full w-full flex flex-col">{children}</div>
+          </main>
+        </ConsoleProvider>
       </SaveProvider>
     </EditorProvider>
   );

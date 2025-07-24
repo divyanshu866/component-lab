@@ -14,6 +14,7 @@ const Editor = () => {
     previewCode,
     updatePreview,
     components,
+    saveComponent,
     activeComponentIndex,
   } = useEditorContext();
   const { consoleLogs, setConsoleLogs } = useConsole();
@@ -30,9 +31,35 @@ const Editor = () => {
         js: c.js,
       });
       setConsoleLogs([]);
+
       updatePreview(c.html, c.css, c.js);
     }
-  }, [activeComponentIndex, components]);
+  }, [activeComponentIndex]);
+
+  // Add keyboard shortcut for Cmd/Ctrl + S
+  useEffect(() => {
+    const handleSaveShortcut = (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === "s") {
+        e.preventDefault(); // Prevent default browser "Save page"
+        console.log("Preview updated via Cmd/Ctrl + S");
+
+        updatePreview(
+          activeComponent.html,
+          activeComponent.css,
+          activeComponent.js
+        );
+        saveComponent(
+          activeComponent.name,
+          activeComponent.html,
+          activeComponent.css,
+          activeComponent.js
+        );
+      }
+    };
+
+    window.addEventListener("keydown", handleSaveShortcut);
+    return () => window.removeEventListener("keydown", handleSaveShortcut);
+  }, [activeComponent]); // Re-bind when component changes
 
   return (
     <div className="flex flex-1 h-0 overflow-hidden">

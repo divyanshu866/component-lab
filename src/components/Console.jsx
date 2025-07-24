@@ -63,9 +63,9 @@ const Console = () => {
             No console output yet. Try interacting with your component!
           </div>
         ) : (
-          consoleLogs.map((log) => (
+          consoleLogs.map((log, index) => (
             <div
-              key={log.id}
+              key={index}
               className={`mb-2 ${
                 log.level === "error"
                   ? "text-red-400"

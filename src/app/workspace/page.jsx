@@ -13,6 +13,7 @@ export default async function workspace() {
   return (
     <>
       <Navbar />
+
       <Editor />
       <Console />
     </>

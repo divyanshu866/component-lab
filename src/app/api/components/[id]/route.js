@@ -3,7 +3,8 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 
-export async function PATCH(req, { params }) {
+export async function PATCH(req, context) {
+  const { id } = await context.params; // <-- await params
   const session = await auth();
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -13,7 +14,7 @@ export async function PATCH(req, { params }) {
 
   // Ensure user owns the component
   const component = await prisma.component.findUnique({
-    where: { id: Number(params.id) },
+    where: { id: Number(id) },
   });
 
   if (!component || component.userId !== session.user.id) {
@@ -22,7 +23,7 @@ export async function PATCH(req, { params }) {
 
   // Update the component
   const updated = await prisma.component.update({
-    where: { id: Number(params.id) },
+    where: { id: Number(id) },
     data: { html, css, js, name },
   });
 

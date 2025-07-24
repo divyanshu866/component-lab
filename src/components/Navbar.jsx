@@ -1,10 +1,10 @@
 "use client";
-import { Play, SaveAll, SaveAllIcon, Terminal } from "lucide-react";
+import { Play, SaveAllIcon, Terminal } from "lucide-react";
 import { useConsole } from "@/context/ConsoleContext";
 import { useEditorContext } from "@/context/EditorContext";
-import { useSave } from "@/context/SaveContext";
+// import { useSave } from "@/context/SaveContext";
 import SIGNOUT from "@/components/sign-out";
-import { auth } from "@/lib/auth";
+// import { auth } from "@/lib/auth";
 export default function Navbar() {
   const { showConsole, setShowConsole } = useConsole();
   const {
@@ -15,7 +15,7 @@ export default function Navbar() {
     saveComponent,
   } = useEditorContext();
 
-  const { isSaving, setIsSaving } = useSave();
+  // const { isSaving, setIsSaving } = useSave();
 
   function onSave() {
     if (
@@ -54,10 +54,16 @@ export default function Navbar() {
           } border rounded-lg`}
         />
       </div>
-      <SIGNOUT />
       <div className="flex items-center justify-between gap-5">
         <button
-          onClick={onSave}
+          onClick={() =>
+            saveComponent(
+              activeComponent.name,
+              activeComponent.html,
+              activeComponent.css,
+              activeComponent.js
+            )
+          }
           className="flex items-center p-2 text-gray-400 bg-gray-800 hover:text-white rounded hover:bg-gray-700 cursor-pointer"
         >
           <SaveAllIcon className="w-5 h-5" />
@@ -80,6 +86,7 @@ export default function Navbar() {
         >
           <Play className="w-4 h-4" />
         </button>
+        <SIGNOUT />
       </div>
     </nav>
   );

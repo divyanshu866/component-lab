@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useState, useContext } from "react";
+import { createContext, useState, useContext, useEffect } from "react";
 
 const EditorContext = createContext();
 
@@ -18,8 +18,16 @@ export function EditorProvider({ children }) {
 
   const [isSaving, setIsSaving] = useState(false);
   const [previewCode, setPreviewCode] = useState("");
-
+  useEffect(() => {
+    updatePreview();
+    console.log("activeComponent==>", activeComponent);
+    console.log("activeComponentIndex==>", activeComponentIndex);
+  }, []);
   const saveComponent = async (name, html, css, js) => {
+    if (!name.trim()) {
+      return;
+    }
+
     const payload = { name, html, css, js };
 
     if (activeComponent?.id) {
@@ -57,14 +65,34 @@ export function EditorProvider({ children }) {
       console.log("created.......");
     }
   };
+  const createNewComponent = async (name, html, css, js) => {
+    if (!name.trim()) {
+      return;
+    }
 
-  const updatePreview = (html, css, js) => {
-    const finalHtml = `
-     <!DOCTYPE html>
-            <html>
-              <head>
-                <style>
-                  body {
+    const payload = { name, html, css, js };
+
+    // Create new component
+    const res = await fetch("/api/components", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    const created = await res.json();
+    setComponents((prev) => [created, ...prev]);
+    setActiveComponent({
+      id: created.id,
+      name: created.name,
+      html: created.html,
+      css: created.css,
+      js: created.js,
+    }); // set the new active component
+    setActiveComponentIndex(0);
+
+    console.log("created.......");
+  };
+  const updatePreview = (html = "", css = "", js = "") => {
+    const boilerCss = `body {
                     margin: 0;
                     padding: 20px;
                     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -73,7 +101,15 @@ export function EditorProvider({ children }) {
                     display: flex;
                     align-items: center;
                     justify-content: center;
-                  }
+                  }`;
+    const finalHtml = `
+     <!DOCTYPE html>
+            <html>
+              <head>
+                <style>
+              
+                ${css ? "" : boilerCss}
+                  
                   ${css}
                 </style>
               </head>
@@ -112,6 +148,13 @@ export function EditorProvider({ children }) {
                   window.addEventListener('error', function(e) {
                     console.error('Error:', e.message, 'at', e.filename + ':' + e.lineno);
                   });
+                   document.querySelectorAll('a').forEach(link => {
+                    link.addEventListener('click', e => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        console.log('Link clicked:', link.href);
+                    });
+                });
                   try {
                     ${js}
                   } catch (e) {
@@ -138,6 +181,7 @@ export function EditorProvider({ children }) {
         activeComponentIndex,
         setActiveComponentIndex,
         saveComponent,
+        createNewComponent,
         isSaving,
         setIsSaving,
       }}

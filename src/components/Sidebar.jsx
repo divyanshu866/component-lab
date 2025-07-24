@@ -1,15 +1,19 @@
 "use client";
-import { Code, Key, PanelRight, Plus, Sparkles, Zap } from "lucide-react";
-import { usePathname } from "next/navigation";
+import { PanelRight, Plus, Sparkles, Zap } from "lucide-react";
+// import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useEditorContext } from "@/context/EditorContext";
+import { useConsole } from "@/context/ConsoleContext";
+import { AI_MODELS } from "@/ai/models";
 export default function Sidebar() {
   // const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
   const [showAiPanel, setShowAiPanel] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
-
-  const [selectedType, setSelectedType] = useState("");
+  const [selectedModel, setSelectedModel] = useState(AI_MODELS[0].value);
+  useEffect(() => {
+    console.log(selectedModel);
+  }, [selectedModel]);
   const {
     components,
     setComponents,
@@ -17,10 +21,16 @@ export default function Sidebar() {
     setActiveComponent,
     activeComponentIndex,
     setActiveComponentIndex,
+    createNewComponent,
     updatePreview,
   } = useEditorContext();
-
+  const { setConsoleLogs } = useConsole();
   const [componentTypes, setComponentTypes] = useState([
+    {
+      name: "Modal",
+      icon: "maximize",
+      description: "Popup overlay for alerts or input",
+    },
     {
       name: "Button",
       icon: "square",
@@ -36,11 +46,7 @@ export default function Sidebar() {
       icon: "menu",
       description: "Top or side navigation bar",
     },
-    {
-      name: "Modal",
-      icon: "maximize",
-      description: "Popup overlay for alerts or input",
-    },
+
     {
       name: "Form",
       icon: "file-text",
@@ -101,43 +107,204 @@ export default function Sidebar() {
       icon: "navigation",
       description: "Hierarchy-based page trail",
     },
+    {
+      name: "List",
+      icon: "list",
+      description: "Vertical or horizontal collection of repeating items",
+    },
+    {
+      name: "Data Grid",
+      icon: "grid",
+      description: "Paginated table for large data sets",
+    },
+    {
+      name: "Calendar",
+      icon: "calendar",
+      description: "Month/Week/Day date selector",
+    },
+    {
+      name: "Date Picker",
+      icon: "calendar-clock",
+      description: "Compact date or range input",
+    },
+    {
+      name: "Time Picker",
+      icon: "clock",
+      description: "Select a specific time value",
+    },
+    {
+      name: "Combobox",
+      icon: "list-plus",
+      description: "Input field with list suggestions",
+    },
+    { name: "Select", icon: "selector", description: "Single-option dropdown" },
+    {
+      name: "Slider",
+      icon: "slider",
+      description: "Range selection with drag handle",
+    },
+    {
+      name: "Switch",
+      icon: "toggle-left",
+      description: "Binary on/off toggle",
+    },
+    {
+      name: "Progress Bar",
+      icon: "loader",
+      description: "Task completion indicator",
+    },
+    {
+      name: "Loader",
+      icon: "refresh",
+      description: "Indefinite loading indicator",
+    },
+    {
+      name: "Skeleton",
+      icon: "align-justify",
+      description: "Loading placeholder shimmer",
+    },
+    { name: "Chip", icon: "tag", description: "Small removable label" },
+    { name: "Badge", icon: "award", description: "Numeric/status indicator" },
+    { name: "Rating", icon: "star", description: "Star/heart rating selector" },
+    { name: "Avatar Group", icon: "users", description: "Clustered avatars" },
+    {
+      name: "Breadcrumb",
+      icon: "compass",
+      description: "Clickable path trail",
+    },
+    { name: "Drawer", icon: "sidebar", description: "Sliding side panel" },
+    {
+      name: "Dialog",
+      icon: "message-square",
+      description: "Modal confirmation overlay",
+    },
+    {
+      name: "Popover",
+      icon: "message-circle",
+      description: "Lightweight contextual bubble",
+    },
+    {
+      name: "Carousel",
+      icon: "play-circle",
+      description: "Swipeable content slider",
+    },
+    {
+      name: "Steps",
+      icon: "steps",
+      description: "Multi-stage progress tracker",
+    },
+    {
+      name: "Accordion",
+      icon: "chevrons-right",
+      description: "Expandable content sections",
+    },
+    {
+      name: "Collapse",
+      icon: "arrow-down",
+      description: "Single panel show/hide",
+    },
+    { name: "Table", icon: "table", description: "Basic tabular layout" },
+    { name: "Chart", icon: "bar-chart", description: "Chart placeholder" },
+    {
+      name: "Tooltip Rich",
+      icon: "info",
+      description: "Tooltip with rich content",
+    },
+    {
+      name: "Alert Banner",
+      icon: "flag",
+      description: "Prominent page-level alert",
+    },
+    {
+      name: "Toast Stack",
+      icon: "bell-off",
+      description: "Transient status messages",
+    },
+    {
+      name: "Chat Bubble",
+      icon: "message",
+      description: "Chat message container",
+    },
+    {
+      name: "Comment Thread",
+      icon: "message-square-dashed",
+      description: "Nested comments",
+    },
+    {
+      name: "Activity Feed",
+      icon: "activity",
+      description: "Reverse-chronological event list",
+    },
+    {
+      name: "File Dropzone",
+      icon: "upload-cloud",
+      description: "Drag-and-drop file upload",
+    },
+    {
+      name: "Image",
+      icon: "image",
+      description: "Static or responsive illustration",
+    },
+    {
+      name: "Video Player",
+      icon: "video",
+      description: "Responsive video frame",
+    },
+    {
+      name: "Video Embed",
+      icon: "video",
+      description: "Responsive video frame",
+    },
+    { name: "Tree View", icon: "tree", description: "Hierarchical explorer" },
+    {
+      name: "Drawer Stack",
+      icon: "layout-sidebar",
+      description: "Multiple stacked drawers",
+    },
+    { name: "Tablist", icon: "columns-3", description: "Tabbed navigation" },
+    {
+      name: "Persona Card",
+      icon: "id-badge",
+      description: "Rich user profile card",
+    },
+    {
+      name: "Toolbar",
+      icon: "slider-horizontal",
+      description: "Action button cluster",
+    },
   ]);
 
   const [styleOptions, setStyleOptions] = useState([
-    {
-      name: "Material UI",
-      icon: "circle",
-      description: "Google's standard design system",
-    },
-    {
-      name: "Glassmorphism",
-      icon: "layers",
-      description: "Frosted, transparent glass effect",
-    },
-    {
-      name: "Neumorphism",
-      icon: "shapes",
-      description: "Soft, extruded 3D surfaces",
-    },
-    {
-      name: "Flat Design",
-      icon: "square",
-      description: "Minimalist, no depth or gradients",
-    },
+    /* ---- original 11 presets here ---- */
     {
       name: "Skeuomorphic",
-      icon: "archive",
-      description: "Real-world textures and metaphors",
+      icon: "archive-alt",
+      description: "Real-world textures and shadows",
     },
     {
-      name: "Minimal",
-      icon: "minimize",
-      description: "Clean and distraction-free UI",
+      name: "Fluent 2",
+      icon: "cube",
+      description: "Microsoft’s depth-rich Fluent tokens",
     },
     {
-      name: "Retro",
-      icon: "cpu",
-      description: "Old-school colors and pixel art",
+      name: "Carbon",
+      icon: "flask",
+      description: "IBM’s modular, accessibility-first system",
+    },
+    {
+      name: "Ant Design",
+      icon: "ant",
+      description: "Enterprise-grade Chinese design system",
+    },
+    {
+      name: "Tailwind Minimal",
+      icon: "wind",
+      description: "Utility-class minimalist style",
+    },
+    {
+      name: "Bento Grid",
+      icon: "grid-alt",
+      description: "Dense tile layout with 3-D offsets",
     },
     {
       name: "Brutalist",
@@ -145,24 +312,124 @@ export default function Sidebar() {
       description: "Raw, intentionally rough aesthetics",
     },
     {
-      name: "Dark Theme",
-      icon: "moon",
-      description: "UI with dark background and light text",
+      name: "Neo-Brutalist",
+      icon: "shield-cracked",
+      description: "Harsh lines, high contrast blocks",
     },
     {
-      name: "Light Theme",
-      icon: "sun",
-      description: "Default light-based appearance",
+      name: "Cyberpunk",
+      icon: "cpu-lightning",
+      description: "Neon gradients and sci-fi glows",
+    },
+    {
+      name: "Glassmorphism",
+      icon: "layers",
+      description: "Frosted, transparent glass effect",
+    },
+    {
+      name: "3-D Glass",
+      icon: "cube-transparent",
+      description: "Frosted glass with depth",
+    },
+    {
+      name: "Claymorphism",
+      icon: "cloud-light",
+      description: "Soft clay-like surfaces",
+    },
+    {
+      name: "Paper Wireframe",
+      icon: "file-text-alt",
+      description: "Outlined paper-style mockups",
+    },
+    {
+      name: "Minimal",
+      icon: "minimize",
+      description: "Clean and distraction-free UI",
+    },
+    {
+      name: "Pastel Memphis",
+      icon: "chrome",
+      description: "Playful 80s pastel shapes",
+    },
+    {
+      name: "Techno Dark",
+      icon: "circuit-board",
+      description: "Dark mode with cyan accents",
+    },
+    {
+      name: "Solarized Light",
+      icon: "sun-cloud",
+      description: "Beige + teal readable palette",
+    },
+    {
+      name: "Solarized Dark",
+      icon: "moon-cloud",
+      description: "Twin dark variant of Solarized",
+    },
+    {
+      name: "Gradient Mesh",
+      icon: "gradient",
+      description: "Organic mesh gradients",
+    },
+    {
+      name: "AI Futuristic",
+      icon: "brain-circuit",
+      description: "Holographic AI-themed visuals",
+    },
+    {
+      name: "Retro",
+      icon: "cpu",
+      description: "Old-school colors and pixel art",
+    },
+    {
+      name: "Retro 8-bit",
+      icon: "monitor",
+      description: "Pixel art retro palette",
+    },
+
+    {
+      name: "Holographic",
+      icon: "prism",
+      description: "Iridescent holo effects",
+    },
+    {
+      name: "Corporate Neutral",
+      icon: "building",
+      description: "Conservative enterprise palette",
+    },
+    {
+      name: "Cinematic",
+      icon: "film",
+      description: "Letterboxed, filmic UI chrome",
+    },
+    {
+      name: "Material 3",
+      icon: "layers-3",
+      description: "Latest Google Material tokens",
+    },
+    {
+      name: "Flat Pastel",
+      icon: "drop",
+      description: "Low-contrast pastel blocks",
+    },
+    {
+      name: "Organic Shapes",
+      icon: "leaf",
+      description: "Curved blobs & asymmetric cuts",
+    },
+    {
+      name: "Wireframe",
+      icon: "slash-forward",
+      description: "Monochrome dashed outlines",
     },
   ]);
 
-  const [selectedStyle, setSelectedStyle] = useState("");
-  const [aiDescription, setAiDescription] = useState("");
-  function onClickNew() {
-    if (true) {
-      createNewComponent();
-    }
-  }
+  const [selectedType, setSelectedType] = useState(componentTypes[0].name);
+
+  const [selectedStyle, setSelectedStyle] = useState(styleOptions[0].name);
+
+  // const [aiDescription, setAiDescription] = useState("");
+
   useEffect(() => {
     async function fetchComponents() {
       const res = await fetch("/api/components");
@@ -175,25 +442,84 @@ export default function Sidebar() {
     }
     fetchComponents();
   }, []);
-  const createNewComponent = () => {
+  const clearScreen = (name = "", html = "", css = "", js = "") => {
     console.log("cleared");
+
     setActiveComponentIndex(null);
 
-    if (activeComponent.html || activeComponent.css || activeComponent.js) {
+    if (true) {
+      console.log("name==>", name);
       setActiveComponent({
         id: "",
-        name: "",
-        html: "",
-        css: "",
-        js: "",
+        name: name,
+        html: html,
+        css: css,
+        js: js,
       });
     }
+    setConsoleLogs([]);
     updatePreview();
+    console.log();
   };
+
+  const generateComponent = async () => {
+    try {
+      setIsGenerating(true);
+      clearScreen();
+
+      const res = await fetch("/api/ai", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          component_type: selectedType,
+          component_style: selectedStyle,
+          model: selectedModel,
+        }),
+      });
+      console.log("model=====>", selectedModel);
+      if (!res.ok) {
+        throw new Error(`Failed: ${res.status}`);
+      }
+
+      const data = await res.json();
+      // If the API returns a JSON string inside data.output, parse it
+      const outputComp = JSON.parse(data.output);
+
+      const { name, html, css, js } = outputComp;
+
+      const generatedComp = {
+        name: name,
+        html: html,
+        css: css,
+        js: js,
+      };
+      setActiveComponent(generatedComp);
+      updatePreview(html, css, js);
+      createNewComponent(name, html, css, js);
+
+      console.log("activeComponent===>", activeComponent);
+      console.log("activeComponentIndex==>", activeComponentIndex);
+
+      console.log("Component Name:", name);
+      console.log("HTML:", html);
+      console.log("CSS:", css);
+      console.log("JS:", js);
+
+      console.log("Generated Component:", outputComp);
+      return data.output;
+    } catch (err) {
+      console.error("Error calling /api/generate:", err);
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
   return (
     <aside
-      className={`bg-gray-800 text-white h-full transition-all duration-100 ${
-        collapsed ? "w-12" : "w-80"
+      className={`bg-gray-800 text-white h-full flex flex-col overflow-y-hidden transition-all duration-100 ${
+        collapsed ? "w-12" : showAiPanel ? "w-80" : "w-80"
       }`}
     >
       <div
@@ -266,7 +592,6 @@ export default function Sidebar() {
         >
           <PanelRight width={"28px"} height={"28px"} />
         </button>
-        {/* )} */}
       </div>
 
       <div
@@ -281,13 +606,13 @@ export default function Sidebar() {
             onClick={() => setShowAiPanel(!showAiPanel)}
             className={`${
               collapsed ? "opacity-0 hidden" : "flex-1 opacity-100"
-            } flex items-center justify-centers gap-2 bg-purple-600 hover:bg-purple-700 px-3 py-2 rounded text-sm cursor-pointer`}
+            } flex items-center justify-centers gap-2 bg-purple-600 hover:bg-purple-700 mx-2 px-3 py-2 rounded text-sm cursor-pointer`}
           >
             <Sparkles className="w-4 h-4" />
             Generate AI Template
           </button>
           <button
-            onClick={onClickNew}
+            onClick={() => clearScreen()}
             className={`${
               collapsed ? "py-2" : ""
             } bg-gray-800 hover:bg-gray-700 px-2 rounded text-sm flex items-center gap-2 cursor-pointer`}
@@ -318,8 +643,8 @@ export default function Sidebar() {
                 onChange={(e) => setSelectedType(e.target.value)}
                 className="w-full bg-gray-600 border border-gray-500 rounded px-2 py-1 text-sm"
               >
-                {componentTypes.map((type) => (
-                  <option key={type.value} value={type.name}>
+                {componentTypes.map((type, index) => (
+                  <option key={index} value={type.name}>
                     {type.name}
                   </option>
                 ))}
@@ -333,15 +658,15 @@ export default function Sidebar() {
                 onChange={(e) => setSelectedStyle(e.target.value)}
                 className="w-full bg-gray-600 border border-gray-500 rounded px-2 py-1 text-sm"
               >
-                {styleOptions.map((style) => (
-                  <option key={style.value} value={style.name}>
+                {styleOptions.map((style, index) => (
+                  <option key={index} value={style.name}>
                     {style.name}
                   </option>
                 ))}
               </select>
             </div>
 
-            <div>
+            {/* <div>
               <label className="block text-xs text-gray-400 mb-1">
                 Or describe your component:
               </label>
@@ -351,18 +676,21 @@ export default function Sidebar() {
                 placeholder="e.g., a responsive pricing table with 3 tiers and hover effects"
                 className="w-full bg-gray-600 border border-gray-500 rounded px-2 py-1 text-sm h-16 resize-none"
               />
-            </div>
-
+            </div> */}
+            <select
+              value={selectedModel}
+              onChange={(e) => setSelectedModel(e.target.value)}
+              className="w-full bg-gray-600 border border-gray-500 rounded px-2 py-1 text-sm"
+            >
+              {AI_MODELS.map((model) => (
+                <option key={model.value} value={model.value}>
+                  {model.label}
+                </option>
+              ))}
+            </select>
             <div className="flex gap-2">
-              {/* <button
-                onClick={() => setShowApiKeyInput(true)}
-                className="flex items-center gap-1 bg-gray-600 hover:bg-gray-700 px-2 py-1 rounded text-xs"
-              >
-                <Key className="w-3 h-3" />
-                API Key
-              </button> */}
               <button
-                // onClick={generateAIComponent}
+                onClick={generateComponent}
                 disabled={isGenerating}
                 className="flex-1 bg-purple-600 hover:bg-purple-700 disabled:opacity-50 px-3 py-2 rounded text-sm flex items-center justify-center gap-2"
               >
@@ -383,31 +711,31 @@ export default function Sidebar() {
         </div>
       )}
       {/* Components List */}
+      <h3
+        className={`${
+          collapsed ? "hidden" : ""
+        } text-sm font-semibold text-gray-400 mx-3 m-2`}
+      >
+        Components
+      </h3>
       <div
         className={`${
           collapsed ? "opacity-0" : "opacity-100"
-        } flex-1 overflow-y-auto transition-all duration-100`}
+        } flex-1 overflow-y-auto overflow-hidden transition-all duration-100`}
       >
-        <div className="p-4">
-          <h3 className="text-sm font-semibold text-gray-400 mb-2">
-            Components
-          </h3>
-          <div className="space-y-1">
-            <ul>
-              {components.map((c, i) => (
-                <li
-                  key={i}
-                  onClick={() => setActiveComponentIndex(i)}
-                  className={`p-2 cursor-pointer ${
-                    i === activeComponentIndex ? "bg-gray-700 rounded-lg" : ""
-                  }`}
-                >
-                  {c.name}
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
+        <ul className="px-2">
+          {components.map((c, i) => (
+            <li
+              key={i}
+              onClick={() => setActiveComponentIndex(i)}
+              className={`p-2 text-sm text-nowrap cursor-pointer ${
+                i === activeComponentIndex ? "bg-gray-700 rounded-lg" : ""
+              }`}
+            >
+              {c.name}
+            </li>
+          ))}
+        </ul>
       </div>
     </aside>
   );
