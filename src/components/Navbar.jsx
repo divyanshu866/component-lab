@@ -7,13 +7,8 @@ import SIGNOUT from "@/components/sign-out";
 // import { auth } from "@/lib/auth";
 export default function Navbar() {
   const { showConsole, setShowConsole } = useConsole();
-  const {
-    componentName,
-    activeComponent,
-    setActiveComponent,
-    updatePreview,
-    saveComponent,
-  } = useEditorContext();
+  const { activeComponent, setActiveComponent, updatePreview, saveComponent } =
+    useEditorContext();
 
   // const { isSaving, setIsSaving } = useSave();
 
@@ -50,7 +45,7 @@ export default function Navbar() {
           value={activeComponent.name}
           placeholder="Component Name"
           className={`bg-gray-700 px-2 w-max text-sm ${
-            !componentName ? "border-red-400" : "border-gray-800"
+            !activeComponent.name ? "border-red-400" : "border-gray-800"
           } border rounded-lg`}
         />
       </div>

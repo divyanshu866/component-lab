@@ -641,7 +641,7 @@ export default function Sidebar() {
               <select
                 value={selectedType}
                 onChange={(e) => setSelectedType(e.target.value)}
-                className="w-full bg-gray-600 border border-gray-500 rounded px-2 py-1 text-sm"
+                className="w-full bg-gray-600 border border-gray-500 rounded px-2 py-1 text-sm cursor-pointer"
               >
                 {componentTypes.map((type, index) => (
                   <option key={index} value={type.name}>
@@ -656,7 +656,7 @@ export default function Sidebar() {
               <select
                 value={selectedStyle}
                 onChange={(e) => setSelectedStyle(e.target.value)}
-                className="w-full bg-gray-600 border border-gray-500 rounded px-2 py-1 text-sm"
+                className="w-full bg-gray-600 border border-gray-500 rounded px-2 py-1 text-sm cursor-pointer"
               >
                 {styleOptions.map((style, index) => (
                   <option key={index} value={style.name}>
@@ -680,7 +680,7 @@ export default function Sidebar() {
             <select
               value={selectedModel}
               onChange={(e) => setSelectedModel(e.target.value)}
-              className="w-full bg-gray-600 border border-gray-500 rounded px-2 py-1 text-sm"
+              className="w-full bg-gray-600 border border-gray-500 rounded px-2 py-1 text-sm cursor-pointer"
             >
               {AI_MODELS.map((model) => (
                 <option key={model.value} value={model.value}>
@@ -692,7 +692,7 @@ export default function Sidebar() {
               <button
                 onClick={generateComponent}
                 disabled={isGenerating}
-                className="flex-1 bg-purple-600 hover:bg-purple-700 disabled:opacity-50 px-3 py-2 rounded text-sm flex items-center justify-center gap-2"
+                className="flex-1 bg-purple-600 hover:bg-purple-700 disabled:opacity-50 px-3 py-2 rounded text-sm flex items-center justify-center gap-2 cursor-pointer"
               >
                 {isGenerating ? (
                   <>
