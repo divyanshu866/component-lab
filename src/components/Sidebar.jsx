@@ -292,14 +292,22 @@ export default function Sidebar() {
       description: "IBM’s modular, accessibility-first system",
     },
     {
-      name: "Ant Design",
-      icon: "ant",
-      description: "Enterprise-grade Chinese design system",
+      name: "Skeuomorphic Antient Antique",
+      icon: "antient",
+      description:
+        "Timeless heritage-inspired style blending classical with modern polish",
     },
     {
-      name: "Tailwind Minimal",
-      icon: "wind",
-      description: "Utility-class minimalist style",
+      name: "Antient Antique",
+      icon: "antient",
+      description:
+        "Timeless heritage-inspired style blending classical with modern polish",
+    },
+    {
+      name: "Metal",
+      icon: "metal",
+      description:
+        "Industrial-inspired aesthetic featuring sleek metallic surfaces, sharp edges, and durable textures",
     },
     {
       name: "Bento Grid",
@@ -370,6 +378,11 @@ export default function Sidebar() {
       name: "Gradient Mesh",
       icon: "gradient",
       description: "Organic mesh gradients",
+    },
+    {
+      name: "Cinematic",
+      icon: "film",
+      description: "Letterboxed, movie-inspired frame style",
     },
     {
       name: "AI Futuristic",
@@ -692,7 +705,9 @@ export default function Sidebar() {
               <button
                 onClick={generateComponent}
                 disabled={isGenerating}
-                className="flex-1 bg-purple-600 hover:bg-purple-700 disabled:opacity-50 px-3 py-2 rounded text-sm flex items-center justify-center gap-2 cursor-pointer"
+                className={`flex-1 bg-purple-600 hover:bg-purple-700 disabled:opacity-50 px-3 py-2 rounded text-sm flex items-center justify-center gap-2 ${
+                  isGenerating ? "" : " cursor-pointer"
+                }`}
               >
                 {isGenerating ? (
                   <>
