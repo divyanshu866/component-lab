@@ -18,7 +18,7 @@ export default function Home() {
           ></div>
         </div>
         {/* Header */}
-        <div className="absolute h-full w-full flex flex-col items-center justify-start">
+        <div className="absolute h-full mx-5 sm:mx-10 flex flex-col items-center justify-start">
           <div className="text-center mt-25">
             <div className="inline-flex items-center gap-2 bg-gradient-to-r from-pink-500/10 to-purple-500/10 border border-pink-500/30 rounded-full px-6 py-3 mb-8 backdrop-blur-sm">
               <Sparkles className="w-5 h-5 text-pink-400 animate-pulse" />
@@ -28,14 +28,14 @@ export default function Home() {
               <Sparkles className="w-5 h-5 text-purple-400 animate-pulse" />
             </div>
 
-            <h1 className="mt-25 text-2xl md:text-8xl font-black mb-6 bg-gradient-to-r from-white via-pink-200 to-purple-200 bg-clip-text text-transparent leading-tight">
+            <h1 className="mt-25 text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black mb-6 bg-gradient-to-r from-white via-pink-200 to-purple-200 bg-clip-text text-transparent leading-tight">
               <span className="bg-gradient-to-r font-sans from-pink-400 via-purple-400 to-indigo-400 bg-clip-text text-transparent">
                 Build UI Components{" "}
                 <span className="text-purple-600">Faster</span>
               </span>
             </h1>
 
-            <p className="text-2xl text-gray-300 max-w-4xl mx-auto leading-relaxed font-light">
+            <p className="text-lg sm:text-2xl md:text-2xl lg:text-2xl text-gray-300 max-w-4xl mx-auto leading-relaxed font-light">
               From prototype to production in seconds. Build components that
               scale, collaborate seamlessly, and ship faster than ever before.
             </p>
