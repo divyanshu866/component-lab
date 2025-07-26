@@ -9,11 +9,11 @@ ComponentLab is a real-time UI code lab where developers design and iterate on i
 
 ## ✅ What's Working
 
-- 🔤 Live HTML, CSS, and JavaScript editors (powered by Monaco)
+- 🔤 Live HTML, CSS, and JavaScript editors
+- 🧠 AI code/Component generation
 - 🖥️ Real-time component rendering + preview
 - 🎨 Component styling presets (manual control)
 - 🧩 Component library structure in progress
-- 🧠 **AI code generation**: _Coming soon_
 
 ---
 
