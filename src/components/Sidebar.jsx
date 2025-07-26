@@ -42,6 +42,11 @@ export default function Sidebar() {
       description: "Container with title, text, and actions",
     },
     {
+      name: "Subscription Pricing Cards (Free and premium)",
+      icon: "layout",
+      description: "Container with title, text, and actions",
+    },
+    {
       name: "Navbar",
       icon: "menu",
       description: "Top or side navigation bar",
@@ -308,6 +313,11 @@ export default function Sidebar() {
       icon: "metal",
       description:
         "Industrial-inspired aesthetic featuring sleek metallic surfaces, sharp edges, and durable textures",
+    },
+    {
+      name: "Neon Minimalism - Subtle Pink-Purple Gradients/Glow/accents (Dark)",
+      icon: "neon",
+      description: "Neon gradients and sci-fi glows",
     },
     {
       name: "Bento Grid",
