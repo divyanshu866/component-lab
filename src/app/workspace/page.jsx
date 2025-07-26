@@ -18,7 +18,7 @@ export default async function workspace() {
       <Navbar user={session.user} />
       <div className="flex flex-1 h-0">
         <Sidebar />
-        <div className="flex flex-col flex-1 w-0">
+        <div className="flex flex-col flex-1 w-0 relative">
           <div className="flex flex-1 h-0">
             <Editor />
             <Preview />

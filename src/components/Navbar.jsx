@@ -74,7 +74,7 @@ export default function Navbar({ user }) {
         </button>
         <button
           onClick={() => setShowConsole((prev) => !prev)}
-          className="flex items-center px-4 h-full bg-gray-100 dark:bg-darkGrey border rounded-lg hover:bg-gray-200 dark:hover:bg-darkSecondary dark:border-darkBorder cursor-pointer"
+          className={`flex items-center px-4 h-full text-pink-600 bg-gray-100 dark:bg-darkGrey border rounded-lg hover:bg-gray-200 dark:hover:bg-darkSecondary dark:border-darkBorder cursor-pointer`}
         >
           <Terminal className="w-4 h-4" />
         </button>

@@ -31,13 +31,13 @@ const Console = () => {
   return (
     <div
       className={`${
-        showConsole ? "" : "hidden"
-      } flex flex-col h-48 border-t border-gray-200 dark:border-darkBorder transition-all duration-75`}
+        showConsole ? " h-50" : "h-0"
+      } flex flex-col border-t rounded-t-lg overflow-hidden border-gray-200 dark:border-darkBorder transition-all duration-75`}
     >
-      <div className="bg-gray-200 dark:bg-darkSecondary border-b border-gray-200 dark:border-darkBorder px-4 py-2 flex items-center justify-between">
+      <div className="bg-gray-200 rounded-t-lg dark:bg-darkSecondary border-b border-gray-200 dark:border-darkBorder px-4 py-2 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Terminal className="w-4 h-4 text-green-600" />
-          <span className="dark:text-neutral-400 text-sm font-medium">
+          <Terminal className="w-4 h-4 text-pink-600" />
+          <span className="dark:text-neutral-400 text-sm font-semibold">
             Console
           </span>
           <span className="text-xs text-gray-400">

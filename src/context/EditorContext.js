@@ -104,11 +104,21 @@ export function EditorProvider({ children }) {
                     flex-direction:column;
                     align-items: center;
                     justify-content: center;
-                  }`;
+                  }
+                  img{
+    max-width: 550px;
+    max-height: 550px;
+    height: 100%;
+    width: 100%;
+}  
+                  `;
     const finalHtml = `
      <!DOCTYPE html>
             <html>
               <head>
+                <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Component Preview</title>
                 <style>
               
                 ${css ? "" : boilerCss}
@@ -119,7 +129,7 @@ export function EditorProvider({ children }) {
               <body>
                 ${
                   !html && !css && !js
-                    ? ' <img src="/newlogo.svg" alt="Logo" width="650" />'
+                    ? ' <img src="/newlogo.svg" alt="Logo" width="550" height="550" />'
                     : html
                 }
                 <script>
