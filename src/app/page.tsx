@@ -18,6 +18,7 @@ export default function Home() {
           ></div>
         </div>
         {/* Header */}
+
         <div className="absolute h-full mx-5 sm:mx-10 flex flex-col items-center justify-start">
           <div className="text-center mt-20 sm:mt-25">
             <div className="inline-flex items-center gap-2 bg-gradient-to-r from-pink-500/10 to-purple-500/10 border border-pink-500/30 rounded-full px-6 py-3 backdrop-blur-sm">
