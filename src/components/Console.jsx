@@ -32,12 +32,14 @@ const Console = () => {
     <div
       className={`${
         showConsole ? "" : "hidden"
-      } h-48 border-t border-gray-700 bg-[#1e1e1e] transition-all duration-75`}
+      } h-48 border-t border-gray-200 dark:border-darkBorder transition-all duration-75`}
     >
-      <div className="bg-gray-900 border-b border-gray-700 px-4 py-2 flex items-center justify-between">
+      <div className="bg-gray-200 dark:bg-darkSecondary border-b border-gray-200 dark:border-darkBorder px-4 py-2 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Terminal className="w-4 h-4 text-green-400" />
-          <span className="text-sm font-medium">Console</span>
+          <span className="dark:text-neutral-400 text-sm font-medium">
+            Console
+          </span>
           <span className="text-xs text-gray-400">
             ({consoleLogs.length} messages)
           </span>

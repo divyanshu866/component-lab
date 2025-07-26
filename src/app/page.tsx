@@ -3,7 +3,10 @@ import Link from "next/link";
 export default function Home() {
   return (
     <div className="min-h-screen font-[family-name:var(--font-geist-sans)]">
-      <main className="min-h-screen bg-neutral-950 text-white px-6 py-12 flex flex-col items-center justify-center text-center">
+      <main className="min-h-screen bg-neutral-950 text-white px-6 py-12 flex flex-col items-center justify-center text-center relative z-50">
+        <div className="absolute h-screen opacity-30 z-0">
+          <img src="/GradientBackground.jpg" alt="" />
+        </div>
         <h1 className="text-4xl md:text-6xl font-bold mb-4">
           Build UI Components <span className="text-blue-500">Faster</span>
         </h1>
@@ -15,7 +18,7 @@ export default function Home() {
 
         <Link
           href="/workspace"
-          className="bg-blue-600 hover:bg-blue-500 transition-colors px-6 py-3 rounded-lg text-lg font-medium"
+          className="bg-blue-600 hover:bg-blue-500 transition-colors px-6 py-3 rounded-lg text-lg font-medium z-10"
         >
           Launch Workspace
         </Link>

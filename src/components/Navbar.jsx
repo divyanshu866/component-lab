@@ -2,10 +2,8 @@
 import { Play, SaveAllIcon, Terminal } from "lucide-react";
 import { useConsole } from "@/context/ConsoleContext";
 import { useEditorContext } from "@/context/EditorContext";
-// import { useSave } from "@/context/SaveContext";
-import SIGNOUT from "@/components/sign-out";
-// import { auth } from "@/lib/auth";
-export default function Navbar() {
+import Profile from "@/components/Profile";
+export default function Navbar({ user }) {
   const { showConsole, setShowConsole } = useConsole();
   const { activeComponent, setActiveComponent, updatePreview, saveComponent } =
     useEditorContext();
@@ -31,9 +29,18 @@ export default function Navbar() {
   }
 
   return (
-    <nav className="h-14 flex items-center justify-between px-6 bg-[#1f2937] border-b border-neutral-500">
-      <div className="flex items-center w-max justify-start gap-5 text-white font-medium">
-        <h1 className="">ComponentLab</h1>
+    <nav className="h-14 bg-brand flex items-center justify-between pr-2 border-b border-gray-200 dark:border-darkBorder">
+      <div className="flex items-center w-max justify-start gap-0 text-white font-medium">
+        <button
+        // onClick={() => {
+        //   setCollapsed(!collapsed);
+        // }}
+        // className="cursor-pointer"
+        >
+          <img src="/newlogo.svg" alt="Logo" className="w-12 h-12" />
+        </button>
+        <img src="/name.svg" alt="Logo" className="h-9 mb-1" />
+
         <input
           type="text"
           onChange={(e) =>
@@ -44,12 +51,14 @@ export default function Navbar() {
           }
           value={activeComponent.name}
           placeholder="Component Name"
-          className={`bg-gray-700 px-2 w-max text-sm ${
-            !activeComponent.name ? "border-red-400" : "border-gray-800"
+          className={`bg-gray-200 dark:bg-darkSecondary outline-0 ml-12 py-1 px-2 w-[300PX] text-sm ${
+            !activeComponent.name
+              ? "border-red-400"
+              : "border-gray-300 dark:border-darkBorder"
           } border rounded-lg`}
         />
       </div>
-      <div className="flex items-center justify-between gap-5">
+      <div className="flex items-center justify-between h-full gap-5">
         <button
           onClick={() =>
             saveComponent(
@@ -59,13 +68,13 @@ export default function Navbar() {
               activeComponent.js
             )
           }
-          className="flex items-center p-2 text-gray-400 bg-gray-800 hover:text-white rounded hover:bg-gray-700 cursor-pointer"
+          className="flex items-center p-2 text-gray-400 bg-gray-100 dark:bg-darkGrey rounded hover:bg-gray-200 dark:hover:bg-darkSecondary cursor-pointer"
         >
           <SaveAllIcon className="w-5 h-5" />
         </button>
         <button
           onClick={() => setShowConsole((prev) => !prev)}
-          className="flex items-center px-5 text-gray-400 bg-gray-800 hover:text-white p-2 rounded hover:bg-gray-700 cursor-pointer"
+          className="flex items-center px-5 text-gray-400 bg-gray-100 dark:bg-darkGrey p-2 rounded hover:bg-gray-200 dark:hover:bg-darkSecondary cursor-pointer"
         >
           <Terminal className="w-4 h-4" />
         </button>
@@ -77,11 +86,11 @@ export default function Navbar() {
               activeComponent.js
             )
           }
-          className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 cursor-pointer"
+          className="flex items-center gap-2 px-4 py-2 border border-green-600 text-white rounded hover:bg-green-700 cursor-pointer"
         >
           <Play className="w-4 h-4" />
         </button>
-        <SIGNOUT />
+        <Profile user={user} />
       </div>
     </nav>
   );

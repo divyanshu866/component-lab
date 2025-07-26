@@ -1,5 +1,6 @@
 // ComponentEditor.tsx
 import Editor from "@monaco-editor/react";
+import "@/styles/editor.css";
 
 export default function ComponentEditor({ code, onChange, language }) {
   return (

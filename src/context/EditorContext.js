@@ -94,11 +94,14 @@ export function EditorProvider({ children }) {
   const updatePreview = (html = "", css = "", js = "") => {
     const boilerCss = `body {
                     margin: 0;
-                    padding: 20px;
+                    padding:0;
+                    height:100vh;
+                    width:100%;
                     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-                    background: #f8fafc;
-                    min-height: 100vh;
+                    background: #0f0f0f;
+                    color:#fff;
                     display: flex;
+                    flex-direction:column;
                     align-items: center;
                     justify-content: center;
                   }`;
@@ -114,7 +117,11 @@ export function EditorProvider({ children }) {
                 </style>
               </head>
               <body>
-                ${!html && !css && !js ? "<h1>Preview</h1>" : html}
+                ${
+                  !html && !css && !js
+                    ? ' <img src="/newlogo.svg" alt="Logo" width="650" />'
+                    : html
+                }
                 <script>
                   // Override console methods to send messages to parent
                   const originalLog = console.log;

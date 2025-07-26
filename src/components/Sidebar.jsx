@@ -531,108 +531,61 @@ export default function Sidebar() {
 
   return (
     <aside
-      className={`bg-gray-800 text-white h-full flex flex-col overflow-y-hidden transition-all duration-100 ${
+      className={`h-full flex flex-col overflow-y-hidden border-r border-gray-200 dark:border-darkBorder dark:bg-darkSecondary transition-all duration-100 ${
         collapsed ? "w-12" : showAiPanel ? "w-80" : "w-80"
       }`}
     >
       <div
-        className={`justify-between pr-2" flex items-center h-14 border-b border-neutral-500`}
+        className={`${
+          collapsed ? "justify-end" : "justify-between"
+        } pr-2" flex items-center h-10 border-b border-gray-200 dark:border-darkBorder`}
       >
-        <button
-          onClick={() => {
-            setCollapsed(!collapsed);
-          }}
-          className="cursor-pointer"
+        <h3
+          className={`${
+            collapsed ? "hidden" : ""
+          } text-sm font-semibold text-gray-400 mx-3 m-2`}
         >
-          <svg
-            width="50"
-            height="50"
-            viewBox="0 0 100 100"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            strokeWidth="5"
-          >
-            <rect x="20" y="20" width="60" height="60" rx="12" fill="#8B5CF6" />
-
-            <line
-              x1="38"
-              y1="50"
-              x2="44"
-              y2="42"
-              stroke="white"
-              strokeWidth=""
-              strokeLinecap="round"
-            />
-            <line
-              x1="38"
-              y1="50"
-              x2="44"
-              y2="58"
-              stroke="white"
-              strokeWidth=""
-              strokeLinecap="round"
-            />
-
-            <line
-              x1="56"
-              y1="42"
-              x2="62"
-              y2="50"
-              stroke="white"
-              strokeWidth=""
-              strokeLinecap="round"
-            />
-
-            <line
-              x1="56"
-              y1="58"
-              x2="62"
-              y2="50"
-              stroke="white"
-              strokeWidth=""
-              strokeLinecap="round"
-            />
-          </svg>
-        </button>
+          Component Library
+        </h3>
         {/* {!collapsed && ( */}
         <button
           onClick={() => {
             setCollapsed(!collapsed);
           }}
           className={`${
-            collapsed ? "opacity-0" : "opacity-100"
-          } pr-3 text-sm text-white cursor-pointer transition-all duration-100`}
+            collapsed ? "opacity-100" : "opacity-100"
+          } pr-3 text-sm text-gray-400 cursor-pointer transition-all duration-100`}
         >
-          <PanelRight width={"28px"} height={"28px"} />
+          <PanelRight width={"18px"} height={"18px"} />
         </button>
       </div>
 
       <div
-        className={`py-4 px-2 border-b border-gray-700 transition-all duration-100`}
+        className={`${
+          collapsed ? "justify-end items-center" : "justify-between"
+        } flex border-b border-gray-200 dark:border-darkBorder gap-1 h-12 transition-all duration-100`}
       >
-        <div
+        {/* <div
           className={`${
             collapsed ? "justify-center items-center" : ""
-          } flex gap-2`}
+          } flex justify-between`}
+        > */}
+        <button
+          onClick={() => setShowAiPanel(!showAiPanel)}
+          className={`${
+            collapsed ? "opacity-0 hidden" : "flex-1 opacity-100"
+          } flex items-center justify-centers bg-gradient-to-r from-pink-700 to-purple-600 border dark:border-darkBorder gap-2 my-2 text-white mx-2 px-3 py-1 rounded-lg text-sm cursor-pointer`}
         >
-          <button
-            onClick={() => setShowAiPanel(!showAiPanel)}
-            className={`${
-              collapsed ? "opacity-0 hidden" : "flex-1 opacity-100"
-            } flex items-center justify-centers gap-2 bg-purple-600 hover:bg-purple-700 mx-2 px-3 py-2 rounded text-sm cursor-pointer`}
-          >
-            <Sparkles className="w-4 h-4" />
-            Generate AI Template
-          </button>
-          <button
-            onClick={() => clearScreen()}
-            className={`${
-              collapsed ? "py-2" : ""
-            } bg-gray-800 hover:bg-gray-700 px-2 rounded text-sm flex items-center gap-2 cursor-pointer`}
-          >
-            <Plus className="w-6 h-6" />
-          </button>
-        </div>
+          <Sparkles className="w-4 h-4" />
+          Generate AI Template
+        </button>
+        <button
+          onClick={() => clearScreen()}
+          className={`text-gray-400 bg-gray-200 dark:bg-darkSecondary hover:bg-gray-100 dark:hover:bg-darkGrey mr-3 rounded text-sm flex items-center gap-2 cursor-pointer`}
+        >
+          <Plus width={"20px"} height={"20px"} />
+        </button>
+        {/* </div> */}
       </div>
 
       {showAiPanel && (
@@ -654,7 +607,7 @@ export default function Sidebar() {
               <select
                 value={selectedType}
                 onChange={(e) => setSelectedType(e.target.value)}
-                className="w-full bg-gray-600 border border-gray-500 rounded px-2 py-1 text-sm cursor-pointer"
+                className="w-full bg-gray-100 dark:bg-darkSecondary border border-gray-300 dark:border-darkBorder rounded-lg px-2 py-1 text-sm cursor-pointer"
               >
                 {componentTypes.map((type, index) => (
                   <option key={index} value={type.name}>
@@ -669,7 +622,7 @@ export default function Sidebar() {
               <select
                 value={selectedStyle}
                 onChange={(e) => setSelectedStyle(e.target.value)}
-                className="w-full bg-gray-600 border border-gray-500 rounded px-2 py-1 text-sm cursor-pointer"
+                className="w-full bg-gray-100 dark:bg-darkSecondary border border-gray-300 dark:border-darkBorder rounded-lg px-2 py-1 text-sm cursor-pointer"
               >
                 {styleOptions.map((style, index) => (
                   <option key={index} value={style.name}>
@@ -693,7 +646,7 @@ export default function Sidebar() {
             <select
               value={selectedModel}
               onChange={(e) => setSelectedModel(e.target.value)}
-              className="w-full bg-gray-600 border border-gray-500 rounded px-2 py-1 text-sm cursor-pointer"
+              className="w-full bg-gray-100 dark:bg-darkSecondary border border-gray-300 dark:border-darkBorder rounded-lg px-2 py-1 text-sm cursor-pointer"
             >
               {AI_MODELS.map((model) => (
                 <option key={model.value} value={model.value}>
@@ -705,7 +658,7 @@ export default function Sidebar() {
               <button
                 onClick={generateComponent}
                 disabled={isGenerating}
-                className={`flex-1 bg-purple-600 hover:bg-purple-700 disabled:opacity-50 px-3 py-2 rounded text-sm flex items-center justify-center gap-2 ${
+                className={`flex-1 text-white bg-gradient-to-r from-pink-700 to-purple-600 border dark:border-darkBorder disabled:opacity-50 px-3 py-2 rounded-lg text-sm flex items-center justify-center gap-2 ${
                   isGenerating ? "" : " cursor-pointer"
                 }`}
               >
@@ -726,17 +679,11 @@ export default function Sidebar() {
         </div>
       )}
       {/* Components List */}
-      <h3
-        className={`${
-          collapsed ? "hidden" : ""
-        } text-sm font-semibold text-gray-400 mx-3 m-2`}
-      >
-        Components
-      </h3>
+
       <div
         className={`${
           collapsed ? "opacity-0" : "opacity-100"
-        } flex-1 overflow-y-auto overflow-hidden transition-all duration-100`}
+        } flex-1 overflow-y-auto overflow-hidden mt-2 px-2 transition-all duration-100`}
       >
         <ul className="px-2">
           {components.map((c, i) => (
@@ -744,7 +691,9 @@ export default function Sidebar() {
               key={i}
               onClick={() => setActiveComponentIndex(i)}
               className={`p-2 text-sm text-nowrap cursor-pointer ${
-                i === activeComponentIndex ? "bg-gray-700 rounded-lg" : ""
+                i === activeComponentIndex
+                  ? "bg-gray-200 dark:bg-activeRed border-l-3 border-activeRedBorder rounded-lg"
+                  : ""
               }`}
             >
               {c.name}

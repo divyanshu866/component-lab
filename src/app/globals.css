@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
 
 :root {
   --background: #ffffff;
@@ -10,17 +11,61 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+
+  /* custom colors */
+  --color-darkGrey: #0f0f0f;
+  --color-darkSecondary: #141414;
+  --color-darkBorder: #333333;
+  --color-lightGrey: #2e2d2b;
+  --color-activeRed: #2d161d;
+  --color-activeRedBorder: #ff006e;
 }
 
-@media (prefers-color-scheme: dark) {
+/* @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
   }
-}
+} */
 
+/* Manual dark mode via class */
+.dark {
+  --background: #0f0f0f;
+  --foreground: #ededed;
+}
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+/* editor styles */
+.monaco-editor.no-user-select .lines-content,
+.monaco-editor.no-user-select .view-line,
+.monaco-editor.no-user-select .view-lines {
+  background-color: var(--background);
+}
+.monaco-editor .line-numbers {
+  background-color: var(--background);
+}
+.monaco-editor .margin-view-overlays {
+  background-color: var(--background);
+  /* border-right: solid 1px gray; */
+}
+.monaco-editor .sticky-widget {
+  background-color: var(--background) !important;
+}
+.monaco-editor .scroll-decoration {
+  box-shadow: var(--vscode-scrollbar-shadow) 0 6px 6px -6px inset;
+}
+.logo {
+  font-size: 1.3rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #ff006e, #8338ec, #3a86ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.primary-gradient {
+  background: linear-gradient(135deg, #ff006e, #8338ec);
 }
