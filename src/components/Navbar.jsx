@@ -29,7 +29,7 @@ export default function Navbar({ user }) {
   }
 
   return (
-    <nav className="h-14 bg-brand flex items-center justify-between px-1 border-b border-gray-200 dark:border-darkBorder">
+    <nav className="h-14 bg-brand flex items-center justify-between px-1 py-2 border-b border-gray-200 dark:border-darkBorder">
       <div className="flex items-center w-max justify-start gap-0 text-white font-medium">
         <button
         // onClick={() => {
@@ -58,7 +58,7 @@ export default function Navbar({ user }) {
           } border rounded-lg`}
         />
       </div>
-      <div className="flex items-center justify-between h-full gap-5">
+      <div className="flex items-center justify-between py-1 h-full gap-5">
         <button
           onClick={() =>
             saveComponent(
@@ -68,13 +68,13 @@ export default function Navbar({ user }) {
               activeComponent.js
             )
           }
-          className="flex items-center p-2 text-gray-400 bg-gray-100 dark:bg-darkGrey rounded hover:bg-gray-200 dark:hover:bg-darkSecondary cursor-pointer"
+          className="flex items-center px-4 h-full bg-gray-100 dark:bg-darkGrey border rounded-lg hover:bg-gray-200 dark:hover:bg-darkSecondary dark:border-darkBorder cursor-pointer"
         >
-          <SaveAllIcon className="w-5 h-5" />
+          <SaveAllIcon className="w-4 h-4 stroke-1" />
         </button>
         <button
           onClick={() => setShowConsole((prev) => !prev)}
-          className="flex items-center px-5 text-gray-400 bg-gray-100 dark:bg-darkGrey p-2 rounded hover:bg-gray-200 dark:hover:bg-darkSecondary cursor-pointer"
+          className="flex items-center px-4 h-full bg-gray-100 dark:bg-darkGrey border rounded-lg hover:bg-gray-200 dark:hover:bg-darkSecondary dark:border-darkBorder cursor-pointer"
         >
           <Terminal className="w-4 h-4" />
         </button>
@@ -86,7 +86,7 @@ export default function Navbar({ user }) {
               activeComponent.js
             )
           }
-          className="flex items-center gap-2 px-4 py-2 border border-green-600 text-white rounded hover:bg-green-700 cursor-pointer"
+          className="flex items-center px-4 h-full border border-green-600 text-white rounded-lg bg-gradient-to-r from-green-800 to-green-700 hover:from-green-900  hover:to-green-800 transition-all cursor-pointer"
         >
           <Play className="w-4 h-4" />
         </button>
