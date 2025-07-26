@@ -40,23 +40,12 @@ body {
 }
 
 /* editor styles */
-.monaco-editor.no-user-select .lines-content,
-.monaco-editor.no-user-select .view-line,
-.monaco-editor.no-user-select .view-lines {
-  background-color: var(--background);
-}
-.monaco-editor .line-numbers {
-  background-color: var(--background);
-}
-.monaco-editor .margin-view-overlays {
-  background-color: var(--background);
-  /* border-right: solid 1px gray; */
-}
-.monaco-editor .sticky-widget {
+.monaco-editor,
+.monaco-editor-background {
   background-color: var(--background) !important;
 }
-.monaco-editor .scroll-decoration {
-  box-shadow: var(--vscode-scrollbar-shadow) 0 6px 6px -6px inset;
+.monaco-editor .margin {
+  background-color: var(--background) !important;
 }
 .logo {
   font-size: 1.3rem;
@@ -67,7 +56,7 @@ body {
   background-clip: text;
 }
 .primary-gradient {
-  background: linear-gradient(135deg, #ff006e, #8338ec);
+  background: linear-gradient(135deg, #c1136a, #3a66cd);
 }
 
 /* Webkit */

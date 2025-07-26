@@ -72,7 +72,7 @@ const Editor = () => {
       <div
         className={`${
           activeEditor == "HTML" ? "" : "hidden"
-        } flex flex-col flex-1 overflow-hidden`}
+        } flex flex-col flex-1 overflow-hidden relative`}
       >
         <div className="flex-1 h-0">
           <ComponentEditor

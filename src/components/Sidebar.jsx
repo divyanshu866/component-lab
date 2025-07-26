@@ -574,7 +574,7 @@ export default function Sidebar() {
           onClick={() => setShowAiPanel(!showAiPanel)}
           className={`${
             collapsed ? "opacity-0 hidden" : "flex-1 opacity-100"
-          } flex items-center justify-centers bg-gradient-to-r from-pink-700 to-purple-600 border dark:border-darkBorder gap-2 my-2 text-white mx-2 px-3 py-1 rounded-lg text-sm cursor-pointer`}
+          } flex items-center justify-centers bg-gradient-to-r from-[#c0146b] to-[#3b64cc] border dark:border-darkBorder gap-2 my-2 text-white mx-2 px-3 py-1 rounded-lg text-sm cursor-pointer`}
         >
           <Sparkles className="w-4 h-4" />
           Generate AI Template
@@ -658,7 +658,7 @@ export default function Sidebar() {
               <button
                 onClick={generateComponent}
                 disabled={isGenerating}
-                className={`flex-1 text-white bg-gradient-to-r from-pink-700 to-purple-600 border dark:border-darkBorder disabled:opacity-50 px-3 py-2 rounded-lg text-sm flex items-center justify-center gap-2 ${
+                className={`flex-1 text-white bg-gradient-to-r from-[#c0146b] to-[#3b64cc] border dark:border-darkBorder disabled:opacity-50 px-3 py-2 rounded-lg text-sm flex items-center justify-center gap-2 ${
                   isGenerating ? "" : " cursor-pointer"
                 }`}
               >

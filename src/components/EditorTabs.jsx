@@ -13,7 +13,7 @@ const EditorTabs = ({ activeEditor, setActiveEditor }) => {
         <img src="/html.svg" alt="" className="w-4 h-4" />
         HTML
         {activeEditor == "HTML" && (
-          <div className="w-full h-0.5 bottom-0 primary-gradient absolute"></div>
+          <div className="w-full h-[0.09rem] bottom-0 primary-gradient absolute"></div>
         )}
       </button>
       <button
@@ -26,7 +26,7 @@ const EditorTabs = ({ activeEditor, setActiveEditor }) => {
         <img src="/css.svg" alt="" className="w-4 h-4" />
         CSS
         {activeEditor == "CSS" && (
-          <div className="w-full h-0.5 bottom-0 primary-gradient absolute"></div>
+          <div className="w-full h-[0.09rem] bottom-0 primary-gradient absolute"></div>
         )}
       </button>
       <button
@@ -39,7 +39,7 @@ const EditorTabs = ({ activeEditor, setActiveEditor }) => {
         <img src="/javascript.svg" alt="" className="w-4 h-4" />
         JavaScript
         {activeEditor == "JS" && (
-          <div className="w-full h-0.5 bottom-0 primary-gradient absolute"></div>
+          <div className="w-full h-[0.09rem] bottom-0 primary-gradient absolute"></div>
         )}
       </button>
     </div>
