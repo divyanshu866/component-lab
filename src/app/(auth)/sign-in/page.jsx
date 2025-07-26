@@ -13,9 +13,17 @@ export default async function SignInPage() {
   if (session) redirect("/workspace");
   return (
     <div className="min-h-screen bg-black text-white flex items-center justify-center p-6 relative overflow-hidden">
-      {/* Simplified animated background for sign in */}
-      <div className="absolute inset-0 opacity-30 z-0">
-        <img src="/GradientBackground.jpg" alt="" />
+      {/* Animated Background */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse"></div>
+        <div
+          className="absolute -bottom-40 -left-40 w-80 h-80 bg-pink-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse"
+          style={{ animationDelay: "2s" }}
+        ></div>
+        <div
+          className="absolute top-40 left-1/2 w-80 h-80 bg-blue-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse"
+          style={{ animationDelay: "4s" }}
+        ></div>
       </div>
       <div className="w-full max-w-md z-10">
         <div className="flex flex-col justify-center items-center text-center mb-8">
@@ -74,8 +82,7 @@ export default async function SignInPage() {
             </button>
           </div> */}
 
-          <div className="mt-6 text-center">
-            {/* <div className="relative">
+          {/* <div className="relative">
               <div className="absolute inset-0 flex items-center">
                 <div className="w-full border-t border-white/20"></div>
               </div>
@@ -86,8 +93,7 @@ export default async function SignInPage() {
               </div>
             </div> */}
 
-            <SignInGithub />
-          </div>
+          <SignInGithub />
 
           {/* <div className="mt-6 text-center text-sm text-gray-400">
             Don't have an account?{" "}

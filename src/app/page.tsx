@@ -1,33 +1,58 @@
+import { Sparkles } from "lucide-react";
 import Link from "next/link";
 
 export default function Home() {
   return (
     <div className="min-h-screen font-[family-name:var(--font-geist-sans)]">
       <main className="min-h-screen bg-neutral-950 text-white px-6 py-12 flex flex-col items-center justify-center text-center relative z-50">
-        <div className="absolute h-screen opacity-30 z-0">
-          <img src="/GradientBackground.jpg" alt="" />
+        {/* Animated Background */}
+        <div className="fixed inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute -top-40 -right-40 w-80 h-80 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse"></div>
+          <div
+            className="absolute -bottom-40 -left-40 w-80 h-80 bg-pink-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse"
+            style={{ animationDelay: "2s" }}
+          ></div>
+          <div
+            className="absolute top-40 left-1/2 w-80 h-80 bg-blue-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse"
+            style={{ animationDelay: "4s" }}
+          ></div>
         </div>
-        <h1 className="text-4xl md:text-6xl font-bold mb-4">
-          Build UI Components <span className="text-blue-500">Faster</span>
-        </h1>
-        <p className="text-lg md:text-xl text-gray-400 max-w-2xl mb-8">
-          ComponentLab is a real-time playground where you can generate
-          HTML/CSS/JS UI components using AI — then tweak them manually in an
-          editor that gets out of your way.
-        </p>
+        {/* Header */}
+        <div className="absolute h-full w-full flex flex-col items-center justify-start">
+          <div className="text-center mt-25">
+            <div className="inline-flex items-center gap-2 bg-gradient-to-r from-pink-500/10 to-purple-500/10 border border-pink-500/30 rounded-full px-6 py-3 mb-8 backdrop-blur-sm">
+              <Sparkles className="w-5 h-5 text-pink-400 animate-pulse" />
+              <span className="text-pink-300 font-semibold">
+                Unlock Your Full Potential
+              </span>
+              <Sparkles className="w-5 h-5 text-purple-400 animate-pulse" />
+            </div>
 
-        <Link
-          href="/workspace"
-          className="bg-blue-600 hover:bg-blue-500 transition-colors px-6 py-3 rounded-lg text-lg font-medium z-10"
-        >
-          Launch Workspace
-        </Link>
+            <h1 className="mt-25 text-2xl md:text-8xl font-black mb-6 bg-gradient-to-r from-white via-pink-200 to-purple-200 bg-clip-text text-transparent leading-tight">
+              <span className="bg-gradient-to-r font-sans from-pink-400 via-purple-400 to-indigo-400 bg-clip-text text-transparent">
+                Build UI Components{" "}
+                <span className="text-purple-600">Faster</span>
+              </span>
+            </h1>
 
-        <p className="mt-6 text-sm text-gray-500">
-          No sign-up needed. Try 3 free AI prompts instantly.
-        </p>
+            <p className="text-2xl text-gray-300 max-w-4xl mx-auto leading-relaxed font-light">
+              From prototype to production in seconds. Build components that
+              scale, collaborate seamlessly, and ship faster than ever before.
+            </p>
+          </div>
+
+          <Link
+            href="/workspace"
+            className="mt-10 bg-gradient-to-r from-pink-600 to-purple-700 transition-colors px-6 py-3 rounded-full text-lg font-medium z-10"
+          >
+            Launch Workspace
+          </Link>
+
+          <p className="mt-9 text-sm text-gray-500">
+            No sign-up needed. Try 3 free AI prompts instantly.
+          </p>
+        </div>
       </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center"></footer>
     </div>
   );
 }

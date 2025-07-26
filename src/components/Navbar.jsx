@@ -3,6 +3,7 @@ import { Play, SaveAllIcon, Terminal } from "lucide-react";
 import { useConsole } from "@/context/ConsoleContext";
 import { useEditorContext } from "@/context/EditorContext";
 import Profile from "@/components/Profile";
+import Link from "next/link";
 export default function Navbar({ user }) {
   const { showConsole, setShowConsole } = useConsole();
   const { activeComponent, setActiveComponent, updatePreview, saveComponent } =
@@ -58,6 +59,7 @@ export default function Navbar({ user }) {
           } border rounded-lg`}
         />
       </div>
+
       <div className="flex items-center justify-between py-1 h-full gap-5">
         <button
           onClick={() =>
