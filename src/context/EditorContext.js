@@ -8,6 +8,7 @@ export function EditorProvider({ children }) {
   const [components, setComponents] = useState([]);
 
   const [activeComponentIndex, setActiveComponentIndex] = useState(null);
+  const [previewKey, setPreviewKey] = useState(0);
   const [activeComponent, setActiveComponent] = useState({
     id: "",
     name: "",
@@ -191,8 +192,10 @@ export function EditorProvider({ children }) {
         activeComponent,
         setActiveComponent,
         previewCode,
-        updatePreview,
         setPreviewCode,
+        previewKey,
+        setPreviewKey,
+        updatePreview,
         components,
         setComponents,
         activeComponentIndex,
