@@ -5,12 +5,20 @@ import { useEditorContext } from "@/context/EditorContext";
 import Profile from "@/components/Profile";
 import Link from "next/link";
 export default function Navbar({ user }) {
-  const { showConsole, setShowConsole } = useConsole();
-  const { activeComponent, setActiveComponent, updatePreview, saveComponent } =
-    useEditorContext();
+  const { showConsole, setShowConsole, setConsoleLogs } = useConsole();
+  const {
+    activeComponent,
+    setActiveComponent,
+    previewKey,
+    setPreviewKey,
+    saveComponent,
+  } = useEditorContext();
 
   // const { isSaving, setIsSaving } = useSave();
-
+  function reRender() {
+    setConsoleLogs([]);
+    setPreviewKey(previewKey + 1);
+  }
   function onSave() {
     if (
       (activeComponent.html || activeComponent.css || activeComponent.js) &&
@@ -81,16 +89,10 @@ export default function Navbar({ user }) {
           <Terminal className="w-4 h-4" />
         </button>
         <button
-          onClick={() =>
-            updatePreview(
-              activeComponent.html,
-              activeComponent.css,
-              activeComponent.js
-            )
-          }
-          className="flex items-center px-4 h-full border border-green-600 text-white rounded-lg bg-gradient-to-r from-green-800 to-green-700 hover:from-green-900  hover:to-green-800 transition-all cursor-pointer"
+          onClick={reRender}
+          className="flex items-center justify-center px-4 h-full border border-green-600 text-white rounded-lg bg-gradient-to-r from-green-800 to-green-700 hover:from-green-900  hover:to-green-800 transition-all cursor-pointer"
         >
-          <Play className="w-4 h-4" />
+          <Play className="w-4 h-4 stroke-1" />
         </button>
         <Profile user={user} />
       </div>
