@@ -43,7 +43,7 @@ const Editor = () => {
       if ((e.metaKey || e.ctrlKey) && e.key === "s") {
         e.preventDefault(); // Prevent default browser "Save page"
         console.log("Preview updated via Cmd/Ctrl + S");
-
+        setConsoleLogs([]);
         updatePreview(
           activeComponent.html,
           activeComponent.css,

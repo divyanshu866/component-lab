@@ -1,7 +1,7 @@
 "use client";
 import { useConsole } from "@/context/ConsoleContext";
 import { Terminal, X } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 const Console = () => {
   const { showConsole, setShowConsole, consoleLogs, setConsoleLogs } =
     useConsole();
