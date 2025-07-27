@@ -26,7 +26,7 @@ export default function ComponentEditor({ code, onChange, language }) {
         <img
           src={`${language}.svg`}
           alt=""
-          className="absolute w-40 h-40 opacity-30"
+          className="absolute max-w-40 max-h-40 h-full w-full p-2 opacity-30"
         />
       )}
 
