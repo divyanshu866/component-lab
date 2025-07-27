@@ -1,11 +1,13 @@
 "use client";
 
+import { Heading1 } from "lucide-react";
 import { createContext, useState, useContext, useEffect } from "react";
 
 const EditorContext = createContext();
 
 export function EditorProvider({ children }) {
   const [components, setComponents] = useState([]);
+  const [isGenerating, setIsGenerating] = useState(false);
 
   const [activeComponentIndex, setActiveComponentIndex] = useState(null);
   const [previewKey, setPreviewKey] = useState(0);
@@ -21,8 +23,6 @@ export function EditorProvider({ children }) {
   const [previewCode, setPreviewCode] = useState("");
   useEffect(() => {
     updatePreview();
-    console.log("activeComponent==>", activeComponent);
-    console.log("activeComponentIndex==>", activeComponentIndex);
   }, []);
   const saveComponent = async (name, html, css, js) => {
     if (!name.trim()) {
@@ -107,8 +107,8 @@ export function EditorProvider({ children }) {
                     justify-content: center;
                   }
                   img{
-    max-width: 550px;
-    max-height: 550px;
+    max-width: 400px;
+    max-height: 400px;
     height: 100%;
     width: 100%;
 }  
@@ -121,7 +121,6 @@ export function EditorProvider({ children }) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Component Preview</title>
                 <style>
-              
                 ${css ? "" : boilerCss}
                   
                   ${css}
@@ -130,7 +129,7 @@ export function EditorProvider({ children }) {
               <body>
                 ${
                   !html && !css && !js
-                    ? ' <img src="/newlogo.svg" alt="Logo" width="550" height="550" />'
+                    ? ' <img src="/newlogo.svg" alt="Logo"/>'
                     : html
                 }
                 <script>
@@ -200,6 +199,8 @@ export function EditorProvider({ children }) {
         setComponents,
         activeComponentIndex,
         setActiveComponentIndex,
+        isGenerating,
+        setIsGenerating,
         saveComponent,
         createNewComponent,
         isSaving,

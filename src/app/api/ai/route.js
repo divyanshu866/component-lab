@@ -10,7 +10,7 @@ Component Type: ${component_type}
 Only for components initially absolutely required to be invisible/hidden (e.g. modals, popover etc.), provide toggle in style to match.
 if data such as images etc. are required, use from these assests:
 Avatar/Persona: 'https://img.freepik.com/free-photo/young-bearded-man-with-striped-shirt_273609-5677.jpg?semt=ais_hybrid&w=740';
-Sample CSV: 'https://people.sc.fsu.edu/~jburkardt/data/csv/airtravel.csv';
+Sample CSV: '/locations.csv';
 Sample image 1:'https://wowslider.com/sliders/demo-93/data1/images/landscape.jpg';
 Sample image 2:'https://wowslider.com/sliders/demo-93/data1/images/sunset.jpg';
 Sample image 3:'https://wowslider.com/sliders/demo-93/data1/images/lake.jpg';

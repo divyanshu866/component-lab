@@ -9,7 +9,6 @@ export default function Sidebar() {
   // const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
   const [showAiPanel, setShowAiPanel] = useState(false);
-  const [isGenerating, setIsGenerating] = useState(false);
   const [selectedModel, setSelectedModel] = useState(AI_MODELS[0].value);
   useEffect(() => {
     console.log(selectedModel);
@@ -22,6 +21,8 @@ export default function Sidebar() {
     activeComponentIndex,
     setActiveComponentIndex,
     createNewComponent,
+    isGenerating,
+    setIsGenerating,
     updatePreview,
   } = useEditorContext();
   const { setConsoleLogs } = useConsole();
@@ -314,11 +315,7 @@ export default function Sidebar() {
       description:
         "Industrial-inspired aesthetic featuring sleek metallic surfaces, sharp edges, and durable textures",
     },
-    {
-      name: "Neon Minimalism - Subtle Pink-Purple Gradients/Glow/accents (Dark)",
-      icon: "neon",
-      description: "Neon gradients and sci-fi glows",
-    },
+
     {
       name: "Bento Grid",
       icon: "grid-alt",
@@ -371,6 +368,11 @@ export default function Sidebar() {
     },
     {
       name: "Techno Dark",
+      icon: "circuit-board",
+      description: "Dark mode with cyan accents",
+    },
+    {
+      name: "Techno Dark (Pink-Purple Gradients/Accents)",
       icon: "circuit-board",
       description: "Dark mode with cyan accents",
     },

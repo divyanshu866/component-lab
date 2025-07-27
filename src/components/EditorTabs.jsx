@@ -2,7 +2,7 @@ import { Code, FileText, Palette } from "lucide-react";
 
 const EditorTabs = ({ activeEditor, setActiveEditor }) => {
   return (
-    <div className="flex h-10 dark:bg-darkSecondary border-b border-gray-200 dark:border-darkBorder">
+    <div className="flex h-10 w-full dark:bg-darkSecondary border-b border-gray-200 dark:border-darkBorder">
       <button
         onClick={() => setActiveEditor("HTML")}
         className={`${

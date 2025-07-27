@@ -3,7 +3,7 @@ import { useConsole } from "@/context/ConsoleContext";
 import { useEditorContext } from "@/context/EditorContext";
 
 const Preview = () => {
-  const { previewCode, previewKey } = useEditorContext();
+  const { previewCode, previewKey, isGenerating } = useEditorContext();
   const { consoleLogs, setConsoleLogs } = useConsole();
 
   return (
@@ -15,7 +15,7 @@ const Preview = () => {
         key={previewKey}
         srcDoc={previewCode}
         sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-presentation"
-        className="w-full h-full"
+        className={`w-full h-full ${isGenerating ? "animate-pulse" : ""}`}
       />
     </div>
   );
