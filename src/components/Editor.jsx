@@ -7,7 +7,7 @@ import { useEditorContext } from "@/context/EditorContext";
 import { useConsole } from "@/context/ConsoleContext";
 
 const Editor = () => {
-  const [activeEditor, setActiveEditor] = useState("HTML");
+  const [activeEditor, setActiveEditor] = useState("AI");
 
   const {
     activeComponent,

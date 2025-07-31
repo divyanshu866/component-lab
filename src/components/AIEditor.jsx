@@ -600,7 +600,7 @@ const AIEditor = ({ activeEditor }) => {
           </option>
         ))}
       </select>
-      <h1 className="text-4xl font-sans font-bold mb-12 pb-2 bg-gradient-to-r from-pink-600 to-purple-500 bg-clip-text text-transparent">
+      <h1 className="text-5xl text-center font-sans font-bold mb-32 pb-2 bg-gradient-to-r from-pink-600 to-purple-500 bg-clip-text text-transparent">
         {activeComponent.id
           ? "Describe Your Changes"
           : "Describe Your Component"}
@@ -608,7 +608,7 @@ const AIEditor = ({ activeEditor }) => {
       <div
         className={`${
           activeComponent.id == "" ? "" : "hidden"
-        } flex gap-4 w-full max-w-2xl mb-4`}
+        } flex gap-4 w-full max-w-2xl mb-7`}
       >
         <select
           value={selectedType}

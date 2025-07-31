@@ -8,7 +8,7 @@ const Preview = () => {
 
   return (
     <div
-      className="flex w-[45%] h-full justify-center items-center border-l border-gray-200 dark:border-darkBorder"
+      className="flex w-[50%] h-full justify-center items-center border-l border-gray-200 dark:border-darkBorder"
       //   dangerouslySetInnerHTML={{ __html: html }}
     >
       <iframe
