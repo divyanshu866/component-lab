@@ -1,14 +1,14 @@
 "use client";
 import { useConsole } from "@/context/ConsoleContext";
 import { useEditorContext } from "@/context/EditorContext";
-
+import AILoader from "@/components/AILoader";
 const Preview = () => {
   const { previewCode, previewKey, isGenerating } = useEditorContext();
   const { consoleLogs, setConsoleLogs } = useConsole();
 
   return (
     <div
-      className="flex w-[50%] h-full justify-center items-center border-l border-gray-200 dark:border-darkBorder"
+      className="flex w-[50%] h-full justify-center items-center border-l border-gray-200 dark:border-darkBorder relative"
       //   dangerouslySetInnerHTML={{ __html: html }}
     >
       <iframe
@@ -17,6 +17,7 @@ const Preview = () => {
         sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-presentation"
         className={`w-full h-full ${isGenerating ? "animate-pulse" : ""}`}
       />
+      <AILoader isActive={isGenerating} />
     </div>
   );
 };

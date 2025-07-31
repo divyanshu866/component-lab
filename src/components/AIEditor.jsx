@@ -450,8 +450,8 @@ const AIEditor = ({ activeEditor }) => {
 
   const generateComponent = async () => {
     try {
-      setIsGenerating(true);
       clearScreen();
+      setIsGenerating(true);
 
       const res = await fetch("/api/ai", {
         method: "POST",

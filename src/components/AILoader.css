@@ -1,0 +1,111 @@
+.componentlab-loader-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: none;
+  /* Hidden by default */
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  background: rgba(10, 5, 20, 0.3);
+  /* Semi-transparent dark overlay */
+  z-index: 9999;
+  /* Ensure it's on top of other content */
+  overflow: hidden;
+  /* Clip the radiating pulse animation within the overlay */
+  pointer-events: all;
+  /* Block interactions with content below */
+}
+
+.componentlab-loader-overlay.is-active {
+  display: flex;
+}
+
+.loader-pulse {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  /* Removed 'bottom: -10rem;' to ensure the element exactly covers the overlay and avoid potential visible edges */
+  pointer-events: none;
+  /* Allow mouse events to pass through the pulse animation itself */
+  background: radial-gradient(
+    circle at 50% 100%,
+    /* Origin of the gradient within its background-size's box */
+      rgba(255, 0, 255, 0.5) 0%,
+    rgba(138, 43, 226, 0.4) 30%,
+    rgba(75, 0, 130, 0) 50%
+      /* Adjusted from 70% to 50% for a faster fade to transparency */
+  );
+  background-size: 10% 10%;
+  /* Initial small size of the gradient */
+  background-repeat: no-repeat;
+  animation: wave-effect 1s infinite ease-in-out;
+}
+
+@keyframes wave-effect {
+  0% {
+    background-size: 10% 10%;
+    background-position: 50% 110%; /* Adjusted to start the pulse further below the screen, ensuring no box is visible */
+    opacity: 0;
+  }
+
+  5% {
+    opacity: 1;
+  }
+
+  100% {
+    background-size: 1000% 1000%;
+    /* Increased significantly (from 200%) to ensure transparent edges are always beyond the view */
+    background-position: 50% -10%; /* Adjusted to end the pulse further above the screen */
+    opacity: 0;
+  }
+}
+
+.loader-content {
+  position: relative;
+  /* Position relative to allow z-index over the pulse */
+  z-index: 10000;
+  /* Ensure content is above the pulse animation */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.loader-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(45deg, #ff00ff, #8a2be2);
+  /* Pink-purple gradient */
+  box-shadow: 0 0 15px rgba(255, 0, 255, 0.8), 0 0 30px rgba(138, 43, 226, 0.6);
+  margin-bottom: 20px;
+  animation: glow-pulse 1.5s infinite alternate ease-in-out;
+}
+
+@keyframes glow-pulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 15px rgba(255, 0, 255, 0.8),
+      0 0 30px rgba(138, 43, 226, 0.6);
+  }
+
+  100% {
+    transform: scale(1.1);
+    box-shadow: 0 0 25px rgba(255, 0, 255, 1), 0 0 40px rgba(138, 43, 226, 0.8);
+  }
+}
+
+.loader-text {
+  color: #fff;
+  font-size: 1.5em;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  text-shadow: 0 0 10px rgba(255, 0, 255, 0.7), 0 0 20px rgba(138, 43, 226, 0.5);
+  margin: 0;
+}
