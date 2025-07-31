@@ -592,7 +592,7 @@ const AIEditor = ({ activeEditor }) => {
       <select
         value={selectedModel}
         onChange={(e) => setSelectedModel(e.target.value)}
-        className="w-full max-w-52 text-right text-neutral-300 dark:bg-transparent border-none outline-0 border-gray-300 dark:border-darkBorder rounded-lg py-3 mr-1 text-sm cursor-pointer absolute top-0 right-0"
+        className="w-full max-w-52 text-right text-neutral-300 dark:bg-transparent border-none outline-0 border-gray-300 dark:border-darkBorder rounded-lg py-3 mr-2 mt-1 text-sm cursor-pointer absolute top-0 right-0"
       >
         {AI_MODELS.map((model) => (
           <option key={model.value} value={model.value}>
