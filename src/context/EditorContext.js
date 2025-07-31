@@ -8,6 +8,7 @@ const EditorContext = createContext();
 export function EditorProvider({ children }) {
   const [components, setComponents] = useState([]);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [changeDesc, setChangeDesc] = useState("");
 
   const [activeComponentIndex, setActiveComponentIndex] = useState(null);
   const [previewKey, setPreviewKey] = useState(0);
@@ -199,6 +200,8 @@ export function EditorProvider({ children }) {
         setComponents,
         activeComponentIndex,
         setActiveComponentIndex,
+        changeDesc,
+        setChangeDesc,
         isGenerating,
         setIsGenerating,
         saveComponent,

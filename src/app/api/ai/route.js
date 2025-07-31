@@ -46,3 +46,63 @@ Focus on creating visually appealing, accessible, and responsive components foll
 
   return NextResponse.json({ output: json });
 }
+
+export async function PATCH(req) {
+  const { name, html, css, js, changes, model } = await req.json();
+  const prompt = `You are an expert frontend developer. You will receive:
+
+The existing component's:
+- name: ${name}
+
+- HTML:
+${html}
+
+- CSS:
+${css}
+
+- JS:
+${js}
+
+A description of the required changes/Problems:
+${changes}
+
+Your task:
+Apply the requested changes to the component and return the updated version as a JSON object in the following format:
+
+{
+  "name": "Updated Component Name (Do not change)",
+  "html": "<!-- updated HTML (if any)-->",
+  "css": "/* updated CSS (if any)*/",
+  "js": "// updated JS (if any)"
+}
+
+Instructions:
+- Do NOT include boilerplate tags like <html>, <head>, or <body>
+- Apply the changes cleanly and accurately
+- Ensure the HTML/CSS/JS are valid and production-ready
+- Leave "js": "" if there are no JavaScript updates
+- Maintain or improve: accessibility, responsiveness, and style consistency
+- If using assets (e.g. images, avatars, videos), prefer these:
+
+  Avatar: https://img.freepik.com/free-photo/young-bearded-man-with-striped-shirt_273609-5677.jpg?semt=ais_hybrid&w=740
+
+  CSV: /locations.csv
+
+  Images:
+    - https://wowslider.com/sliders/demo-93/data1/images/landscape.jpg
+    - https://wowslider.com/sliders/demo-93/data1/images/sunset.jpg
+    - https://wowslider.com/sliders/demo-93/data1/images/lake.jpg
+    - https://mdbcdn.b-cdn.net/img/Photos/Slides/4.webp
+
+  Video: https://www.youtube.com/embed/tgbNymZ7vqY
+`;
+
+  const rawResult = await generate(prompt, model);
+
+  console.log("RAW RESULT======>", rawResult);
+
+  // Remove code fences like ```json and ```
+  const json = rawResult.replace(/```json|```/g, "").trim();
+
+  return NextResponse.json({ output: json });
+}

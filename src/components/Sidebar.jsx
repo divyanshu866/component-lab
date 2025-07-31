@@ -21,11 +21,13 @@ export default function Sidebar() {
     activeComponentIndex,
     setActiveComponentIndex,
     createNewComponent,
+    showPromptWindow,
+    setShowPromptWindow,
     isGenerating,
     setIsGenerating,
     updatePreview,
   } = useEditorContext();
-  const { setConsoleLogs } = useConsole();
+  const { setConsoleLogs, showConsole, setShowConsole } = useConsole();
   const [componentTypes, setComponentTypes] = useState([
     {
       name: "Modal",
@@ -397,7 +399,7 @@ export default function Sidebar() {
       description: "Letterboxed, movie-inspired frame style",
     },
     {
-      name: "AI Futuristic",
+      name: "AI Futuristic (Pink-Purple Dark)",
       icon: "brain-circuit",
       description: "Holographic AI-themed visuals",
     },
@@ -454,7 +456,13 @@ export default function Sidebar() {
   const [selectedStyle, setSelectedStyle] = useState(styleOptions[0].name);
 
   // const [aiDescription, setAiDescription] = useState("");
-
+  function updateActiveComponent(index) {
+    if (!isGenerating) {
+      setActiveComponentIndex(index);
+    }
+    console.log("ComponentAActive======>", components[index]);
+    console.log("ActiveCompIndex======>", index);
+  }
   useEffect(() => {
     async function fetchComponents() {
       const res = await fetch("/api/components");
@@ -606,10 +614,12 @@ export default function Sidebar() {
             collapsed ? "opacity-0" : "opacity-100"
           } p-4 border-b border-gray-700 bg-gray-750 transition-all duration-100`}
         >
-          <h3 className="text-sm font-semibold mb-3 flex items-center gap-2">
-            <Sparkles className="w-4 h-4 text-purple-400" />
-            AI Generator
-          </h3>
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-sm font-semibold flex items-center gap-2">
+              <Sparkles className="w-4 h-4 text-purple-400" />
+              AI Generator
+            </h3>
+          </div>
 
           <div className="space-y-3">
             <div>
@@ -701,7 +711,7 @@ export default function Sidebar() {
           {components.map((c, i) => (
             <li
               key={i}
-              onClick={() => setActiveComponentIndex(i)}
+              onClick={() => updateActiveComponent(i)}
               className={`p-2 text-sm text-nowrap cursor-pointer ${
                 i === activeComponentIndex
                   ? "bg-gray-200 dark:bg-activeRed border-l-3 border-activeRedBorder rounded-lg"

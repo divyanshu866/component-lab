@@ -1,4 +1,4 @@
-import { Code, FileText, Palette } from "lucide-react";
+import { Sparkles } from "lucide-react";
 
 const EditorTabs = ({ activeEditor, setActiveEditor }) => {
   return (
@@ -42,6 +42,19 @@ const EditorTabs = ({ activeEditor, setActiveEditor }) => {
           <div className="w-full h-[0.09rem] bottom-0 primary-gradient absolute"></div>
         )}
       </button>
+
+      <div className="ml-auto h-full py-1 pr-1">
+        <button
+          onClick={() => setActiveEditor("AI")}
+          className={`${
+            activeEditor == "JS" ? "bg-gray-200 dark:bg-darkGrey" : ""
+          } h-full text-yellow-300 flex items-center justify-center gap-2 px-4 text-sm font-medium border-t border-b rounded-full border-gray-50 dark:border-darkBorder relative  transition-all duration-100 cursor-pointer`}
+        >
+          {/* <Code className="w-4 h-4 text-white p-0.5 bg-yellow-500 rounded-sm" /> */}
+          <Sparkles className="w-4 h-4 text-yellow-300" />
+          AI
+        </button>
+      </div>
     </div>
   );
 };

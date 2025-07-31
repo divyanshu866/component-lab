@@ -1,7 +1,7 @@
 "use client";
 import ComponentEditor from "@/components/ComponentEditor";
 import EditorTabs from "@/components/EditorTabs";
-
+import AIEditor from "@/components/AIEditor";
 import { useEffect, useState } from "react";
 import { useEditorContext } from "@/context/EditorContext";
 import { useConsole } from "@/context/ConsoleContext";
@@ -68,6 +68,8 @@ const Editor = () => {
         activeEditor={activeEditor}
         setActiveEditor={setActiveEditor}
       />
+      {/* AI Editor */}
+      <AIEditor activeEditor={activeEditor} />
       {/* Editors */}
       <div
         className={`${
