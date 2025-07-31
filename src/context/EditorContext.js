@@ -121,7 +121,7 @@ export function EditorProvider({ children }) {
                 <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Component Preview</title>
-                <style>
+    <style>
                 ${css ? "" : boilerCss}
                   
                   ${css}
