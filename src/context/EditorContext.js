@@ -70,7 +70,6 @@ export function EditorProvider({ children }) {
     if (!name.trim()) {
       return;
     }
-    setShowPreview(false);
     const payload = { name, html, css, js };
 
     // Create new component

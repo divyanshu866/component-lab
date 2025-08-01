@@ -452,8 +452,9 @@ const AIEditor = ({ activeEditor }) => {
 
   const generateComponent = async () => {
     try {
-      setShowPreview(true);
       clearScreen();
+      setShowPreview(true);
+
       setIsGenerating(true);
 
       const res = await fetch("/api/ai", {
@@ -571,7 +572,6 @@ const AIEditor = ({ activeEditor }) => {
   }
   const clearScreen = (name = "", html = "", css = "", js = "") => {
     console.log("cleared");
-
     setActiveComponentIndex(null);
 
     if (true) {
