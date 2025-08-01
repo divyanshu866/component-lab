@@ -605,7 +605,7 @@ const AIEditor = ({ activeEditor }) => {
           </option>
         ))}
       </select>
-      <h1 className="text-4xl mt-[20vh] text-center font-sans font-bold mb-10 pb-2 bg-gradient-to-r from-pink-600 to-purple-500 bg-clip-text text-transparent">
+      <h1 className="lg:text-3xl xl:text-5xl mt-[20vh] text-center font-sans font-bold mb-10 pb-2 bg-gradient-to-r from-pink-600 to-purple-500 bg-clip-text text-transparent">
         {activeComponent.id
           ? "Describe Your Changes"
           : "Describe Your Component"}
@@ -646,7 +646,7 @@ const AIEditor = ({ activeEditor }) => {
         </select>
       </div>
 
-      <div className="w-full max-w-3xl flex flex-col justify-center items-center transition-all bg-neutral-800/70 border dark:border-darkBorder rounded-2xl overflow-hidden duration-500">
+      <div className="w-full max-w-4xl flex flex-col justify-center items-center transition-all bg-neutral-800/70 border dark:border-darkBorder rounded-2xl overflow-hidden duration-500">
         <textarea
           value={changeDesc}
           onChange={(e) => {
@@ -660,7 +660,7 @@ const AIEditor = ({ activeEditor }) => {
               ? "Describe what you'd like to change about this component..."
               : "Describe your component in detail. Include functionality, appearance, and behavior..."
           }
-          className="w-full m-0 font-sans text-sm resize-none rounded-xl text-white p-4 outline-none placeholder-neutral-600 max-h-64 transition-all duration-200"
+          className="w-full m-0 font-sans text-md resize-none rounded-xl text-white p-4 outline-none placeholder-neutral-600 max-h-64 transition-all duration-200"
         />
         {/* <div className="absolute bottom-3 right-3 text-xs text-neutral-500">
           {changeDesc.length} characters
