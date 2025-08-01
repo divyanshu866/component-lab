@@ -12,10 +12,12 @@ export default function Navbar({ user }) {
     previewKey,
     setPreviewKey,
     saveComponent,
+    setShowPreview,
   } = useEditorContext();
 
   // const { isSaving, setIsSaving } = useSave();
   function reRender() {
+    setShowPreview(true);
     setConsoleLogs([]);
     setPreviewKey(previewKey + 1);
   }

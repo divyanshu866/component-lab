@@ -12,9 +12,9 @@ const Editor = () => {
   const {
     activeComponent,
     setActiveComponent,
-    previewCode,
     updatePreview,
     components,
+    setShowPreview,
     saveComponent,
     activeComponentIndex,
   } = useEditorContext();
@@ -41,6 +41,8 @@ const Editor = () => {
   useEffect(() => {
     const handleSaveShortcut = (e) => {
       if ((e.metaKey || e.ctrlKey) && e.key === "s") {
+        setShowPreview(true);
+
         e.preventDefault(); // Prevent default browser "Save page"
         console.log("Preview updated via Cmd/Ctrl + S");
         setConsoleLogs([]);
