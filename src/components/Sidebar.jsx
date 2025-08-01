@@ -52,6 +52,9 @@ export default function Sidebar() {
     fetchComponents();
   }, []);
   const clearScreen = (name = "", html = "", css = "", js = "") => {
+    if (isGenerating) {
+      return;
+    }
     console.log("cleared");
     setShowPreview(false);
 
@@ -119,7 +122,8 @@ export default function Sidebar() {
         </button> */}
         <button
           onClick={() => clearScreen()}
-          className={`text-gray-400 w-full bg-gray-200 dark:bg-darkSecondary hover:bg-gray-100 dark:hover:bg-darkGrey rounded text-sm flex items-center justify-center gap-2 cursor-pointer`}
+          disabled={isGenerating}
+          className={`text-gray-400 w-full bg-gray-200 dark:bg-darkSecondary hover:bg-gray-100 dark:hover:bg-darkGrey rounded text-sm flex items-center justify-center gap-2 disabled:cursor-not-allowed cursor-pointer`}
         >
           <Plus width={"20px"} height={"20px"} />
           {collapsed ? "" : "New Component"}
