@@ -63,7 +63,7 @@ const Editor = () => {
   }, [activeComponent]); // Re-bind when component changes
 
   return (
-    <div className="flex flex-col flex-1 w-0">
+    <div className="flex flex-col flex-1 w-0 border-r-5 dark:border-darkBorder">
       <EditorTabs
         activeEditor={activeEditor}
         setActiveEditor={setActiveEditor}
