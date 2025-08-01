@@ -11,7 +11,7 @@ const Preview = () => {
     <div
       className={`${
         showPreview ? "w-[50%]" : "w-0 opacity-0"
-      } flex h-full justify-center items-center border-l border-gray-200 dark:border-darkBorder relative transition-all duration-100`}
+      } flex h-full justify-center items-center border-l border-gray-200 dark:border-darkBorder relative transition-all duration-200`}
       //   dangerouslySetInnerHTML={{ __html: html }}
     >
       <iframe
