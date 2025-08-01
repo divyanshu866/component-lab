@@ -44,7 +44,7 @@ const EditorTabs = ({ activeEditor, setActiveEditor }) => {
           )}
         </button>
       </div>
-      <div className="ml-auto h-full py-1 pr-1">
+      <div className="ml-3 mr-auto h-full py-1 pr-1">
         <button
           onClick={() => setActiveEditor("AI")}
           className={`${
