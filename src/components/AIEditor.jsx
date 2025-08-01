@@ -20,6 +20,8 @@ const AIEditor = ({ activeEditor }) => {
     changeDesc,
     setChangeDesc,
     isGenerating,
+    showPreview,
+    setShowPreview,
     updatePreview,
     setIsGenerating,
   } = useEditorContext();
@@ -450,6 +452,7 @@ const AIEditor = ({ activeEditor }) => {
 
   const generateComponent = async () => {
     try {
+      setShowPreview(true);
       clearScreen();
       setIsGenerating(true);
 
@@ -507,6 +510,8 @@ const AIEditor = ({ activeEditor }) => {
       return;
     }
     try {
+      setShowPreview(true);
+
       setIsGenerating(true);
       // clearScreen();
       const res = await fetch("/api/ai", {
@@ -587,12 +592,12 @@ const AIEditor = ({ activeEditor }) => {
     <div
       className={` ${
         activeEditor == "AI" ? "" : "hidden"
-      } flex h-full w-full mx-auto flex-col items-center justify-center flex-1 px-4 relative`}
+      } flex h-full w-full mx-auto flex-col items-center justify-start flex-1 px-20 relative transition-all duration-200`}
     >
       <select
         value={selectedModel}
         onChange={(e) => setSelectedModel(e.target.value)}
-        className="w-full max-w-52 text-right text-neutral-300 dark:bg-transparent border-none outline-0 border-gray-300 dark:border-darkBorder rounded-lg py-3 mr-2 mt-1 text-sm cursor-pointer absolute top-0 right-0"
+        className="w-full max-w-52 text-left text-neutral-400 dark:bg-transparent border-none outline-0 border-gray-300 dark:border-darkBorder rounded-lg py-1 ml-2 mt-2 text-md cursor-pointer absolute top-1 left-0"
       >
         {AI_MODELS.map((model) => (
           <option key={model.value} value={model.value}>
@@ -600,7 +605,7 @@ const AIEditor = ({ activeEditor }) => {
           </option>
         ))}
       </select>
-      <h1 className="text-5xl text-center font-sans font-bold mb-32 pb-2 bg-gradient-to-r from-pink-600 to-purple-500 bg-clip-text text-transparent">
+      <h1 className="text-4xl mt-[20vh] text-center font-sans font-bold mb-10 pb-2 bg-gradient-to-r from-pink-600 to-purple-500 bg-clip-text text-transparent">
         {activeComponent.id
           ? "Describe Your Changes"
           : "Describe Your Component"}
@@ -608,13 +613,13 @@ const AIEditor = ({ activeEditor }) => {
       <div
         className={`${
           activeComponent.id == "" ? "" : "hidden"
-        } flex gap-4 w-full max-w-2xl mb-7`}
+        } flex gap-4 w-full max-w-3xl mb-7`}
       >
         <select
           value={selectedType}
           onChange={(e) => setSelectedType(e.target.value)}
           name="select"
-          className="w-full bg-gray-100 dark:bg-darkSecondary border border-gray-300 dark:border-darkBorder rounded-lg px-2 py-1 text-sm cursor-pointer"
+          className="w-full bg-gray-100 dark:bg-darkSecondary border border-gray-300 dark:border-darkBorder rounded-lg px-2 py-1 text-sm transition-all duration-200 cursor-pointer"
         >
           <option className="dark:text-gray-900" value={""}>
             {"Component Type"}
@@ -628,7 +633,7 @@ const AIEditor = ({ activeEditor }) => {
         <select
           value={selectedStyle}
           onChange={(e) => setSelectedStyle(e.target.value)}
-          className="w-full bg-gray-100 dark:bg-darkSecondary border border-gray-300 dark:border-darkBorder rounded-lg px-2 py-1 text-sm cursor-pointer"
+          className="w-full bg-gray-100 dark:bg-darkSecondary border border-gray-300 dark:border-darkBorder rounded-lg px-2 py-1 text-sm transition-all duration-200 cursor-pointer"
         >
           <option className="dark:text-gray-900" value={""}>
             {"Component Style"}
@@ -641,31 +646,7 @@ const AIEditor = ({ activeEditor }) => {
         </select>
       </div>
 
-      {/* <div className="w-full max-w-lg bg-neutral-800 rounded-xl p-3 space-y-1 shadow-lg">
-        <textarea
-          value={changeDesc}
-          onChange={(e) => {
-            setChangeDesc(e.target.value);
-            e.target.style.height = "auto";
-            e.target.style.height = `${e.target.scrollHeight}px`;
-          }}
-          rows={1}
-          placeholder="Start typing your change description..."
-          className="w-full resize-none overflow-hidden bg-neutral-700 rounded-lg text-sm text-white p-3 outline-none focus:ring-2 focus:ring-pink-700 transition-all duration-200"
-        />
-
-        <div className="flex justify-end">
-          <button
-            onClick={rework}
-            disabled={changeDesc == "" || isGenerating}
-            className="flex items-center disabled:bg-neutral-700 disabled:cursor-not-allowed gap-2 bg-neutral-600 hover:bg-gray-400 text-white font-medium py-1.5 px-4 rounded-lg transition-all duration-200 cursor-pointer"
-          >
-            <Play width={16} height={16} />
-          </button>
-        </div>
-      </div> */}
-
-      <div className="w-full max-w-2xl flex flex-col justify-center items-center transition-all bg-neutral-800/70 border dark:border-darkBorder rounded-2xl overflow-hidden duration-500">
+      <div className="w-full max-w-3xl flex flex-col justify-center items-center transition-all bg-neutral-800/70 border dark:border-darkBorder rounded-2xl overflow-hidden duration-500">
         <textarea
           value={changeDesc}
           onChange={(e) => {
@@ -679,7 +660,7 @@ const AIEditor = ({ activeEditor }) => {
               ? "Describe what you'd like to change about this component..."
               : "Describe your component in detail. Include functionality, appearance, and behavior..."
           }
-          className="w-full m-0 font-sans text-sm resize-none rounded-xl text-white p-4 outline-none transition-all duration-200 placeholder-neutral-600 max-h-64"
+          className="w-full m-0 font-sans text-sm resize-none rounded-xl text-white p-4 outline-none placeholder-neutral-600 max-h-64 transition-all duration-200"
         />
         {/* <div className="absolute bottom-3 right-3 text-xs text-neutral-500">
           {changeDesc.length} characters

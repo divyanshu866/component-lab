@@ -9,7 +9,7 @@
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  background: rgba(10, 5, 20, 0.3);
+  background: rgba(10, 5, 20, 0.1);
   /* Semi-transparent dark overlay */
   z-index: 9999;
   /* Ensure it's on top of other content */
@@ -35,15 +35,15 @@
   background: radial-gradient(
     circle at 50% 100%,
     /* Origin of the gradient within its background-size's box */
-      rgba(255, 0, 255, 0.5) 0%,
-    rgba(138, 43, 226, 0.4) 30%,
+      rgba(255, 0, 255, 0.3) 0%,
+    rgba(138, 43, 226, 0.3) 30%,
     rgba(75, 0, 130, 0) 50%
       /* Adjusted from 70% to 50% for a faster fade to transparency */
   );
   background-size: 10% 10%;
   /* Initial small size of the gradient */
   background-repeat: no-repeat;
-  animation: wave-effect 1s infinite ease-in-out;
+  animation: wave-effect 2s infinite ease-out;
 }
 
 @keyframes wave-effect {
@@ -54,7 +54,14 @@
   }
 
   5% {
-    opacity: 1;
+    opacity: 0.6;
+  }
+
+  75% {
+    background-size: 1000% 1000%;
+    /* Increased significantly (from 200%) to ensure transparent edges are always beyond the view */
+    background-position: 50% -10%; /* Adjusted to end the pulse further above the screen */
+    opacity: 0;
   }
 
   100% {

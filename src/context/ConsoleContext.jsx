@@ -5,7 +5,7 @@ import { createContext, useContext, useState } from "react";
 const ConsoleContext = createContext(null);
 
 export const ConsoleProvider = ({ children }) => {
-  const [showConsole, setShowConsole] = useState(true);
+  const [showConsole, setShowConsole] = useState(false);
   const [consoleLogs, setConsoleLogs] = useState([]);
 
   return (

@@ -6,6 +6,7 @@ const EditorContext = createContext();
 export function EditorProvider({ children }) {
   const [components, setComponents] = useState([]);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
   const [changeDesc, setChangeDesc] = useState("");
 
   const [activeComponentIndex, setActiveComponentIndex] = useState(null);
@@ -69,7 +70,7 @@ export function EditorProvider({ children }) {
     if (!name.trim()) {
       return;
     }
-
+    setShowPreview(false);
     const payload = { name, html, css, js };
 
     // Create new component
@@ -202,6 +203,8 @@ export function EditorProvider({ children }) {
         setChangeDesc,
         isGenerating,
         setIsGenerating,
+        showPreview,
+        setShowPreview,
         saveComponent,
         createNewComponent,
         isSaving,

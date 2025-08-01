@@ -24,6 +24,7 @@ export default function Sidebar() {
     createNewComponent,
     isGenerating,
     setIsGenerating,
+    setShowPreview,
     updatePreview,
   } = useEditorContext();
   const { setConsoleLogs, showConsole, setShowConsole } = useConsole();
@@ -32,6 +33,7 @@ export default function Sidebar() {
     if (isGenerating) {
       return;
     }
+    setShowPreview(true);
 
     setActiveComponentIndex(index);
 
@@ -51,6 +53,7 @@ export default function Sidebar() {
   }, []);
   const clearScreen = (name = "", html = "", css = "", js = "") => {
     console.log("cleared");
+    setShowPreview(false);
 
     setActiveComponentIndex(null);
 
@@ -219,7 +222,7 @@ export default function Sidebar() {
               onClick={() => updateActiveComponent(i)}
               className={`p-2 text-sm text-nowrap cursor-pointer ${
                 i === activeComponentIndex
-                  ? "bg-gray-200 dark:bg-activeRed border-l-3 border-activeRedBorder rounded-lg"
+                  ? "bg-gray-200 dark:bg-neutral-800 border-l-3 border-neutral-600 rounded-lg"
                   : ""
               }`}
             >
