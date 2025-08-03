@@ -460,6 +460,10 @@ const AIEditor = ({ activeEditor }) => {
   const [selectedStyle, setSelectedStyle] = useState();
 
   const generateComponent = async () => {
+    if (!changeDesc.trim()) {
+      console.log("EMPTY");
+      return;
+    }
     try {
       clearScreen();
       setShowPreview(true);
@@ -514,13 +518,15 @@ const AIEditor = ({ activeEditor }) => {
       console.log("Generated Component:", outputComp);
       return data.output;
     } catch (err) {
+      alert("An Error occured. Please try again.");
       console.error("Error calling /api/generate:", err);
     } finally {
       setIsGenerating(false);
     }
   };
   async function rework() {
-    if (changeDesc == "") {
+    if (!changeDesc.trim()) {
+      console.log("EMPTY");
       return;
     }
     try {
