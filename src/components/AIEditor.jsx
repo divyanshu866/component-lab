@@ -1,7 +1,16 @@
 "use client";
 import React, { useState } from "react";
 import { useEditorContext } from "@/context/EditorContext";
-import { ArrowUp, MoveUp, Play, PlayCircle, Sparkles, Zap } from "lucide-react";
+import {
+  ArrowUp,
+  ChevronUp,
+  Command,
+  MoveUp,
+  Play,
+  PlayCircle,
+  Sparkles,
+  Zap,
+} from "lucide-react";
 import { useConsole } from "@/context/ConsoleContext";
 import { AI_MODELS } from "@/ai/models";
 
@@ -703,6 +712,20 @@ const AIEditor = ({ activeEditor }) => {
           </button>
         </div>
       </div>
+      {activeComponent.id != "" && (
+        <div className="mt-10 text-neutral-600 rounded-lg text-sm font-sans text-center">
+          <h3>Click to focus on Editor</h3>
+          <h3 className="flex items-center">
+            Command (<Command className="w-3 h-3" />) + S to save on Mac
+          </h3>
+
+          <h3>or</h3>
+
+          <h3 className="flex items-center">
+            Control (<ChevronUp className="w-3 h-3" />) + S to save on Windows
+          </h3>
+        </div>
+      )}
     </div>
   );
 };
