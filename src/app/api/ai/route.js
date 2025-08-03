@@ -79,7 +79,7 @@ Sample image 3:'https://wowslider.com/sliders/demo-93/data1/images/lake.jpg';
 Sample image 4:'https://mdbcdn.b-cdn.net/img/Photos/Slides/4.webp';
 Sample video: 'https://www.youtube.com/embed/tgbNymZ7vqY';
 
-Please provide the output in a JSON object with the following fields:
+Please return JSON object only! with the following fields:
 
 - "name": a short descriptive name of the generated component (string)  
 - "html": the HTML markup for the component (string) — **exclude all boilerplate HTML tags like <html>, <head>, <body>, etc.; provide only the component's internal markup**  
@@ -88,7 +88,7 @@ Please provide the output in a JSON object with the following fields:
 
 Ensure the code is clean, well-structured, and ready for direct use in a real-time preview environment.
 
-Example response format:
+Example response json object:
 {
 "name": "Glassmorphic Button",
 "html": "<button class='glass-button'>Click Me</button>",
