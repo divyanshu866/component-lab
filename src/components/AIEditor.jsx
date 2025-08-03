@@ -715,14 +715,14 @@ const AIEditor = ({ activeEditor }) => {
       {activeComponent.id != "" && (
         <div className="mt-10 text-neutral-600 rounded-lg text-sm font-sans text-center">
           <h3>Click to focus on Editor</h3>
-          <h3 className="flex items-center">
+          <h3 className="flex items-center justify-center">
             Command (<Command className="w-3 h-3" />) + S to save on Mac
           </h3>
 
           <h3>or</h3>
 
-          <h3 className="flex items-center">
-            Control (<ChevronUp className="w-3 h-3" />) + S to save on Windows
+          <h3 className="flex items-center justify-center">
+            Ctrl (<ChevronUp className="w-3 h-3" />) + S to save on Windows
           </h3>
         </div>
       )}
