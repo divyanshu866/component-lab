@@ -475,6 +475,10 @@ const AIEditor = ({ activeEditor }) => {
       }
 
       const data = await res.json();
+
+      // Remove code fences like ```json and ```
+      data.output = data.output.replace(/```json|```/g, "").trim();
+
       // If the API returns a JSON string inside data.output, parse it
       const outputComp = JSON.parse(data.output);
 
@@ -535,6 +539,10 @@ const AIEditor = ({ activeEditor }) => {
       }
 
       const data = await res.json();
+
+      // Remove code fences like ```json and ```
+      data.output = data.output.replace(/```json|```/g, "").trim();
+
       // If the API returns a JSON string inside data.output, parse it
       const outputComp = JSON.parse(data.output);
 
@@ -653,6 +661,12 @@ const AIEditor = ({ activeEditor }) => {
             setChangeDesc(e.target.value);
             e.target.style.height = "auto";
             e.target.style.height = `${e.target.scrollHeight}px`;
+          }}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && !e.shiftKey) {
+              e.preventDefault();
+              activeComponent.id == "" ? generateComponent() : rework();
+            }
           }}
           rows={1}
           placeholder={

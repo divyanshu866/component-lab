@@ -3,7 +3,7 @@ import { generate } from "@/ai/providers/generate";
 
 export async function POST(req) {
   const { component_type, component_style, desc, model } = await req.json();
-  const prompt = `Generate a frontend UI component based on the following inputs:
+  const prompt = `Generate a UI component with functionality (if required) based on the following inputs:
 
 Style: ${component_style}  
 Component Type: ${component_type}
