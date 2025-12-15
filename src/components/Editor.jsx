@@ -6,9 +6,7 @@ import { useEffect, useState } from "react";
 import { useEditorContext } from "@/context/EditorContext";
 import { useConsole } from "@/context/ConsoleContext";
 
-const Editor = () => {
-  const [activeEditor, setActiveEditor] = useState("AI");
-
+const Editor = ({ isMobile }) => {
   const {
     activeComponent,
     setActiveComponent,
@@ -17,7 +15,15 @@ const Editor = () => {
     setShowPreview,
     saveComponent,
     activeComponentIndex,
+    activeEditor,
+    setActiveEditor,
   } = useEditorContext();
+
+  useEffect(() => {
+    if (isMobile) {
+      setShowPreview(false);
+    }
+  }, [activeEditor]);
   const { consoleLogs, setConsoleLogs } = useConsole();
   useEffect(() => {
     if (activeComponentIndex != null && components[activeComponentIndex]) {
@@ -65,13 +71,17 @@ const Editor = () => {
   }, [activeComponent]); // Re-bind when component changes
 
   return (
-    <div className="flex flex-col flex-1 w-0 border-r-5 dark:border-darkBorder">
+    <div
+      className={`${
+        isMobile ? "w-full h-full absolute" : "w-0"
+      } flex flex-col flex-1 border-r-5 dark:border-darkBorder`}
+    >
       <EditorTabs
         activeEditor={activeEditor}
         setActiveEditor={setActiveEditor}
       />
       {/* AI Editor */}
-      <AIEditor activeEditor={activeEditor} />
+      <AIEditor isMobile={isMobile} activeEditor={activeEditor} />
       {/* Editors */}
       <div
         className={`${

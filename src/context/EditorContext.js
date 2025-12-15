@@ -4,9 +4,13 @@ import { createContext, useState, useContext, useEffect } from "react";
 const EditorContext = createContext();
 
 export function EditorProvider({ children }) {
+  const [activeEditor, setActiveEditor] = useState("AI");
+
   const [components, setComponents] = useState([]);
   const [isGenerating, setIsGenerating] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+
   const [changeDesc, setChangeDesc] = useState("");
 
   const [activeComponentIndex, setActiveComponentIndex] = useState(null);
@@ -187,6 +191,8 @@ export function EditorProvider({ children }) {
   return (
     <EditorContext.Provider
       value={{
+        activeEditor,
+        setActiveEditor,
         activeComponent,
         setActiveComponent,
         previewCode,
@@ -194,6 +200,8 @@ export function EditorProvider({ children }) {
         previewKey,
         setPreviewKey,
         updatePreview,
+        sidebarCollapsed,
+        setSidebarCollapsed,
         components,
         setComponents,
         activeComponentIndex,

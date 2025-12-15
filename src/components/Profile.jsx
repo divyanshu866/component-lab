@@ -5,7 +5,7 @@ import { signOut } from "next-auth/react";
 const Profile = ({ user }) => {
   const [showProfileModal, setShowProfileModal] = useState(false);
   return (
-    <div className="h-full aspect-square mr-1">
+    <div className="h-full aspect-square mr-1 z-105">
       <button
         onClick={() => setShowProfileModal(true)}
         className="border dark:border-white rounded-full cursor-pointer"

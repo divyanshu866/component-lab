@@ -5,9 +5,10 @@ import { useEffect, useState } from "react";
 import { useEditorContext } from "@/context/EditorContext";
 import { useConsole } from "@/context/ConsoleContext";
 import { AI_MODELS } from "@/ai/models";
-export default function Sidebar() {
+export default function Sidebar({ isMobile }) {
   // const pathname = usePathname();
-  const [collapsed, setCollapsed] = useState(false);
+  console.log(isMobile);
+  // const [collapsed, setCollapsed] = useState(false);
   const [showAiPanel, setShowAiPanel] = useState(false);
   const [selectedModel, setSelectedModel] = useState(AI_MODELS[0].value);
   useEffect(() => {
@@ -26,6 +27,8 @@ export default function Sidebar() {
     setIsGenerating,
     setShowPreview,
     updatePreview,
+    sidebarCollapsed,
+    setSidebarCollapsed,
   } = useEditorContext();
   const { setConsoleLogs, showConsole, setShowConsole } = useConsole();
 
@@ -77,18 +80,18 @@ export default function Sidebar() {
 
   return (
     <aside
-      className={`h-full flex flex-col overflow-y-hidden border-r border-gray-200 dark:border-darkBorder dark:bg-darkSecondary transition-all duration-100 ${
-        collapsed ? "w-12" : "w-75"
-      }`}
+      className={`h-full flex flex-col overflow-y-hidden border-r border-gray-200 dark:border-darkBorder dark:bg-darkSecondary z-100 transition-all duration-100 ${
+        sidebarCollapsed ? (isMobile ? "w-0" : "w-12") : "w-75"
+      } ${isMobile ? "absolute" : "relative"}`}
     >
       <div
         className={`${
-          collapsed ? "justify-end" : "justify-between"
+          sidebarCollapsed ? "justify-end" : "justify-between"
         } pr-2" flex items-center h-10 border-b border-gray-200 dark:border-darkBorder`}
       >
         <h3
           className={`${
-            collapsed ? "hidden" : ""
+            sidebarCollapsed ? "hidden" : ""
           } text-sm font-semibold text-gray-400 mx-3 m-2`}
         >
           Component Library
@@ -96,10 +99,10 @@ export default function Sidebar() {
         {/* {!collapsed && ( */}
         <button
           onClick={() => {
-            setCollapsed(!collapsed);
+            setSidebarCollapsed(!sidebarCollapsed);
           }}
-          className={`${
-            collapsed ? "opacity-100" : "opacity-100"
+          className={`${isMobile ? "hidden" : ""} ${
+            sidebarCollapsed ? "opacity-100" : "opacity-100"
           } pr-3 text-sm text-gray-400 cursor-pointer transition-all duration-100`}
         >
           <PanelRight width={"18px"} height={"18px"} />
@@ -108,7 +111,7 @@ export default function Sidebar() {
 
       <div
         className={`${
-          collapsed ? "justify-end items-center" : "justify-center"
+          sidebarCollapsed ? "justify-end items-center" : "justify-center"
         } flex border-b border-gray-200 dark:border-darkBorder gap-1 h-12 transition-all duration-100`}
       >
         {/* <button
@@ -126,7 +129,7 @@ export default function Sidebar() {
           className={`text-gray-400 w-full bg-gray-200 dark:bg-darkSecondary hover:bg-gray-100 dark:hover:bg-darkGrey rounded text-sm flex items-center justify-center gap-2 disabled:cursor-not-allowed cursor-pointer`}
         >
           <Plus width={"20px"} height={"20px"} />
-          {collapsed ? "" : "New Component"}
+          {sidebarCollapsed ? "" : "New Component"}
         </button>
         {/* </div> */}
       </div>
@@ -216,7 +219,7 @@ export default function Sidebar() {
 
       <div
         className={`${
-          collapsed ? "opacity-0" : "opacity-100"
+          sidebarCollapsed ? "opacity-0" : "opacity-100"
         } flex-1 overflow-y-auto overflow-hidden mt-2 px-2 transition-all duration-100`}
       >
         <ul className="px-2">

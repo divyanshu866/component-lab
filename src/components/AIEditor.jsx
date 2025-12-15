@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { act, useState } from "react";
 import { useEditorContext } from "@/context/EditorContext";
 import {
   ArrowUp,
@@ -14,10 +14,12 @@ import {
 import { useConsole } from "@/context/ConsoleContext";
 import { AI_MODELS } from "@/ai/models";
 
-const AIEditor = ({ activeEditor }) => {
+const AIEditor = ({ isMobile }) => {
   const [selectedModel, setSelectedModel] = useState(AI_MODELS[0].value);
   const { setConsoleLogs } = useConsole();
   const {
+    activeEditor,
+    setActiveEditor,
     activeComponent,
     setActiveComponent,
     activeComponentIndex,
@@ -467,10 +469,17 @@ const AIEditor = ({ activeEditor }) => {
     try {
       clearScreen();
       setShowPreview(true);
-
       setIsGenerating(true);
 
-      const res = await fetch("/api/ai", {
+      // Initialize streaming component
+      const streamingComp = {
+        name: "New Component",
+        html: "",
+        css: "",
+        js: "",
+      };
+
+      const response = await fetch("/api/ai", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -482,45 +491,89 @@ const AIEditor = ({ activeEditor }) => {
           model: selectedModel,
         }),
       });
-      console.log("model=====>", selectedModel);
-      if (!res.ok) {
-        throw new Error(`Failed: ${res.status}`);
+
+      if (!response.ok) {
+        throw new Error(`Failed: ${response.status}`);
       }
 
-      const data = await res.json();
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = "";
 
-      // Remove code fences like ```json and ```
-      data.output = data.output.replace(/```json|```/g, "").trim();
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
 
-      // If the API returns a JSON string inside data.output, parse it
-      const outputComp = JSON.parse(data.output);
+        const chunk = decoder.decode(value, { stream: true });
+        buffer += chunk;
 
-      const { name, html, css, js } = outputComp;
+        // Process SSE events from buffer
+        const events = buffer.split("\n\n");
+        buffer = events.pop() || ""; // Keep incomplete event in buffer
 
-      const generatedComp = {
-        name: name,
-        html: html,
-        css: css,
-        js: js,
-      };
-      setActiveComponent(generatedComp);
-      updatePreview(html, css, js);
-      createNewComponent(name, html, css, js);
+        for (const event of events) {
+          if (event.startsWith("data: ")) {
+            try {
+              const data = JSON.parse(event.substring(6)); // Remove 'data: ' prefix
 
-      console.log("activeComponent===>", activeComponent);
-      console.log("activeComponentIndex==>", activeComponentIndex);
-
-      console.log("Component Name:", name);
-      console.log("HTML:", html);
-      console.log("CSS:", css);
-      console.log("JS:", js);
-
-      console.log("Generated Component:", outputComp);
-      return data.output;
+              //Do nothing for name for now
+              if (data.type === "name") {
+                // streamingComp.name += data.content;
+                // setActiveComponent({ ...streamingComp });
+              } else if (data.type === "html") {
+                setActiveEditor("HTML");
+                streamingComp.html += data.content;
+                setActiveComponent({ ...streamingComp });
+                updatePreview(
+                  streamingComp.html,
+                  streamingComp.css,
+                  streamingComp.js
+                );
+              } else if (data.type === "css") {
+                setActiveEditor("CSS");
+                streamingComp.css += data.content;
+                setActiveComponent({ ...streamingComp });
+                updatePreview(
+                  streamingComp.html,
+                  streamingComp.css,
+                  streamingComp.js
+                );
+              } else if (data.type === "js") {
+                setActiveEditor("JS");
+                streamingComp.js += data.content;
+                setActiveComponent({ ...streamingComp });
+                updatePreview(
+                  streamingComp.html,
+                  streamingComp.css,
+                  streamingComp.js
+                );
+              }
+            } catch (err) {
+              console.error("Error parsing streaming data:", err);
+            }
+          } else if (event.startsWith("event: end")) {
+            // Streaming complete
+            setIsGenerating(false);
+            createNewComponent(
+              streamingComp.name,
+              streamingComp.html,
+              streamingComp.css,
+              streamingComp.js
+            );
+            console.log("Streaming complete");
+            return;
+          } else if (event.startsWith("event: error")) {
+            const errorData = JSON.parse(event.substring(12)); // Remove 'event: error\ndata: ' prefix
+            console.error("Streaming error:", errorData.error);
+            setIsGenerating(false);
+            alert("An Error occurred. Please try again.");
+            return;
+          }
+        }
+      }
     } catch (err) {
-      alert("An Error occured. Please try again.");
+      alert("An Error occurred. Please try again.");
       console.error("Error calling /api/generate:", err);
-    } finally {
       setIsGenerating(false);
     }
   };
@@ -531,10 +584,19 @@ const AIEditor = ({ activeEditor }) => {
     }
     try {
       setShowPreview(true);
-
       setIsGenerating(true);
-      // clearScreen();
-      const res = await fetch("/api/ai", {
+
+      // Initialize streaming component with existing values
+      const streamingComp = {
+        id: activeComponent.id,
+        name: activeComponent.name,
+        html: "",
+        css: "",
+        js: "",
+      };
+      setActiveComponent(streamingComp);
+
+      const response = await fetch("/api/ai", {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -548,50 +610,87 @@ const AIEditor = ({ activeEditor }) => {
           model: selectedModel,
         }),
       });
-      console.log("model=====>", selectedModel);
-      if (!res.ok) {
-        throw new Error(`Failed: ${res.status}`);
+
+      if (!response.ok) {
+        throw new Error(`Failed: ${response.status}`);
       }
 
-      const data = await res.json();
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = "";
 
-      // Remove code fences like ```json and ```
-      data.output = data.output.replace(/```json|```/g, "").trim();
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
 
-      // If the API returns a JSON string inside data.output, parse it
-      const outputComp = JSON.parse(data.output);
+        const chunk = decoder.decode(value, { stream: true });
+        buffer += chunk;
 
-      const { name, html, css, js } = outputComp;
+        // Process SSE events from buffer
+        const events = buffer.split("\n\n");
+        buffer = events.pop() || ""; // Keep incomplete event in buffer
 
-      const generatedComp = {
-        id: activeComponent.id,
-        name: activeComponent.name,
-        html: html,
-        css: css,
-        js: js,
-      };
-      setActiveComponent(generatedComp);
+        for (const event of events) {
+          if (event.startsWith("data: ")) {
+            try {
+              const data = JSON.parse(event.substring(6)); // Remove 'data: ' prefix
 
-      updatePreview(html, css, js);
-
-      console.log("activeComponent===>", activeComponent);
-      console.log("activeComponentIndex==>", activeComponentIndex);
-
-      console.log("Component Name:", name);
-      console.log("HTML:", html);
-      console.log("CSS:", css);
-      console.log("JS:", js);
-
-      console.log("Generated Component:", outputComp);
-      return data.output;
+              if (data.type === "name") {
+                streamingComp.name += data.content;
+                setActiveComponent({ ...streamingComp });
+              } else if (data.type === "html") {
+                setActiveEditor("HTML");
+                streamingComp.html += data.content;
+                setActiveComponent({ ...streamingComp });
+                updatePreview(
+                  streamingComp.html,
+                  streamingComp.css,
+                  streamingComp.js
+                );
+              } else if (data.type === "css") {
+                setActiveEditor("CSS");
+                streamingComp.css += data.content;
+                setActiveComponent({ ...streamingComp });
+                updatePreview(
+                  streamingComp.html,
+                  streamingComp.css,
+                  streamingComp.js
+                );
+              } else if (data.type === "js") {
+                setActiveEditor("JS");
+                streamingComp.js += data.content;
+                setActiveComponent({ ...streamingComp });
+                updatePreview(
+                  streamingComp.html,
+                  streamingComp.css,
+                  streamingComp.js
+                );
+              }
+            } catch (err) {
+              console.error("Error parsing streaming data:", err);
+            }
+          } else if (event.startsWith("event: end")) {
+            // Streaming complete
+            setIsGenerating(false);
+            setChangeDesc("");
+            console.log("Streaming rework complete");
+            return;
+          } else if (event.startsWith("event: error")) {
+            const errorData = JSON.parse(event.substring(12)); // Remove 'event: error\ndata: ' prefix
+            console.error("Streaming error:", errorData.error);
+            setIsGenerating(false);
+            setChangeDesc("");
+            alert("An Error occurred. Please try again.");
+            return;
+          }
+        }
+      }
     } catch (err) {
       console.error("Error calling /api/generate:", err);
-      alert("An Error occured. Please try again.");
-    } finally {
+      alert("An Error occurred. Please try again.");
       setIsGenerating(false);
       setChangeDesc("");
     }
-    console.log("rework");
   }
   const clearScreen = (name = "", html = "", css = "", js = "") => {
     console.log("cleared");
@@ -613,7 +712,7 @@ const AIEditor = ({ activeEditor }) => {
   };
   return (
     <div
-      className={` ${
+      className={`${
         activeEditor == "AI" ? "" : "hidden"
       } flex h-full w-full mx-auto flex-col items-center justify-start flex-1 px-20 relative transition-all duration-200`}
     >
@@ -644,8 +743,8 @@ const AIEditor = ({ activeEditor }) => {
           name="select"
           className="w-full bg-gray-100 dark:bg-darkSecondary border border-gray-300 dark:border-darkBorder rounded-lg px-2 py-1 text-sm transition-all duration-200 cursor-pointer"
         >
-          <option className="dark:text-gray-900" value={""}>
-            {"Component Type"}
+          <option className="dark:text-gray-900" value={"custom type"}>
+            {"Custom type"}
           </option>
           {componentTypes.map((type, index) => (
             <option key={index} value={type.name}>
@@ -658,8 +757,8 @@ const AIEditor = ({ activeEditor }) => {
           onChange={(e) => setSelectedStyle(e.target.value)}
           className="w-full bg-gray-100 dark:bg-darkSecondary border border-gray-300 dark:border-darkBorder rounded-lg px-2 py-1 text-sm transition-all duration-200 cursor-pointer"
         >
-          <option className="dark:text-gray-900" value={""}>
-            {"Component Style"}
+          <option className="dark:text-gray-900" value={"Custom style"}>
+            {"Custom style"}
           </option>
           {styleOptions.map((style, index) => (
             <option key={index} value={style.name}>
