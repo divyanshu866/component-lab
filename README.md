@@ -11,9 +11,10 @@ ComponentLab is a real-time UI code lab where developers design and iterate on i
 
 - 🔤 Live HTML, CSS, and JavaScript editors
 - 🧠 AI code/Component generation
+- 🧠 AI generated code streaming v1
 - 🖥️ Real-time component rendering + preview
 - 🎨 Component styling presets (manual control)
-- 🧩 Component library structure in progress
+- 🧩 Component library
 
 ---
 
