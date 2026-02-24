@@ -24,7 +24,9 @@ const Editor = ({ isMobile }) => {
       setShowPreview(false);
     }
   }, [activeEditor]);
+
   const { consoleLogs, setConsoleLogs } = useConsole();
+
   useEffect(() => {
     if (activeComponentIndex != null && components[activeComponentIndex]) {
       console.log("compIndex", activeComponentIndex);
@@ -55,13 +57,13 @@ const Editor = ({ isMobile }) => {
         updatePreview(
           activeComponent.html,
           activeComponent.css,
-          activeComponent.js
+          activeComponent.js,
         );
         saveComponent(
           activeComponent.name,
           activeComponent.html,
           activeComponent.css,
-          activeComponent.js
+          activeComponent.js,
         );
       }
     };

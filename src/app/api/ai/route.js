@@ -5,11 +5,12 @@ import { generate } from "@/ai/providers/generate";
 function createStreamingResponse(stream) {
   // Create a ReadableStream for SSE
   const encoder = new TextEncoder();
-  let buffer = "";
 
   const readable = new ReadableStream({
     async start(controller) {
       try {
+        let buffer = "";
+
         let currentSection = null;
 
         for await (const chunk of stream) {
@@ -47,8 +48,8 @@ function createStreamingResponse(stream) {
                       `data: ${JSON.stringify({
                         type: "section_start",
                         section: info.section,
-                      })}\n\n`
-                    )
+                      })}\n\n`,
+                    ),
                   );
                   markerFound = true;
                   break;
@@ -110,8 +111,8 @@ function createStreamingResponse(stream) {
                       `data: ${JSON.stringify({
                         type: currentSection,
                         content: char,
-                      })}\n\n`
-                    )
+                      })}\n\n`,
+                    ),
                   );
                 }
 
@@ -121,8 +122,8 @@ function createStreamingResponse(stream) {
                     `data: ${JSON.stringify({
                       type: "section_end",
                       section: currentSection,
-                    })}\n\n`
-                  )
+                    })}\n\n`,
+                  ),
                 );
 
                 // Reset for next section
@@ -140,8 +141,8 @@ function createStreamingResponse(stream) {
                       `data: ${JSON.stringify({
                         type: currentSection,
                         content: char,
-                      })}\n\n`
-                    )
+                      })}\n\n`,
+                    ),
                   );
                 }
 
@@ -151,14 +152,14 @@ function createStreamingResponse(stream) {
                     `data: ${JSON.stringify({
                       type: "section_end",
                       section: currentSection,
-                    })}\n\n`
-                  )
+                    })}\n\n`,
+                  ),
                 );
 
                 // Start new section
                 currentSection = nextSection;
                 remaining = remaining.substring(
-                  nextStartIndex + nextMarkerLength
+                  nextStartIndex + nextMarkerLength,
                 );
 
                 // Send section start signal for new section
@@ -167,8 +168,8 @@ function createStreamingResponse(stream) {
                     `data: ${JSON.stringify({
                       type: "section_start",
                       section: currentSection,
-                    })}\n\n`
-                  )
+                    })}\n\n`,
+                  ),
                 );
               } else {
                 // No markers found, send one character at a time to avoid getting stuck
@@ -179,8 +180,8 @@ function createStreamingResponse(stream) {
                       `data: ${JSON.stringify({
                         type: currentSection,
                         content: char,
-                      })}\n\n`
-                    )
+                      })}\n\n`,
+                    ),
                   );
                   remaining = remaining.substring(1);
                 }
@@ -198,8 +199,8 @@ function createStreamingResponse(stream) {
           encoder.encode(
             `event: error\ndata: ${JSON.stringify({
               error: error.message,
-            })}\n\n`
-          )
+            })}\n\n`,
+          ),
         );
         controller.close();
       }
@@ -331,11 +332,11 @@ NEVER output:
 Input: Style: Glassmorphism, Component: Button, Instructions: Call-to-action button
 
 Output:
-NAME_STARTGlassmorphic CTA ButtonNAME_ENDHTML_START<div class="btn-container"><button class="glass-btn" type="button">Get Started</button></div>HTML_ENDCSS_STARThtml, body { margin: 0; padding: 0; width: 100%; height: 100%; box-sizing: border-box; font-family: system-ui, -apple-system, sans-serif; display: flex; justify-content: center; align-items: center; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+###NAME_START###Glassmorphic CTA Button###NAME_END######HTML_START###<div class="btn-container"><button class="glass-btn" type="button">Get Started</button></div>###HTML_END######CSS_START###html, body { margin: 0; padding: 0; width: 100%; height: 100%; box-sizing: border-box; font-family: system-ui, -apple-system, sans-serif; display: flex; justify-content: center; align-items: center; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
 *, *::before, *::after { box-sizing: inherit; }
 .glass-btn { padding: 16px 32px; font-size: 1rem; font-weight: 600; color: #fff; background: rgba(255,255,255,0.15); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2); border-radius: 12px; cursor: pointer; transition: all 0.3s ease; }
 .glass-btn:hover { background: rgba(255,255,255,0.25); transform: translateY(-2px); box-shadow: 0 8px 32px rgba(0,0,0,0.2); }
-.glass-btn:focus { outline: 2px solid rgba(255,255,255,0.5); outline-offset: 2px; }CSS_ENDJS_STARTJS_END
+.glass-btn:focus { outline: 2px solid rgba(255,255,255,0.5); outline-offset: 2px; }###CSS_END######JS_START###//No Js Required###JS_END###
 </example>
 
 Respond with ONLY the JSON object. No other text.

@@ -36,6 +36,7 @@ const AIEditor = ({ isMobile }) => {
     updatePreview,
     setIsGenerating,
   } = useEditorContext();
+
   const [componentTypes, setComponentTypes] = useState([
     {
       name: "Modal",
@@ -458,6 +459,7 @@ const AIEditor = ({ isMobile }) => {
       description: "Monochrome dashed outlines",
     },
   ]);
+
   const [selectedType, setSelectedType] = useState();
   const [selectedStyle, setSelectedStyle] = useState();
 
@@ -502,6 +504,7 @@ const AIEditor = ({ isMobile }) => {
 
       while (true) {
         const { done, value } = await reader.read();
+
         if (done) break;
 
         const chunk = decoder.decode(value, { stream: true });
@@ -527,7 +530,7 @@ const AIEditor = ({ isMobile }) => {
                 updatePreview(
                   streamingComp.html,
                   streamingComp.css,
-                  streamingComp.js
+                  streamingComp.js,
                 );
               } else if (data.type === "css") {
                 setActiveEditor("CSS");
@@ -536,7 +539,7 @@ const AIEditor = ({ isMobile }) => {
                 updatePreview(
                   streamingComp.html,
                   streamingComp.css,
-                  streamingComp.js
+                  streamingComp.js,
                 );
               } else if (data.type === "js") {
                 setActiveEditor("JS");
@@ -545,7 +548,7 @@ const AIEditor = ({ isMobile }) => {
                 updatePreview(
                   streamingComp.html,
                   streamingComp.css,
-                  streamingComp.js
+                  streamingComp.js,
                 );
               }
             } catch (err) {
@@ -558,7 +561,7 @@ const AIEditor = ({ isMobile }) => {
               streamingComp.name,
               streamingComp.html,
               streamingComp.css,
-              streamingComp.js
+              streamingComp.js,
             );
             console.log("Streaming complete");
             return;
@@ -645,7 +648,7 @@ const AIEditor = ({ isMobile }) => {
                 updatePreview(
                   streamingComp.html,
                   streamingComp.css,
-                  streamingComp.js
+                  streamingComp.js,
                 );
               } else if (data.type === "css") {
                 setActiveEditor("CSS");
@@ -654,7 +657,7 @@ const AIEditor = ({ isMobile }) => {
                 updatePreview(
                   streamingComp.html,
                   streamingComp.css,
-                  streamingComp.js
+                  streamingComp.js,
                 );
               } else if (data.type === "js") {
                 setActiveEditor("JS");
@@ -663,7 +666,7 @@ const AIEditor = ({ isMobile }) => {
                 updatePreview(
                   streamingComp.html,
                   streamingComp.css,
-                  streamingComp.js
+                  streamingComp.js,
                 );
               }
             } catch (err) {
