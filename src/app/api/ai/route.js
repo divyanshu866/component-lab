@@ -1,221 +1,49 @@
 import { NextResponse } from "next/server";
 import { generate } from "@/ai/providers/generate";
+import { createStreamingResponse } from "@/ai/stream_parser";
 
-// Helper function to create streaming response
-function createStreamingResponse(stream) {
-  // Create a ReadableStream for SSE
-  const encoder = new TextEncoder();
+//API GENERATE NEW COMPONENT
+export async function POST(req) {
+  const { component_type, component_style, desc, model } = await req.json();
 
-  const readable = new ReadableStream({
-    async start(controller) {
-      try {
-        let buffer = "";
+  const prompt = `Generate a UI component with functionality (if required) based on the following inputs:
+  Component Style: ${component_style}
+  Component Type: ${component_type}
+  Client Instructions: ${desc}
+  `;
 
-        let currentSection = null;
-
-        for await (const chunk of stream) {
-          const chunkText = chunk.text || "";
-          buffer += chunkText;
-
-          // Process markers and content in the buffer
-          let remaining = buffer;
-          buffer = "";
-
-          while (remaining.length > 0) {
-            if (currentSection === null) {
-              // Look for section start markers anywhere in the remaining content
-              const startMarkerMap = {
-                "###NAME_START###": { section: "name", length: 16 },
-                "###HTML_START###": { section: "html", length: 16 },
-                "###CSS_START###": { section: "css", length: 15 },
-                "###JS_START###": { section: "js", length: 14 },
-              };
-
-              let markerFound = false;
-              for (const [marker, info] of Object.entries(startMarkerMap)) {
-                const markerIndex = remaining.indexOf(marker);
-                if (markerIndex !== -1) {
-                  // If we're not in a section and there's content before a marker,
-                  // the LLM might be generating content before starting properly.
-                  // Ignore content before markers when not in a section.
-
-                  currentSection = info.section;
-                  remaining = remaining.substring(markerIndex + info.length);
-
-                  // Send section start signal
-                  controller.enqueue(
-                    encoder.encode(
-                      `data: ${JSON.stringify({
-                        type: "section_start",
-                        section: info.section,
-                      })}\n\n`,
-                    ),
-                  );
-                  markerFound = true;
-                  break;
-                }
-              }
-
-              if (!markerFound) {
-                // No marker found, this shouldn't happen when not in section
-                // The LLM might not be following the format, so we'll skip this character
-                if (remaining.length > 0) {
-                  remaining = remaining.substring(1);
-                } else {
-                  // Empty buffer, break out of loop
-                  break;
-                }
-              }
-            } else {
-              // We're in a section, look for end marker or next start marker
-              const endMarker =
-                "###" + currentSection.toUpperCase() + "_END###";
-              const endIndex = remaining.indexOf(endMarker);
-
-              // Also check for any start marker that would indicate the next section
-              const startMarkerMap = {
-                "###NAME_START###": { section: "name", length: 16 },
-                "###HTML_START###": { section: "html", length: 16 },
-                "###CSS_START###": { section: "css", length: 15 },
-                "###JS_START###": { section: "js", length: 14 },
-              };
-
-              let nextStartIndex = -1;
-              let nextSection = null;
-              let nextMarkerLength = 0;
-
-              for (const [marker, info] of Object.entries(startMarkerMap)) {
-                const index = remaining.indexOf(marker);
-                if (
-                  index !== -1 &&
-                  (nextStartIndex === -1 || index < nextStartIndex)
-                ) {
-                  nextStartIndex = index;
-                  nextSection = info.section;
-                  nextMarkerLength = info.length;
-                }
-              }
-
-              if (
-                endIndex !== -1 &&
-                (nextStartIndex === -1 || endIndex < nextStartIndex)
-              ) {
-                // Found end marker first, send content up to end marker
-                const content = remaining.substring(0, endIndex);
-
-                // Send each character individually
-                for (let i = 0; i < content.length; i++) {
-                  const char = content[i];
-                  controller.enqueue(
-                    encoder.encode(
-                      `data: ${JSON.stringify({
-                        type: currentSection,
-                        content: char,
-                      })}\n\n`,
-                    ),
-                  );
-                }
-
-                // Send section end signal
-                controller.enqueue(
-                  encoder.encode(
-                    `data: ${JSON.stringify({
-                      type: "section_end",
-                      section: currentSection,
-                    })}\n\n`,
-                  ),
-                );
-
-                // Reset for next section
-                currentSection = null;
-                remaining = remaining.substring(endIndex + endMarker.length);
-              } else if (nextStartIndex !== -1) {
-                // Found next start marker, send content up to it and switch sections
-                const content = remaining.substring(0, nextStartIndex);
-
-                // Send each character individually
-                for (let i = 0; i < content.length; i++) {
-                  const char = content[i];
-                  controller.enqueue(
-                    encoder.encode(
-                      `data: ${JSON.stringify({
-                        type: currentSection,
-                        content: char,
-                      })}\n\n`,
-                    ),
-                  );
-                }
-
-                // Send section end signal
-                controller.enqueue(
-                  encoder.encode(
-                    `data: ${JSON.stringify({
-                      type: "section_end",
-                      section: currentSection,
-                    })}\n\n`,
-                  ),
-                );
-
-                // Start new section
-                currentSection = nextSection;
-                remaining = remaining.substring(
-                  nextStartIndex + nextMarkerLength,
-                );
-
-                // Send section start signal for new section
-                controller.enqueue(
-                  encoder.encode(
-                    `data: ${JSON.stringify({
-                      type: "section_start",
-                      section: currentSection,
-                    })}\n\n`,
-                  ),
-                );
-              } else {
-                // No markers found, send one character at a time to avoid getting stuck
-                if (remaining.length > 0) {
-                  const char = remaining[0];
-                  controller.enqueue(
-                    encoder.encode(
-                      `data: ${JSON.stringify({
-                        type: currentSection,
-                        content: char,
-                      })}\n\n`,
-                    ),
-                  );
-                  remaining = remaining.substring(1);
-                }
-              }
-            }
-          }
-        }
-
-        // Send end event
-        controller.enqueue(encoder.encode("event: end\ndata: {}\n\n"));
-        controller.close();
-      } catch (error) {
-        console.error("Streaming error:", error);
-        controller.enqueue(
-          encoder.encode(
-            `event: error\ndata: ${JSON.stringify({
-              error: error.message,
-            })}\n\n`,
-          ),
-        );
-        controller.close();
-      }
-    },
-  });
-
-  return new Response(readable, {
-    headers: {
-      "Content-Type": "text/event-stream",
-      "Cache-Control": "no-cache",
-      Connection: "keep-alive",
-    },
-  });
+  const stream = await generate(SYSTEM_PROMPT, prompt, model);
+  return createStreamingResponse(stream);
 }
 
+//API MODIFY EXISTING COMPONENT
+export async function PATCH(req) {
+  const { name, html, css, js, changes, model } = await req.json();
+
+  const prompt = `
+  Your task:
+  Apply the requested changes to the component and return the updated version as a JSON object:
+  Edit Instructions/Problems to solve:
+  ${changes}
+
+  Component:
+  - name: ${name}
+
+  - HTML:
+  ${html}
+
+  - CSS:
+  ${css}
+
+  - JS:
+  ${js}
+  `;
+
+  const stream = await generate(EDIT_SYSTEM_PROMPT, prompt, model);
+  return createStreamingResponse(stream);
+}
+
+// System prompt for generating new components
 const SYSTEM_PROMPT = `<role>
 You are an expert frontend developer specializing in creating beautiful, functional UI components. Generate production-ready HTML, CSS, and JavaScript code based on user specifications.
 </role>
@@ -341,6 +169,8 @@ Output:
 
 Respond with ONLY the JSON object. No other text.
 `;
+
+// System prompt for editting components
 const EDIT_SYSTEM_PROMPT = `<role>
 You are an expert frontend developer specializing in modifying and improving existing UI components. Your task is to update the provided component based on user instructions while preserving all unrelated functionality.
 </role>
@@ -437,44 +267,3 @@ Output:
 
 Respond with ONLY the JSON object. No other text.
 `;
-
-//GENERATE NEW COMPONENT
-export async function POST(req) {
-  const { component_type, component_style, desc, model } = await req.json();
-
-  const prompt = `Generate a UI component with functionality (if required) based on the following inputs:
-  Component Style: ${component_style}
-  Component Type: ${component_type}
-  Client Instructions: ${desc}
-  `;
-
-  const stream = await generate(SYSTEM_PROMPT, prompt, model);
-  return createStreamingResponse(stream);
-}
-
-//MODIFY EXISTING COMPONENT
-export async function PATCH(req) {
-  const { name, html, css, js, changes, model } = await req.json();
-
-  const prompt = `
-  Your task:
-  Apply the requested changes to the component and return the updated version as a JSON object:
-  Edit Instructions/Problems to solve:
-  ${changes}
-
-  Component:
-  - name: ${name}
-
-  - HTML:
-  ${html}
-
-  - CSS:
-  ${css}
-
-  - JS:
-  ${js}
-  `;
-
-  const stream = await generate(EDIT_SYSTEM_PROMPT, prompt, model);
-  return createStreamingResponse(stream);
-}
