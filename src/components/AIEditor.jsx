@@ -475,7 +475,7 @@ const AIEditor = ({ isMobile }) => {
 
       // Initialize streaming component
       const streamingComp = {
-        name: "New Component",
+        name: "",
         html: "",
         css: "",
         js: "",
@@ -521,7 +521,7 @@ const AIEditor = ({ isMobile }) => {
 
               //Do nothing for name for now
               if (data.type === "name") {
-                // streamingComp.name += data.content;
+                streamingComp.name += data.content;
                 // setActiveComponent({ ...streamingComp });
               } else if (data.type === "html") {
                 setActiveEditor("HTML");
