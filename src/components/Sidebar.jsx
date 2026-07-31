@@ -132,7 +132,7 @@ export default function Sidebar({ isMobile }) {
       <div
         className={`${
           sidebarCollapsed ? "justify-end" : "justify-between"
-        } pr-2" flex items-center h-10 border-b border-gray-200 dark:border-darkBorder`}
+        } pr-2" flex items-center min-h-10 border-b border-gray-200 dark:border-darkBorder`}
       >
         <h3
           className={`${
@@ -157,7 +157,7 @@ export default function Sidebar({ isMobile }) {
       <div
         className={`${
           sidebarCollapsed ? "justify-end items-center" : "justify-center"
-        } flex border-b border-gray-200 dark:border-darkBorder gap-1 h-12 transition-all duration-100`}
+        } flex border-b border-gray-200 dark:border-darkBorder gap-1 min-h-12 transition-all duration-100`}
       >
         <button
           onClick={() => {
