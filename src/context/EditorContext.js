@@ -9,6 +9,7 @@ export function EditorProvider({ children }) {
   const [components, setComponents] = useState([]);
   const [isGenerating, setIsGenerating] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
+  const [isMaximised, setIsMaximised] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   const [changeDesc, setChangeDesc] = useState("");
@@ -44,7 +45,7 @@ export function EditorProvider({ children }) {
       });
       const updated = await res.json();
       setComponents((prev) =>
-        prev.map((c) => (c.id === updated.id ? updated : c))
+        prev.map((c) => (c.id === updated.id ? updated : c)),
       );
       console.log("Updated");
     } else {
@@ -216,6 +217,8 @@ export function EditorProvider({ children }) {
         createNewComponent,
         isSaving,
         setIsSaving,
+        isMaximised,
+        setIsMaximised,
       }}
     >
       {children}

@@ -17,6 +17,8 @@ const Editor = ({ isMobile }) => {
     activeComponentIndex,
     activeEditor,
     setActiveEditor,
+    isMaximised,
+    setIsMaximised,
   } = useEditorContext();
 
   useEffect(() => {
@@ -76,7 +78,7 @@ const Editor = ({ isMobile }) => {
     <div
       className={`${
         isMobile ? "w-full h-full absolute" : "w-0"
-      } flex flex-col flex-1 border-r-5 dark:border-darkBorder`}
+      } ${isMaximised ? "hidden" : ""} flex flex-col flex-1 border-r-5 dark:border-darkBorder`}
     >
       <EditorTabs
         activeEditor={activeEditor}

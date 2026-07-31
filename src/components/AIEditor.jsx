@@ -519,10 +519,8 @@ const AIEditor = ({ isMobile }) => {
             try {
               const data = JSON.parse(event.substring(6)); // Remove 'data: ' prefix
 
-              //Do nothing for name for now
               if (data.type === "name") {
                 streamingComp.name += data.content;
-                // setActiveComponent({ ...streamingComp });
               } else if (data.type === "html") {
                 setActiveEditor("HTML");
                 streamingComp.html += data.content;
@@ -592,7 +590,7 @@ const AIEditor = ({ isMobile }) => {
       // Initialize streaming component with existing values
       const streamingComp = {
         id: activeComponent.id,
-        name: activeComponent.name,
+        name: "",
         html: "",
         css: "",
         js: "",
@@ -632,12 +630,10 @@ const AIEditor = ({ isMobile }) => {
         // Process SSE events from buffer
         const events = buffer.split("\n\n");
         buffer = events.pop() || ""; // Keep incomplete event in buffer
-
         for (const event of events) {
           if (event.startsWith("data: ")) {
             try {
               const data = JSON.parse(event.substring(6)); // Remove 'data: ' prefix
-
               if (data.type === "name") {
                 streamingComp.name += data.content;
                 setActiveComponent({ ...streamingComp });

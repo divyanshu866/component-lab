@@ -13,7 +13,7 @@ const WorkspaceClient = ({ user }) => {
       <div className="flex flex-1 h-0">
         <Sidebar isMobile={isMobile} />
         <div className={`flex flex-col flex-1 w-0 relative`}>
-          <div className={`flex flex-1 h-0`}>
+          <div className={`flex flex-1 justify-end h-0`}>
             <Editor isMobile={isMobile} />
             <Preview isMobile={isMobile} />
           </div>

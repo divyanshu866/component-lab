@@ -1,5 +1,12 @@
 "use client";
-import { PanelRight, Plus, Sparkles, Zap } from "lucide-react";
+import {
+  PanelRight,
+  Plus,
+  Sparkles,
+  Zap,
+  Trash,
+  MoreHorizontal,
+} from "lucide-react";
 // import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useEditorContext } from "@/context/EditorContext";
@@ -8,8 +15,9 @@ import { AI_MODELS } from "@/ai/models";
 export default function Sidebar({ isMobile }) {
   // const pathname = usePathname();
   console.log(isMobile);
-  // const [collapsed, setCollapsed] = useState(false);
   const [showAiPanel, setShowAiPanel] = useState(false);
+  const [chatMenu, setChatMenu] = useState(null);
+  const [mouseClick, setMouseClick] = useState(false);
   const [selectedModel, setSelectedModel] = useState(AI_MODELS[0].value);
   useEffect(() => {
     console.log(selectedModel);
@@ -21,6 +29,8 @@ export default function Sidebar({ isMobile }) {
     setActiveComponent,
     activeComponentIndex,
     setActiveComponentIndex,
+    activeEditor,
+    setActiveEditor,
     setChangeDesc,
     createNewComponent,
     isGenerating,
@@ -29,8 +39,43 @@ export default function Sidebar({ isMobile }) {
     updatePreview,
     sidebarCollapsed,
     setSidebarCollapsed,
+    isMaximised,
+    setIsMaximised,
   } = useEditorContext();
   const { setConsoleLogs, showConsole, setShowConsole } = useConsole();
+  async function deleteComponent(id, componentIndex) {
+    setChatMenu(null);
+    // Implementation for deleting a component
+    const res = await fetch(`/api/components/${id}`, {
+      method: "DELETE",
+    });
+
+    if (!res.ok) {
+      console.error("Failed to delete component");
+      return;
+    }
+    // Handle active component highlighting
+    if (activeComponentIndex != 0 && activeComponentIndex > componentIndex) {
+      setActiveComponentIndex(activeComponentIndex - 1);
+    }
+    // Update the components state after deletion
+    setComponents((prev) => prev.filter((c) => c.id !== id));
+
+    if (activeComponent?.id === id) {
+      clearScreen();
+      setActiveEditor("AI");
+    }
+  }
+  const hideChatMenu = () => {
+    setChatMenu(null);
+  };
+  useEffect(() => {
+    window.addEventListener("mousedown", hideChatMenu);
+
+    return () => {
+      window.removeEventListener("mousedown", hideChatMenu);
+    };
+  }, []);
 
   function updateActiveComponent(index) {
     if (isGenerating) {
@@ -80,7 +125,7 @@ export default function Sidebar({ isMobile }) {
 
   return (
     <aside
-      className={`h-full flex flex-col overflow-y-hidden border-r border-gray-200 dark:border-darkBorder dark:bg-darkSecondary z-100 transition-all duration-100 ${
+      className={`h-full flex flex-col overflow-visible border-r border-gray-200 dark:border-darkBorder dark:bg-darkSecondary z-100 transition-all duration-100 ${
         sidebarCollapsed ? (isMobile ? "w-0" : "w-12") : "w-75"
       } ${isMobile ? "absolute" : "relative"}`}
     >
@@ -114,17 +159,13 @@ export default function Sidebar({ isMobile }) {
           sidebarCollapsed ? "justify-end items-center" : "justify-center"
         } flex border-b border-gray-200 dark:border-darkBorder gap-1 h-12 transition-all duration-100`}
       >
-        {/* <button
-          onClick={() => setShowAiPanel(!showAiPanel)}
-          className={`${
-            collapsed ? "opacity-0 hidden" : "flex-1 opacity-100"
-          } flex items-center justify-centers bg-gradient-to-r from-[#c0146b] to-[#3b64cc] border dark:border-darkBorder gap-2 my-2 text-white mx-2 px-3 py-1 rounded-lg text-sm cursor-pointer`}
-        >
-          <Sparkles className="w-4 h-4" />
-          Generate AI Template
-        </button> */}
         <button
-          onClick={() => clearScreen()}
+          onClick={() => {
+            clearScreen();
+            if (isMaximised) {
+              setIsMaximised(false);
+            }
+          }}
           disabled={isGenerating}
           className={`text-gray-400 w-full bg-gray-200 dark:bg-darkSecondary hover:bg-gray-100 dark:hover:bg-darkGrey rounded text-sm flex items-center justify-center gap-2 disabled:cursor-not-allowed cursor-pointer`}
         >
@@ -134,106 +175,56 @@ export default function Sidebar({ isMobile }) {
         {/* </div> */}
       </div>
 
-      {/* {showAiPanel && (
-        <div
-          className={`${
-            collapsed ? "opacity-0" : "opacity-100"
-          } p-4 border-b border-gray-700 bg-gray-750 transition-all duration-100`}
-        >
-          <div className="flex items-center justify-between mb-3">
-            <h3 className="text-sm font-semibold flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-purple-400" />
-              AI Generator
-            </h3>
-          </div>
-
-          <div className="space-y-3">
-            <div>
-              <label className="block text-xs text-gray-400 mb-1">
-                Component
-              </label>
-              <select
-                value={selectedType}
-                onChange={(e) => setSelectedType(e.target.value)}
-                className="w-full bg-gray-100 dark:bg-darkSecondary border border-gray-300 dark:border-darkBorder rounded-lg px-2 py-1 text-sm cursor-pointer"
-              >
-                {componentTypes.map((type, index) => (
-                  <option key={index} value={type.name}>
-                    {type.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-xs text-gray-400 mb-1">Style</label>
-              <select
-                value={selectedStyle}
-                onChange={(e) => setSelectedStyle(e.target.value)}
-                className="w-full bg-gray-100 dark:bg-darkSecondary border border-gray-300 dark:border-darkBorder rounded-lg px-2 py-1 text-sm cursor-pointer"
-              >
-                {styleOptions.map((style, index) => (
-                  <option key={index} value={style.name}>
-                    {style.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <select
-              value={selectedModel}
-              onChange={(e) => setSelectedModel(e.target.value)}
-              className="w-full bg-gray-100 dark:bg-darkSecondary border border-gray-300 dark:border-darkBorder rounded-lg px-2 py-1 text-sm cursor-pointer"
-            >
-              {AI_MODELS.map((model) => (
-                <option key={model.value} value={model.value}>
-                  {model.label}
-                </option>
-              ))}
-            </select>
-            <div className="flex gap-2">
-              <button
-                onClick={generateComponent}
-                disabled={isGenerating}
-                className={`flex-1 text-white bg-gradient-to-r from-[#c0146b] to-[#3b64cc] border dark:border-darkBorder disabled:opacity-50 px-3 py-2 rounded-lg text-sm flex items-center justify-center gap-2 ${
-                  isGenerating ? "" : " cursor-pointer"
-                }`}
-              >
-                {isGenerating ? (
-                  <>
-                    <div className="animate-spin rounded-full h-4 w-4 border-2 border-purple-300 border-t-purple-600"></div>
-                    Generating...
-                  </>
-                ) : (
-                  <>
-                    <Zap className="w-4 h-4" />
-                    Generate with AI
-                  </>
-                )}
-              </button>
-            </div>
-          </div>
-        </div>
-      )} */}
       {/* Components List */}
 
       <div
         className={`${
           sidebarCollapsed ? "opacity-0" : "opacity-100"
-        } flex-1 overflow-y-auto overflow-hidden mt-2 px-2 transition-all duration-100`}
+        } flex flex-col overflow-y-auto overflow-hidden mt-2 px-2 transition-all duration-100`}
       >
         <ul className="px-2">
           {components.map((c, i) => (
             <li
               key={i}
               onClick={() => updateActiveComponent(i)}
-              className={`p-2 text-sm text-nowrap cursor-pointer ${
+              className={`flex relative items-center justify-between p-2 text-sm text-nowrap cursor-pointer ${
                 i === activeComponentIndex
                   ? "bg-gray-200 dark:bg-neutral-800 border-l-3 border-neutral-600 rounded-lg"
                   : ""
               }`}
             >
-              {c.name}
+              <span className="min-w-0 flex-1 truncate">{c.name}</span>
+              <button
+                onMouseDown={(e) => e.stopPropagation()}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  // open menu
+                  setChatMenu(chatMenu === i ? null : i);
+                }}
+                className="p-1 rounded text-neutral-500 hover:text-gray-300 bold dark:hover:text-neutral-100 pointer"
+              >
+                <MoreHorizontal size={14} className="pointer" />
+              </button>
+              {chatMenu === i && (
+                <div className="absolute right-8 top-0 z-20 w-40 rounded-lg border border-gray-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 shadow-lg">
+                  <button
+                    onMouseDown={(e) => e.stopPropagation()}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      console.log("Edit Chat", c.id);
+                      deleteComponent(c.id, i);
+                    }}
+                    className="flex w-full px-4 py-2 text-left text-red-500 hover:bg-gray-100 dark:hover:bg-neutral-800"
+                  >
+                    <Trash
+                      width={"18px"}
+                      height={"18px"}
+                      className="bold mr-2"
+                    />
+                    Delete Chat
+                  </button>
+                </div>
+              )}
             </li>
           ))}
         </ul>
