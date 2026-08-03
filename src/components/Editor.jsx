@@ -19,6 +19,7 @@ const Editor = ({ isMobile }) => {
     setActiveEditor,
     isMaximised,
     setIsMaximised,
+    setReworkUI,
   } = useEditorContext();
 
   useEffect(() => {
@@ -36,6 +37,7 @@ const Editor = ({ isMobile }) => {
 
       setActiveComponent({
         id: c.id,
+        messages: c.prompts || [],
         name: c.name,
         html: c.html,
         css: c.css,
@@ -62,11 +64,13 @@ const Editor = ({ isMobile }) => {
           activeComponent.js,
         );
         saveComponent(
+          [],
           activeComponent.name,
           activeComponent.html,
           activeComponent.css,
           activeComponent.js,
         );
+        setReworkUI(true);
       }
     };
 

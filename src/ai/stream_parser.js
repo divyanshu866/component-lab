@@ -1,6 +1,7 @@
 // Helper function to create streaming response
 const startMarkers = {
   "###NAME_START###": "name",
+  "###MESSAGE_START###": "message",
   "###HTML_START###": "html",
   "###CSS_START###": "css",
   "###JS_START###": "js",
@@ -8,6 +9,7 @@ const startMarkers = {
 
 const endMarkers = {
   "###NAME_END###": "name",
+  "###MESSAGE_END###": "message",
   "###HTML_END###": "html",
   "###CSS_END###": "css",
   "###JS_END###": "js",
@@ -30,8 +32,8 @@ export async function createStreamingResponse(stream) {
           // Process markers and content in the accumulator
           let remaining = accumulator;
           console.log("Remaining:", remaining);
-          //No start untill lengths is greater than 16
-          while (remaining.length >= 16) {
+          //No start untill lengths is greater than 19
+          while (remaining.length >= 19) {
             if (inSection == false) {
               //Check for all markers
               let foundStartMarker = false;
@@ -50,8 +52,8 @@ export async function createStreamingResponse(stream) {
               }
               //If none of the startMarker is found
               if (foundStartMarker == false) {
-                //remove everything except last 16 characters
-                remaining = remaining.slice(-16);
+                //remove everything except last 19 characters
+                remaining = remaining.slice(-19);
                 break;
               } else {
                 //remove marker & everything before it & set inSection to true
@@ -89,8 +91,8 @@ export async function createStreamingResponse(stream) {
                 }
               }
               if (foundEndMarker == false) {
-                //Emit Everything except last 16 characters
-                const emitContent = remaining.slice(0, -16);
+                //Emit Everything except last 19 characters
+                const emitContent = remaining.slice(0, -19);
                 console.log("Emitting Content for Section:", emitContent);
                 controller.enqueue(
                   encoder.encode(
@@ -100,8 +102,8 @@ export async function createStreamingResponse(stream) {
                     })}\n\n`,
                   ),
                 );
-                //Retain last 16 characters for next iteration
-                remaining = remaining.slice(-16);
+                //Retain last 19 characters for next iteration
+                remaining = remaining.slice(-19);
                 break;
               }
               //If End marker found, emit everything before the marker and send section end signal

@@ -31,15 +31,15 @@ export async function DELETE(req, context) {
 }
 
 export async function PATCH(req, context) {
-  const { id } = await context.params; // <-- await params
+  const { id } = await context.params;
   const session = await auth();
+
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const { html, css, js, name } = await req.json();
+  const { messages = [], name, html, css, js } = await req.json();
 
-  // Ensure user owns the component
   const component = await prisma.component.findUnique({
     where: { id: Number(id) },
   });
@@ -48,10 +48,37 @@ export async function PATCH(req, context) {
     return NextResponse.json({ error: "Not Found" }, { status: 404 });
   }
 
-  // Update the component
-  const updated = await prisma.component.update({
-    where: { id: Number(id) },
-    data: { html, css, js, name },
+  const updated = await prisma.$transaction(async (tx) => {
+    await tx.component.update({
+      where: { id: Number(id) },
+      data: {
+        name,
+        html,
+        css,
+        js,
+      },
+    });
+
+    for (const [index, message] of messages.entries()) {
+      await tx.prompt.create({
+        data: {
+          componentId: Number(id),
+          role: message.role,
+          message: message.message,
+        },
+      });
+    }
+
+    return await tx.component.findUnique({
+      where: { id: Number(id) },
+      include: {
+        prompts: {
+          orderBy: {
+            id: "asc",
+          },
+        },
+      },
+    });
   });
 
   return NextResponse.json(updated, { status: 200 });

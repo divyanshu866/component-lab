@@ -15,11 +15,18 @@ export default function Navbar({ user }) {
     setShowPreview,
     sidebarCollapsed,
     setSidebarCollapsed,
+    setReworkUI,
+    updatePreview,
   } = useEditorContext();
 
   // const { isSaving, setIsSaving } = useSave();
   function reRender() {
     setShowPreview(true);
+    updatePreview(
+      activeComponent.html,
+      activeComponent.css,
+      activeComponent.js,
+    );
     setConsoleLogs([]);
     setPreviewKey(previewKey + 1);
   }
@@ -28,16 +35,15 @@ export default function Navbar({ user }) {
       (activeComponent.html || activeComponent.css || activeComponent.js) &&
       activeComponent.name
     ) {
-      console.log("SAVING......");
-      console.log(activeComponent);
       saveComponent(
+        activeComponent.messages,
         activeComponent.name,
         activeComponent.html,
         activeComponent.css,
-        activeComponent.js
+        activeComponent.js,
       );
-    } else {
-      console.log("Not SAVED");
+      setShowPreview(true);
+      setReworkUI(true);
     }
   }
 
@@ -87,14 +93,7 @@ export default function Navbar({ user }) {
 
         <div className="flex items-center justify-between py-1 h-full gap-5">
           <button
-            onClick={() =>
-              saveComponent(
-                activeComponent.name,
-                activeComponent.html,
-                activeComponent.css,
-                activeComponent.js
-              )
-            }
+            onClick={onSave}
             className="flex items-center px-4 h-full bg-gray-100 dark:bg-darkGrey border rounded-lg hover:bg-gray-200 dark:hover:bg-darkSecondary dark:border-darkBorder cursor-pointer"
           >
             <SaveAllIcon className="w-4 h-4 stroke-1" />

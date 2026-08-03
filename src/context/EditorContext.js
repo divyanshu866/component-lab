@@ -7,6 +7,19 @@ export function EditorProvider({ children }) {
   const [activeEditor, setActiveEditor] = useState("AI");
 
   const [components, setComponents] = useState([]);
+  const [reworkUI, setReworkUI] = useState(false);
+  const [activeComponent, setActiveComponent] = useState({
+    id: "",
+    messages: [],
+    name: "",
+    html: "",
+    css: "",
+    js: "",
+  });
+  const [activeComponentIndex, setActiveComponentIndex] = useState(null);
+
+  const [activeMessages, setActiveMessages] = useState([]);
+
   const [isGenerating, setIsGenerating] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
   const [isMaximised, setIsMaximised] = useState(false);
@@ -14,28 +27,20 @@ export function EditorProvider({ children }) {
 
   const [changeDesc, setChangeDesc] = useState("");
 
-  const [activeComponentIndex, setActiveComponentIndex] = useState(null);
   const [previewKey, setPreviewKey] = useState(0);
-  const [activeComponent, setActiveComponent] = useState({
-    id: "",
-    name: "",
-    html: "",
-    css: "",
-    js: "",
-  });
 
   const [isSaving, setIsSaving] = useState(false);
   const [previewCode, setPreviewCode] = useState("");
   useEffect(() => {
     updatePreview();
   }, []);
-  const saveComponent = async (name, html, css, js) => {
+  const saveComponent = async (messages, name, html, css, js) => {
     if (!name.trim()) {
       return;
     }
 
-    const payload = { name, html, css, js };
-
+    const payload = { messages, name, html, css, js };
+    console.log("Payload for saving component>>> (saveComponent()):", payload);
     if (activeComponent?.id) {
       // Update existing component
       const res = await fetch(`/api/components/${activeComponent.id}`, {
@@ -47,7 +52,11 @@ export function EditorProvider({ children }) {
       setComponents((prev) =>
         prev.map((c) => (c.id === updated.id ? updated : c)),
       );
-      console.log("Updated");
+      // set the new active component
+      setActiveComponent(updated);
+      setActiveMessages(updated.prompts || []);
+
+      console.log("Updated", updated);
     } else {
       // Create new component
       const res = await fetch("/api/components", {
@@ -60,22 +69,24 @@ export function EditorProvider({ children }) {
       console.log(components);
       setActiveComponent({
         id: created.id,
+        messages: created.prompts || [],
         name: created.name,
         html: created.html,
         css: created.css,
         js: created.js,
       }); // set the new active component
+
       setActiveComponentIndex(0);
       console.log(activeComponent);
       console.log(created);
       console.log("created.......");
     }
   };
-  const createNewComponent = async (name, html, css, js) => {
+  const createNewComponent = async (messages, name, html, css, js) => {
     if (!name.trim()) {
       return;
     }
-    const payload = { name, html, css, js };
+    const payload = { messages, name, html, css, js };
 
     // Create new component
     const res = await fetch("/api/components", {
@@ -87,14 +98,16 @@ export function EditorProvider({ children }) {
     setComponents((prev) => [created, ...prev]);
     setActiveComponent({
       id: created.id,
+      messages: messages,
       name: created.name,
       html: created.html,
       css: created.css,
       js: created.js,
     }); // set the new active component
+    // setActiveMessages(created.prompts || []); // set the new active messages
     setActiveComponentIndex(0);
 
-    console.log("created.......");
+    console.log("created.......", created);
   };
   const updatePreview = (html = "", css = "", js = "") => {
     const boilerCss = `body {
@@ -193,6 +206,8 @@ export function EditorProvider({ children }) {
     <EditorContext.Provider
       value={{
         activeEditor,
+        activeMessages,
+        setActiveMessages,
         setActiveEditor,
         activeComponent,
         setActiveComponent,
@@ -219,6 +234,8 @@ export function EditorProvider({ children }) {
         setIsSaving,
         isMaximised,
         setIsMaximised,
+        reworkUI,
+        setReworkUI,
       }}
     >
       {children}

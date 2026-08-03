@@ -75,7 +75,30 @@ model Component{
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  prompts   Prompt[]  //Added relation to prompt
+
   //relation back to user
   user User @relation(fields: [userId],references: [id])
   userId String
+
+  @@index([userId])
+
+}
+enum PromptRole {
+  USER
+  ASSISTANT
+}
+// Added Conversation history per component
+model Prompt {
+  id Int @id @default(autoincrement())
+  role PromptRole
+
+  message String
+
+  componentId Int
+  component Component @relation(fields: [componentId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@index([componentId, createdAt])
 }

@@ -24,6 +24,7 @@ export default function Sidebar({ isMobile }) {
   }, [selectedModel]);
   const {
     components,
+    setActiveMessages,
     setComponents,
     activeComponent,
     setActiveComponent,
@@ -39,6 +40,8 @@ export default function Sidebar({ isMobile }) {
     updatePreview,
     sidebarCollapsed,
     setSidebarCollapsed,
+    reworkUI,
+    setReworkUI,
     isMaximised,
     setIsMaximised,
   } = useEditorContext();
@@ -78,13 +81,17 @@ export default function Sidebar({ isMobile }) {
   }, []);
 
   function updateActiveComponent(index) {
+    //prevent switching components while generating
     if (isGenerating) {
       return;
     }
     setShowPreview(true);
-
     setActiveComponentIndex(index);
-
+    if (index != null && index >= 0) {
+      setReworkUI(true);
+    }
+    setActiveMessages(components[index]?.prompts || []);
+    console.log("activeComponent>>>#####>>>", activeComponent);
     setChangeDesc("");
   }
   useEffect(() => {
@@ -93,6 +100,7 @@ export default function Sidebar({ isMobile }) {
       if (res.ok) {
         const data = await res.json();
         setComponents(data);
+        console.log("Fetched components>>>>:", data);
       } else {
         console.error("Failed to fetch components");
       }
@@ -103,9 +111,9 @@ export default function Sidebar({ isMobile }) {
     if (isGenerating) {
       return;
     }
-    console.log("cleared");
+    setActiveMessages([]);
+    setReworkUI(false);
     setShowPreview(false);
-
     setActiveComponentIndex(null);
 
     if (true) {
@@ -120,7 +128,7 @@ export default function Sidebar({ isMobile }) {
     }
     setConsoleLogs([]);
     updatePreview();
-    console.log();
+    console.log("cleared");
   };
 
   return (

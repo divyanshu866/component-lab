@@ -13,17 +13,24 @@ import {
 } from "lucide-react";
 import { useConsole } from "@/context/ConsoleContext";
 import { AI_MODELS } from "@/ai/models";
+import ChatBox from "./ChatList";
+import ChatList from "./ChatList";
 
 const AIEditor = ({ isMobile }) => {
   const [selectedModel, setSelectedModel] = useState(AI_MODELS[0].value);
   const { setConsoleLogs } = useConsole();
   const {
+    components,
+    activeMessages,
+    setActiveMessages,
     activeEditor,
     setActiveEditor,
     activeComponent,
     setActiveComponent,
     activeComponentIndex,
     setActiveComponentIndex,
+    reworkUI,
+    setReworkUI,
     createNewComponent,
     previewKey,
     setPreviewKey,
@@ -468,14 +475,35 @@ const AIEditor = ({ isMobile }) => {
       console.log("EMPTY");
       return;
     }
+
     try {
       clearScreen();
+      setReworkUI(true);
+      let latestMessages = [...activeMessages];
+      const userMessage = {
+        id: null,
+        role: "USER",
+        message: changeDesc,
+        componentId: null,
+        createdAt: null,
+      };
+      setChangeDesc("");
+      const assistantPlaceholder = {
+        id: null,
+        role: "ASSISTANT",
+        message: "",
+        componentId: null,
+        createdAt: null,
+      };
+      latestMessages = [...latestMessages, userMessage, assistantPlaceholder];
+      setActiveMessages(latestMessages);
       setShowPreview(true);
       setIsGenerating(true);
 
       // Initialize streaming component
       const streamingComp = {
         name: "",
+        message: activeMessages,
         html: "",
         css: "",
         js: "",
@@ -489,7 +517,7 @@ const AIEditor = ({ isMobile }) => {
         body: JSON.stringify({
           component_type: selectedType,
           component_style: selectedStyle,
-          desc: changeDesc,
+          desc: userMessage.message,
           model: selectedModel,
         }),
       });
@@ -521,8 +549,23 @@ const AIEditor = ({ isMobile }) => {
 
               if (data.type === "name") {
                 streamingComp.name += data.content;
+              } else if (data.type === "message") {
+                // latestMessages[1].message += data.content;
+                // setActiveMessages(latestMessages);
+                const nextMessages = latestMessages.map((msg, index) =>
+                  index === latestMessages.length - 1 &&
+                  msg.role === "ASSISTANT"
+                    ? {
+                        ...msg,
+                        message: `${msg.message || ""}${data.content || ""}`,
+                      }
+                    : msg,
+                );
+
+                latestMessages = nextMessages;
+                setActiveMessages(nextMessages);
               } else if (data.type === "html") {
-                setActiveEditor("HTML");
+                // setActiveEditor("HTML");
                 streamingComp.html += data.content;
                 setActiveComponent({ ...streamingComp });
                 updatePreview(
@@ -531,7 +574,7 @@ const AIEditor = ({ isMobile }) => {
                   streamingComp.js,
                 );
               } else if (data.type === "css") {
-                setActiveEditor("CSS");
+                // setActiveEditor("CSS");
                 streamingComp.css += data.content;
                 setActiveComponent({ ...streamingComp });
                 updatePreview(
@@ -540,7 +583,7 @@ const AIEditor = ({ isMobile }) => {
                   streamingComp.js,
                 );
               } else if (data.type === "js") {
-                setActiveEditor("JS");
+                // setActiveEditor("JS");
                 streamingComp.js += data.content;
                 setActiveComponent({ ...streamingComp });
                 updatePreview(
@@ -555,7 +598,12 @@ const AIEditor = ({ isMobile }) => {
           } else if (event.startsWith("event: end")) {
             // Streaming complete
             setIsGenerating(false);
+            console.log(
+              "Active Messages at the end of streaming:",
+              latestMessages,
+            );
             createNewComponent(
+              latestMessages,
               streamingComp.name,
               streamingComp.html,
               streamingComp.css,
@@ -586,11 +634,30 @@ const AIEditor = ({ isMobile }) => {
     try {
       setShowPreview(true);
       setIsGenerating(true);
+      let latestMessages = [...activeMessages];
+      const userMessage = {
+        id: null,
+        role: "USER",
+        message: changeDesc,
+        componentId: activeComponent.id,
+        createdAt: null,
+      };
+      setChangeDesc("");
+      const assistantPlaceholder = {
+        id: null,
+        role: "ASSISTANT",
+        message: "",
+        componentId: activeComponent.id,
+        createdAt: null,
+      };
+      latestMessages = [...latestMessages, userMessage, assistantPlaceholder];
+      setActiveMessages((prev) => [...prev, latestMessages]);
 
       // Initialize streaming component with existing values
       const streamingComp = {
         id: activeComponent.id,
         name: "",
+        message: activeMessages,
         html: "",
         css: "",
         js: "",
@@ -607,7 +674,7 @@ const AIEditor = ({ isMobile }) => {
           html: activeComponent.html,
           css: activeComponent.css,
           js: activeComponent.js,
-          changes: changeDesc,
+          changes: userMessage.message,
           model: selectedModel,
         }),
       });
@@ -637,8 +704,24 @@ const AIEditor = ({ isMobile }) => {
               if (data.type === "name") {
                 streamingComp.name += data.content;
                 setActiveComponent({ ...streamingComp });
+              } else if (data.type === "message") {
+                // latestMessages[latestMessages.length - 1].message +=
+                //   data.content;
+                // setActiveMessages(latestMessages);
+                const nextMessages = latestMessages.map((msg, index) =>
+                  index === latestMessages.length - 1 &&
+                  msg.role === "ASSISTANT"
+                    ? {
+                        ...msg,
+                        message: `${msg.message || ""}${data.content || ""}`,
+                      }
+                    : msg,
+                );
+
+                latestMessages = nextMessages;
+                setActiveMessages(nextMessages);
               } else if (data.type === "html") {
-                setActiveEditor("HTML");
+                // setActiveEditor("HTML");
                 streamingComp.html += data.content;
                 setActiveComponent({ ...streamingComp });
                 updatePreview(
@@ -647,7 +730,7 @@ const AIEditor = ({ isMobile }) => {
                   streamingComp.js,
                 );
               } else if (data.type === "css") {
-                setActiveEditor("CSS");
+                // setActiveEditor("CSS");
                 streamingComp.css += data.content;
                 setActiveComponent({ ...streamingComp });
                 updatePreview(
@@ -656,7 +739,7 @@ const AIEditor = ({ isMobile }) => {
                   streamingComp.js,
                 );
               } else if (data.type === "js") {
-                setActiveEditor("JS");
+                // setActiveEditor("JS");
                 streamingComp.js += data.content;
                 setActiveComponent({ ...streamingComp });
                 updatePreview(
@@ -672,6 +755,24 @@ const AIEditor = ({ isMobile }) => {
             // Streaming complete
             setIsGenerating(false);
             setChangeDesc("");
+            console.log(
+              "Active Messages at the end of rework streaming:",
+              latestMessages,
+            );
+            const updated = await saveComponent(
+              [
+                latestMessages[latestMessages.length - 2],
+                latestMessages[latestMessages.length - 1],
+              ],
+              streamingComp.name,
+              streamingComp.html,
+              streamingComp.css,
+              streamingComp.js,
+            );
+
+            // Update existing component
+
+            console.log("Updated");
             console.log("Streaming rework complete");
             return;
           } else if (event.startsWith("event: error")) {
@@ -699,6 +800,7 @@ const AIEditor = ({ isMobile }) => {
       console.log("name==>", name);
       setActiveComponent({
         id: "",
+        messages: [],
         name: name,
         html: html,
         css: css,
@@ -713,8 +815,9 @@ const AIEditor = ({ isMobile }) => {
     <div
       className={`${
         activeEditor == "AI" ? "" : "hidden"
-      } flex h-full w-full mx-auto flex-col items-center justify-start flex-1 px-20 relative transition-all duration-200`}
+      } flex h-full w-full mx-auto flex-col items-center justify-start flex-1 relative transition-all duration-200 overflow-hidden`}
     >
+      {/* Model Selection */}
       <select
         value={selectedModel}
         onChange={(e) => setSelectedModel(e.target.value)}
@@ -726,110 +829,103 @@ const AIEditor = ({ isMobile }) => {
           </option>
         ))}
       </select>
-      <h1 className="lg:text-3xl xl:text-5xl mt-[20vh] text-center font-sans font-bold mb-10 pb-2 bg-gradient-to-r from-pink-600 to-purple-500 bg-clip-text text-transparent">
-        {activeComponent.id
-          ? "Describe Your Changes"
-          : "Describe Your Component"}
-      </h1>
       <div
-        className={`${
-          activeComponent.id == "" ? "" : "hidden"
-        } flex gap-4 w-full max-w-3xl mb-7`}
+        className={`w-full h-full flex flex-col ${reworkUI ? "justify-end" : "justify-center"} mt-12 mb-3.5 gap-3.5 items-center overflow-hidden`}
       >
-        <select
-          value={selectedType}
-          onChange={(e) => setSelectedType(e.target.value)}
-          name="select"
-          className="w-full bg-gray-100 dark:bg-darkSecondary border border-gray-300 dark:border-darkBorder rounded-lg px-2 py-1 text-sm transition-all duration-200 cursor-pointer"
-        >
-          <option className="dark:text-gray-900" value={"custom type"}>
-            {"Custom type"}
-          </option>
-          {componentTypes.map((type, index) => (
-            <option key={index} value={type.name}>
-              {type.name}
-            </option>
-          ))}
-        </select>
-        <select
-          value={selectedStyle}
-          onChange={(e) => setSelectedStyle(e.target.value)}
-          className="w-full bg-gray-100 dark:bg-darkSecondary border border-gray-300 dark:border-darkBorder rounded-lg px-2 py-1 text-sm transition-all duration-200 cursor-pointer"
-        >
-          <option className="dark:text-gray-900" value={"Custom style"}>
-            {"Custom style"}
-          </option>
-          {styleOptions.map((style, index) => (
-            <option key={index} value={style.name}>
-              {style.name}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      <div className="w-full max-w-4xl flex flex-col justify-center items-center transition-all bg-neutral-800/70 border dark:border-darkBorder rounded-2xl overflow-hidden duration-500">
-        <textarea
-          value={changeDesc}
-          onChange={(e) => {
-            setChangeDesc(e.target.value);
-            e.target.style.height = "auto";
-            e.target.style.height = `${e.target.scrollHeight}px`;
-          }}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" && !e.shiftKey) {
-              e.preventDefault();
-              activeComponent.id == "" ? generateComponent() : rework();
-            }
-          }}
-          rows={1}
-          placeholder={
-            activeComponent.id
-              ? "Describe what you'd like to change about this component..."
-              : "Describe your component in detail. Include functionality, appearance, and behavior..."
-          }
-          className="w-full m-0 font-sans text-md resize-none rounded-xl text-white p-4 outline-none placeholder-neutral-600 max-h-64 transition-all duration-200"
-        />
-        {/* <div className="absolute bottom-3 right-3 text-xs text-neutral-500">
-          {changeDesc.length} characters
-        </div> */}
-        <div className="w-full m-0">
-          <button
-            onClick={activeComponent.id == "" ? generateComponent : rework}
-            disabled={
-              isGenerating ||
-              (activeComponent.id == "" ? changeDesc == "" : changeDesc == "")
-            }
-            className={`ml-auto border mr-1 mb-1 mt-1 dark:bg-neutral-300 dark:border-darkBorder disabled:opacity-50 disabled:cursor-not-allowed px-2 py-2 rounded-xl text-sm flex items-center justify-center gap-2 ${
-              isGenerating ? "" : "cursor-pointer"
-            }`}
+        {/* Chat List */}
+        <ChatList />
+        {/* heading/textarea container */}
+        <div className="w-full px-3.5 flex flex-col justify-center items-center max-w-4xl">
+          <h1
+            className={` ${reworkUI ? "hidden" : ""} lg:text-3xl xl:text-5xl text-center font-sans font-bold mb-12 bg-gradient-to-r from-pink-600 to-purple-500 bg-clip-text text-transparent`}
           >
-            {isGenerating ? (
-              <>
-                <div className="animate-spin rounded-full h-4 w-4 border-2 border-neutral-300 border-t-neutral-600"></div>
-              </>
-            ) : (
-              <>
-                <ArrowUp className="w-4 h-4 stroke-black" />
-                {/* {activeComponent.id == "" ? "Generate" : "Make Edits"} */}
-              </>
-            )}
-          </button>
+            Describe Your Component
+          </h1>
+          <div className={`${reworkUI ? "hidden" : ""} flex gap-4 w-full mb-7`}>
+            <select
+              value={selectedType}
+              onChange={(e) => setSelectedType(e.target.value)}
+              name="select"
+              className="w-full bg-gray-100 dark:bg-darkSecondary border border-gray-300 dark:border-darkBorder rounded-lg px-2 py-1 text-sm transition-all duration-200 cursor-pointer"
+            >
+              <option className="dark:text-gray-900" value={"custom type"}>
+                {"Custom type"}
+              </option>
+              {componentTypes.map((type, index) => (
+                <option key={index} value={type.name}>
+                  {type.name}
+                </option>
+              ))}
+            </select>
+            <select
+              value={selectedStyle}
+              onChange={(e) => setSelectedStyle(e.target.value)}
+              className="w-full bg-gray-100 dark:bg-darkSecondary border border-gray-300 dark:border-darkBorder rounded-lg px-2 py-1 text-sm transition-all duration-200 cursor-pointer"
+            >
+              <option className="dark:text-gray-900" value={"Custom style"}>
+                {"Custom style"}
+              </option>
+              {styleOptions.map((style, index) => (
+                <option key={index} value={style.name}>
+                  {style.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div
+            className={`${reworkUI ? "" : ""} w-full flex flex-col  items-center transition-all bg-neutral-800/70 border dark:border-darkBorder rounded-2xl overflow-hidden duration-500`}
+          >
+            <textarea
+              value={changeDesc}
+              disabled={isGenerating}
+              onChange={(e) => {
+                setChangeDesc(e.target.value);
+                e.target.style.height = "auto";
+                e.target.style.height = `${e.target.scrollHeight}px`;
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault();
+                  activeComponent.id == "" ? generateComponent() : rework();
+                }
+              }}
+              rows={1}
+              placeholder={
+                activeComponent.id
+                  ? "Describe changes"
+                  : "Describe your component"
+              }
+              className="w-full m-0 font-sans text-md resize-none rounded-xl text-white p-4 outline-none placeholder-neutral-600 max-h-64 transition-all duration-200"
+            />
+
+            <div className="w-full m-0">
+              <button
+                onClick={activeComponent.id == "" ? generateComponent : rework}
+                disabled={
+                  isGenerating ||
+                  (activeComponent.id == ""
+                    ? changeDesc == ""
+                    : changeDesc == "")
+                }
+                className={`ml-auto border mr-1 mb-1 mt-1 dark:bg-neutral-300 dark:border-darkBorder disabled:opacity-50 disabled:cursor-not-allowed px-2 py-2 rounded-xl text-sm flex items-center justify-center gap-2 ${
+                  isGenerating ? "" : "cursor-pointer"
+                }`}
+              >
+                {isGenerating ? (
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 border-2 border-neutral-300 border-t-neutral-600"></div>
+                  </>
+                ) : (
+                  <>
+                    <ArrowUp className="w-4 h-4 stroke-black" />
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
         </div>
       </div>
-      {activeComponent.id != "" && (
-        <div className="mt-10 text-neutral-600 rounded-lg text-sm font-sans text-center">
-          <h3>Click to focus on Editor</h3>
-          <h3 className="flex items-center justify-center">
-            Command (<Command className="w-3 h-3" />) + S to save on Mac
-          </h3>
-
-          <h3>or</h3>
-
-          <h3 className="flex items-center justify-center">
-            Ctrl (<ChevronUp className="w-3 h-3" />) + S to save on Windows
-          </h3>
-        </div>
-      )}
     </div>
   );
 };
