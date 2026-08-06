@@ -8,6 +8,8 @@ import { useConsole } from "@/context/ConsoleContext";
 
 const Editor = ({ user, isMobile }) => {
   const {
+    setSelectedType,
+    setSelectedStyle,
     activeComponent,
     setActiveComponent,
     updatePreview,
@@ -94,7 +96,8 @@ const Editor = ({ user, isMobile }) => {
         setActiveMessages([]);
         setReworkUI(false);
         setActiveComponentIndex(null);
-
+        setSelectedType("Custom type");
+        setSelectedStyle("Custom style");
         setActiveComponent({
           id: "",
           messages: [],

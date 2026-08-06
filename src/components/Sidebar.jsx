@@ -25,6 +25,8 @@ export default function Sidebar({ isMobile }) {
     console.log(selectedModel);
   }, [selectedModel]);
   const {
+    setSelectedType,
+    setSelectedStyle,
     components,
     setActiveMessages,
     setComponents,
@@ -113,6 +115,9 @@ export default function Sidebar({ isMobile }) {
     if (isGenerating) {
       return;
     }
+
+    setSelectedType("Custom type");
+    setSelectedStyle("Custom style");
     setActiveMessages([]);
     setReworkUI(false);
     setShowPreview(false);

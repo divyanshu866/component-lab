@@ -4,6 +4,8 @@ import { createContext, useState, useContext, useEffect } from "react";
 const EditorContext = createContext();
 
 export function EditorProvider({ children }) {
+  const [selectedType, setSelectedType] = useState();
+  const [selectedStyle, setSelectedStyle] = useState();
   const [activeEditor, setActiveEditor] = useState("AI");
 
   const [components, setComponents] = useState([]);
@@ -205,6 +207,10 @@ export function EditorProvider({ children }) {
   return (
     <EditorContext.Provider
       value={{
+        selectedType,
+        setSelectedType,
+        selectedStyle,
+        setSelectedStyle,
         activeEditor,
         activeMessages,
         setActiveMessages,

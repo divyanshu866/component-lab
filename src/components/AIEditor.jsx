@@ -41,6 +41,10 @@ const AIEditor = ({ user, isMobile }) => {
     setShowPreview,
     updatePreview,
     setIsGenerating,
+    selectedType,
+    setSelectedType,
+    selectedStyle,
+    setSelectedStyle,
   } = useEditorContext();
 
   const [componentTypes, setComponentTypes] = useState([
@@ -466,9 +470,6 @@ const AIEditor = ({ user, isMobile }) => {
     },
   ]);
 
-  const [selectedType, setSelectedType] = useState();
-  const [selectedStyle, setSelectedStyle] = useState();
-
   const generateComponent = async () => {
     if (!changeDesc.trim()) {
       console.log("EMPTY");
@@ -476,7 +477,6 @@ const AIEditor = ({ user, isMobile }) => {
     }
 
     try {
-      clearScreen();
       setReworkUI(true);
       let latestMessages = [...activeMessages];
       const userMessage = {
@@ -526,6 +526,8 @@ const AIEditor = ({ user, isMobile }) => {
       }
 
       const reader = response.body.getReader();
+      // Reset the editor now that the stream has been established.
+      clearScreen();
       const decoder = new TextDecoder();
       let buffer = "";
 
@@ -792,20 +794,20 @@ const AIEditor = ({ user, isMobile }) => {
     }
   }
   const clearScreen = (name = "", html = "", css = "", js = "") => {
-    console.log("cleared");
+    console.log("Editor cleared from AI-EDITOR");
+    setSelectedType("Custom type");
+    setSelectedStyle("Custom style");
     setActiveComponentIndex(null);
 
-    if (true) {
-      console.log("name==>", name);
-      setActiveComponent({
-        id: "",
-        messages: [],
-        name: name,
-        html: html,
-        css: css,
-        js: js,
-      });
-    }
+    setActiveComponent({
+      id: "",
+      messages: [],
+      name: name,
+      html: html,
+      css: css,
+      js: js,
+    });
+
     setConsoleLogs([]);
     updatePreview();
     console.log();
