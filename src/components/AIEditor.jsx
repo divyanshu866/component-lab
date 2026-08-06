@@ -1,6 +1,7 @@
 "use client";
 import React, { act, useState } from "react";
 import { useEditorContext } from "@/context/EditorContext";
+import { SlidersHorizontal } from "lucide-react";
 import {
   ArrowUp,
   ChevronUp,
@@ -18,6 +19,7 @@ import ChatList from "./ChatList";
 const AIEditor = ({ user, isMobile }) => {
   const [selectedModel, setSelectedModel] = useState(AI_MODELS[0].value);
   const { setConsoleLogs } = useConsole();
+  const [showFilters, setShowFilters] = useState(false);
   const {
     components,
     activeMessages,
@@ -830,6 +832,7 @@ const AIEditor = ({ user, isMobile }) => {
           </option>
         ))}
       </select>
+
       <div
         className={`w-full h-full flex flex-col ${reworkUI ? "justify-end" : "justify-center"} mt-12 gap-1 items-center overflow-hidden`}
       >
@@ -844,8 +847,18 @@ const AIEditor = ({ user, isMobile }) => {
           >
             Good to see you, {user.name}!
           </h1>
+
+          {/* {showFilters && ( */}
           <div
-            className={`${reworkUI ? "hidden" : ""} flex gap-4 w-full mb-7 px-4`}
+            className={`flex justify-between items-center w-full gap-5 px-4
+    overflow-hidden transition-all duration-300 ease-out
+    ${reworkUI ? "hidden" : ""}
+    ${
+      showFilters
+        ? "max-h-32 opacity-100 translate-y-0 mb-5 pointer-events-auto"
+        : "max-h-0 opacity-0 -translate-y-2 mb-0 pointer-events-none"
+    }
+  `}
           >
             <select
               value={selectedType}
@@ -877,6 +890,7 @@ const AIEditor = ({ user, isMobile }) => {
               ))}
             </select>
           </div>
+          {/* )} */}
           <div className="w-full h-full">
             <div className="flex items-end text-center gap-3 rounded-4xl pl-4 mx-4 border border-neutral-800 bg-neutral-900 p-1 transition-all duration-200 focus-within:border-purple-500/40]">
               <textarea
@@ -905,13 +919,26 @@ const AIEditor = ({ user, isMobile }) => {
                 }}
                 className="self-center max-h-55 flex-1 resize-none overflow-y-auto bg-transparent text-md leading-6 text-white placeholder-neutral-500 outline-none"
               />
-              <div>
+
+              <div className="flex gap-3">
+                {!reworkUI && (
+                  <button
+                    onClick={() => {
+                      setShowFilters((v) => !v);
+                      setSelectedType("Custom type");
+                      setSelectedStyle("Custom style");
+                    }}
+                    className={`${showFilters ? "text-orange-400 hover:text-orange-300" : "text-neutral-500 hover:text-white"} flex items-center justify-center rounded-full bg-transparent transition cursor-pointer`}
+                  >
+                    <SlidersHorizontal size={16} />
+                  </button>
+                )}
                 <button
                   onClick={
                     activeComponent.id === "" ? generateComponent : rework
                   }
                   disabled={isGenerating || !changeDesc.trim()}
-                  className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-black transition hover:bg-neutral-200 disabled:cursor-not-allowed disabled:opacity-40"
+                  className="flex p-3 items-center justify-center rounded-full bg-white text-black transition hover:bg-neutral-200 cursor-pointer disabled:cursor-not-allowed disabled:opacity-40"
                 >
                   {isGenerating ? (
                     <div className="h-4 w-4 animate-spin rounded-full border-2 border-neutral-400 border-t-black" />
