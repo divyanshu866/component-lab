@@ -15,8 +15,7 @@ import { useConsole } from "@/context/ConsoleContext";
 import { AI_MODELS } from "@/ai/models";
 import ChatBox from "./ChatList";
 import ChatList from "./ChatList";
-
-const AIEditor = ({ isMobile }) => {
+const AIEditor = ({ user, isMobile }) => {
   const [selectedModel, setSelectedModel] = useState(AI_MODELS[0].value);
   const { setConsoleLogs } = useConsole();
   const {
@@ -764,10 +763,10 @@ const AIEditor = ({ isMobile }) => {
                 latestMessages[latestMessages.length - 2],
                 latestMessages[latestMessages.length - 1],
               ],
-              streamingComp.name,
-              streamingComp.html,
-              streamingComp.css,
-              streamingComp.js,
+              streamingComp.name.trim(),
+              streamingComp.html.trim(),
+              streamingComp.css.trim(),
+              streamingComp.js.trim(),
             );
 
             // Update existing component
@@ -815,13 +814,13 @@ const AIEditor = ({ isMobile }) => {
     <div
       className={`${
         activeEditor == "AI" ? "" : "hidden"
-      } flex h-full w-full mx-auto flex-col items-center justify-start flex-1 relative transition-all duration-200 overflow-hidden`}
+      } flex h-full w-full mx-auto flex-col items-center justify-start flex-1 relative transition-all duration-200 overflow-hidden bg-transparent`}
     >
       {/* Model Selection */}
       <select
         value={selectedModel}
         onChange={(e) => setSelectedModel(e.target.value)}
-        className="w-full max-w-52 text-left text-neutral-400 dark:bg-transparent border-none outline-0 border-gray-300 dark:border-darkBorder rounded-lg py-1 ml-2 mt-2 text-md cursor-pointer absolute top-1 left-0"
+        className="w-full max-w-52 h-12 text-left text-neutral-200 dark:bg-transparent border-none outline-0 border-gray-300 dark:border-darkBorder rounded-lg py-0 my-0 mx-4 text-sm cursor-pointer absolute top-0 left-0"
       >
         {AI_MODELS.map((model) => (
           <option key={model.value} value={model.value}>
@@ -830,23 +829,27 @@ const AIEditor = ({ isMobile }) => {
         ))}
       </select>
       <div
-        className={`w-full h-full flex flex-col ${reworkUI ? "justify-end" : "justify-center"} mt-12 mb-3.5 gap-3.5 items-center overflow-hidden`}
+        className={`w-full h-full flex flex-col ${reworkUI ? "justify-end" : "justify-center"} mt-12 gap-1 items-center overflow-hidden`}
       >
         {/* Chat List */}
         <ChatList />
         {/* heading/textarea container */}
-        <div className="w-full px-3.5 flex flex-col justify-center items-center max-w-4xl">
+        <div
+          className={`${reworkUI ? "absolute bottom-4" : "absolute bottom-[50%]"} w-full flex flex-col justify-center items-center max-w-5xl`}
+        >
           <h1
-            className={` ${reworkUI ? "hidden" : ""} lg:text-3xl xl:text-5xl text-center font-sans font-bold mb-12 bg-gradient-to-r from-pink-600 to-purple-500 bg-clip-text text-transparent`}
+            className={` ${reworkUI ? "hidden" : ""} lg:text-3xl xl:text-4xl text-center font-sans font-medium mb-12 bg-linear-to-r from-pink-700 to-purple-700 bg-clip-text text-transparent`}
           >
-            Describe Your Component
+            Good to see you, {user.name}!
           </h1>
-          <div className={`${reworkUI ? "hidden" : ""} flex gap-4 w-full mb-7`}>
+          <div
+            className={`${reworkUI ? "hidden" : ""} flex gap-4 w-full mb-7 px-4`}
+          >
             <select
               value={selectedType}
               onChange={(e) => setSelectedType(e.target.value)}
               name="select"
-              className="w-full bg-gray-100 dark:bg-darkSecondary border border-gray-300 dark:border-darkBorder rounded-lg px-2 py-1 text-sm transition-all duration-200 cursor-pointer"
+              className="w-full bg-gray-100 dark:bg-darkSecondary border border-gray-300 dark:border-darkBorder rounded-full px-3 py-2 text-md transition-all duration-200 cursor-pointer"
             >
               <option className="dark:text-gray-900" value={"custom type"}>
                 {"Custom type"}
@@ -860,7 +863,7 @@ const AIEditor = ({ isMobile }) => {
             <select
               value={selectedStyle}
               onChange={(e) => setSelectedStyle(e.target.value)}
-              className="w-full bg-gray-100 dark:bg-darkSecondary border border-gray-300 dark:border-darkBorder rounded-lg px-2 py-1 text-sm transition-all duration-200 cursor-pointer"
+              className="w-full bg-gray-100 dark:bg-darkSecondary border border-gray-300 dark:border-darkBorder rounded-full px-3 py-2  text-md transition-all duration-200 cursor-pointer"
             >
               <option className="dark:text-gray-900" value={"Custom style"}>
                 {"Custom style"}
@@ -872,56 +875,49 @@ const AIEditor = ({ isMobile }) => {
               ))}
             </select>
           </div>
-
-          <div
-            className={`${reworkUI ? "" : ""} w-full flex flex-col  items-center transition-all bg-neutral-800/70 border dark:border-darkBorder rounded-2xl overflow-hidden duration-500`}
-          >
-            <textarea
-              value={changeDesc}
-              disabled={isGenerating}
-              onChange={(e) => {
-                setChangeDesc(e.target.value);
-                e.target.style.height = "auto";
-                e.target.style.height = `${e.target.scrollHeight}px`;
-              }}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && !e.shiftKey) {
-                  e.preventDefault();
-                  activeComponent.id == "" ? generateComponent() : rework();
+          <div className="w-full h-full">
+            <div className="flex items-end text-center gap-3 rounded-4xl pl-4 mx-4 border border-neutral-800 bg-neutral-900 p-1 transition-all duration-200 focus-within:border-purple-500/40]">
+              <textarea
+                value={changeDesc}
+                disabled={isGenerating}
+                rows={1}
+                placeholder={
+                  activeComponent.id
+                    ? "Describe changes..."
+                    : "Describe your component..."
                 }
-              }}
-              rows={1}
-              placeholder={
-                activeComponent.id
-                  ? "Describe changes"
-                  : "Describe your component"
-              }
-              className="w-full m-0 font-sans text-md resize-none rounded-xl text-white p-4 outline-none placeholder-neutral-600 max-h-64 transition-all duration-200"
-            />
+                onChange={(e) => {
+                  setChangeDesc(e.target.value);
 
-            <div className="w-full m-0">
-              <button
-                onClick={activeComponent.id == "" ? generateComponent : rework}
-                disabled={
-                  isGenerating ||
-                  (activeComponent.id == ""
-                    ? changeDesc == ""
-                    : changeDesc == "")
-                }
-                className={`ml-auto border mr-1 mb-1 mt-1 dark:bg-neutral-300 dark:border-darkBorder disabled:opacity-50 disabled:cursor-not-allowed px-2 py-2 rounded-xl text-sm flex items-center justify-center gap-2 ${
-                  isGenerating ? "" : "cursor-pointer"
-                }`}
-              >
-                {isGenerating ? (
-                  <>
-                    <div className="animate-spin rounded-full h-4 w-4 border-2 border-neutral-300 border-t-neutral-600"></div>
-                  </>
-                ) : (
-                  <>
-                    <ArrowUp className="w-4 h-4 stroke-black" />
-                  </>
-                )}
-              </button>
+                  e.target.style.height = "0px";
+                  e.target.style.height = `${Math.min(
+                    e.target.scrollHeight,
+                    220,
+                  )}px`;
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault();
+                    activeComponent.id === "" ? generateComponent() : rework();
+                  }
+                }}
+                className="self-center max-h-55 flex-1 resize-none overflow-y-auto bg-transparent text-md leading-6 text-white placeholder-neutral-500 outline-none"
+              />
+              <div>
+                <button
+                  onClick={
+                    activeComponent.id === "" ? generateComponent : rework
+                  }
+                  disabled={isGenerating || !changeDesc.trim()}
+                  className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-black transition hover:bg-neutral-200 disabled:cursor-not-allowed disabled:opacity-40"
+                >
+                  {isGenerating ? (
+                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-neutral-400 border-t-black" />
+                  ) : (
+                    <ArrowUp className="h-4 w-4" />
+                  )}
+                </button>
+              </div>
             </div>
           </div>
         </div>

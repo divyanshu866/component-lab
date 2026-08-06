@@ -22,11 +22,11 @@ const Preview = ({ isMobile }) => {
             ? "w-full h-full absolute mt-10 bg-white"
             : isMaximised
               ? "w-full justify-self-end"
-              : "w-[50%]"
+              : "w-[45%]"
           : "w-0 opacity-0"
       } ${
         isMobile ? "" : ""
-      }  flex h-full justify-center items-center border-l border-gray-200 dark:border-darkBorder relative transition-all duration-200`}
+      }  flex h-full justify-center items-center border-l rounded-2xl overflow-hidden border-gray-200 dark:border-darkBorder relative transition-all duration-200`}
       //   dangerouslySetInnerHTML={{ __html: html }}
     >
       <button

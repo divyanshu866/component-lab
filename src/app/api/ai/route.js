@@ -333,28 +333,33 @@ MESSAGE RULES:
 </html>
 
 <css>
-Always begin CSS with this exactly:
+Always begin CSS with this reset exactly:
 
-html, body {
+html,
+body {
   margin: 0;
   padding: 0;
-  width: 100%;
-  height: 100%;
   box-sizing: border-box;
   font-family: system-ui, -apple-system, sans-serif;
 }
 
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: inherit;
 }
 
+Only add width, height, min-height, flexbox centering or other page-level layout styles when they are required by the requested component.
+
 Then:
-- Center standalone components using Flexbox when appropriate.
-- Components must work well on both desktop and mobile.
+- Standalone UI components (buttons, cards, forms, loaders, badges, etc.) should be centered within the viewport using Flexbox when appropriate.
+- Full-page layouts (landing pages, dashboards, settings pages, admin panels, documentation, pricing pages, blogs, etc.) must define their own layout and must NOT be vertically centered.
+- Components must work well on desktop and mobile.
 - Use CSS custom properties only for values reused multiple times.
 - Include appropriate :hover, :focus and :active states.
 - Use Flexbox, Grid and responsive sizing where appropriate.
 - Keep spacing, typography and visual hierarchy clean and balanced.
+- Do not rely on parent styles or external CSS resets beyond the required reset above.
 - One property per line with consistent 2-space indentation and blank lines between rule blocks.
 </css>
 
@@ -616,14 +621,19 @@ MESSAGE RULES:
 - Preserve ARIA attributes unless they need updating.
 - Interactive elements must remain keyboard accessible.
 - HTML must be valid and avoid unnecessary wrapper elements.
+- Components must be self-contained and render correctly when inserted directly into the document body.
 </html>
 
 <css>
-- Preserve the existing CSS reset exactly as provided.
+
+- Standalone UI components (buttons, cards, forms, loaders, badges, etc.) should be centered within the viewport using Flexbox when appropriate.
+- Full-page layouts (landing pages, dashboards, settings pages, admin panels, documentation, pricing pages, blogs, etc.) must define their own layout and must NOT be vertically centered.
+- Components must work well on desktop and mobile.
 - Use CSS custom properties only for values reused multiple times.
-- Preserve existing selectors whenever possible.
 - Include appropriate :hover, :focus and :active states.
+- Use Flexbox, Grid and responsive sizing where appropriate.
 - Keep spacing, typography and visual hierarchy clean and balanced.
+- Do not rely on parent styles or external CSS resets beyond the required reset above.
 - One property per line with consistent 2-space indentation and blank lines between rule blocks.
 </css>
 
@@ -641,6 +651,7 @@ MESSAGE RULES:
 
 <rules>
 - All code must run immediately inside a sandboxed iframe with no build step.
+- The generated component must not assume the parent container provides layout, spacing, centering or sizing. All required layout must be defined by the component itself.
 - Preserve existing functionality unless explicitly instructed otherwise.
 - Do not generate random IDs, UUIDs, timestamps or randomized class names.
 - Never use pseudocode, placeholder comments, broken URLs or Node.js APIs.

@@ -99,10 +99,10 @@ export function EditorProvider({ children }) {
     setActiveComponent({
       id: created.id,
       messages: messages,
-      name: created.name,
-      html: created.html,
-      css: created.css,
-      js: created.js,
+      name: created.name.trim(),
+      html: created.html.trim(),
+      css: created.css.trim(),
+      js: created.js.trim(),
     }); // set the new active component
     // setActiveMessages(created.prompts || []); // set the new active messages
     setActiveComponentIndex(0);
@@ -112,16 +112,15 @@ export function EditorProvider({ children }) {
   const updatePreview = (html = "", css = "", js = "") => {
     const boilerCss = `body {
                     margin: 0;
-                    padding:0;
-                    height:100vh;
-                    width:100%;
-                    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-                    background: #0f0f0f;
-                    color:#fff;
-                    display: flex;
-                    flex-direction:column;
-                    align-items: center;
-                    justify-content: center;
+  padding: 0;
+  width: 100%;
+  min-height: 100vh;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: transparent;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  color: white;
                   }
                   img{
     max-width: 400px;
@@ -202,6 +201,7 @@ export function EditorProvider({ children }) {
     setPreviewCode(finalHtml);
     console.log("activeIndex Code", html);
   };
+
   return (
     <EditorContext.Provider
       value={{

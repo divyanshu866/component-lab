@@ -19,10 +19,10 @@ export async function POST(request) {
     if (messages.length < 2) {
       const component = await tx.component.create({
         data: {
-          name: name || "New Component",
-          html: html || "",
-          css: css || "",
-          js: js || "",
+          name: name.trim() || "New Component",
+          html: html.trim() || "",
+          css: css.trim() || "",
+          js: js.trim() || "",
           user: { connect: { id: session.user.id } },
         },
         include: {

@@ -1,84 +1,186 @@
-import { ArrowRight, Crown } from "lucide-react";
-import { useState } from "react";
+import { ArrowRight, Check, Star } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 const UpgradeCard = ({ plan, billingCycle }) => {
-  const [hoveredCard, setHoveredCard] = useState(null);
-  const Icon = plan.icon;
-  const isPremium = plan.id === "premium";
+  const isPro = plan.id === "premium";
   const price = plan.price[billingCycle];
+  const router = useRouter();
+  const yearlySavings =
+    billingCycle === "yearly"
+      ? (plan.price.monthly - plan.price.yearly) * 12
+      : 0;
+
   return (
     <div
-      key={plan.id}
-      onMouseEnter={() => setHoveredCard(plan.id)}
-      onMouseLeave={() => setHoveredCard(null)}
-      className={`relative group transition-all duration-700`}
+      className={`
+    relative
+    overflow-hidden
+    rounded-[28px]
+    bg-[#050505]
+    transition-all
+    duration-300
+    hover:-translate-y-1
+    mb-5
+
+    ${
+      isPro
+        ? `
+          border-2
+          border-fuchsia-700/80
+          shadow-[0_0_35px_rgba(217,70,239,.18)]
+        `
+        : `
+          border-2
+          border-white/30
+        `
+    }
+  `}
     >
-      {/* Glow Effect */}
+      {/* Border Glow */}
 
-      <div className="absolute -inset-1 bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 rounded-3xl blur-lg opacity-60 group-hover:opacity-80 transition-opacity duration-500"></div>
+      {isPro && (
+        <>
+          <div className="absolute inset-0 rounded-[28px] bg-linear-to-r from-violet-500/10 via-transparent to-fuchsia-500/10 pointer-events-none" />
 
-      {/* Popular Badge */}
-      {plan.badge && (
-        <div className="absolute -top-6 left-1/2 transform -translate-x-1/2 z-20">
-          <div className="bg-gradient-to-r from-pink-500 to-purple-600 text-white px-6 py-2 rounded-full font-black flex items-center gap-2 shadow-2xl animate-pulse">
-            <Crown className="w-4 h-4" />
-            {plan.badge}
-            <Crown className="w-4 h-4" />
-          </div>
-        </div>
+          <div className="absolute -right-24 top-0 h-52 w-52 rounded-full bg-fuchsia-500/10 blur-[90px]" />
+        </>
       )}
 
-      <div
-        className={`relative bg-gray-900/90 backdrop-blur-2xl border-2 rounded-3xl p-10 h-full transition-all duration-500 ${"border-pink-500/50 shadow-2xl shadow-pink-500/25"} ${
-          hoveredCard === plan.id ? "transform translate-y-[-8px]" : ""
-        }`}
-      >
-        {/* Card Header */}
-        <div className="text-center mb-10">
-          <div
-            className={`inline-flex items-center justify-center w-20 h-20 rounded-3xl bg-gradient-to-br ${plan.color} mb-6 shadow-2xl animate-pulse `}
-          >
-            <Icon className="w-10 h-10 text-white" />
-          </div>
+      <div className="relative flex h-full flex-col p-8">
+        {/* Plan */}
 
-          <h3 className="text-3xl font-black mb-3">{plan.name}</h3>
-          <p className="text-gray-400 text-lg mb-8">{plan.description}</p>
+        <div>
+          <h3 className="text-3xl font-semibold text-white">{plan.name}</h3>
 
-          <div className="flex items-end justify-center gap-2 mb-6">
-            <span className="text-6xl font-black bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
+          {/* Price */}
+
+          <div className="mt-5 flex items-end">
+            <span className="text-6xl font-bold tracking-tight text-white">
               ${price}
             </span>
-            {price > 0 && (
-              <span className="text-gray-400 mb-4 text-xl">
-                /{billingCycle === "yearly" ? "mo" : "mo"}
-              </span>
-            )}
+
+            <span className="mb-2 ml-2 text-xl font-medium text-gray-300">
+              /month
+            </span>
           </div>
 
-          {billingCycle === "yearly" && plan.price.yearly > 0 && (
-            <div className="text-lg text-green-400 mb-6 font-bold">
-              💰 Save ${(plan.price.monthly - plan.price.yearly) * 12}/year
-            </div>
+          {billingCycle === "yearly" && yearlySavings > 0 && (
+            <p className="mt-3 text-sm text-emerald-400">
+              Save ${yearlySavings}/year
+            </p>
           )}
+
+          <p className="mt-8 text-lg leading-8 text-gray-300">
+            {plan.description}
+          </p>
         </div>
 
-        {/* Features List */}
+        {/* Features */}
 
-        {/* CTA Button */}
-        <button
-          className={`w-full py-6 px-8 rounded-2xl font-black text-xl transition-all duration-300 transform hover:scale-105 ${
-            plan.ctaVariant === "primary"
-              ? "bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 hover:from-pink-600 hover:via-purple-600 hover:to-indigo-600 text-white shadow-2xl hover:shadow-pink-500/50 animate-pulse"
-              : "bg-gray-800 hover:bg-gray-700 text-gray-300 border-2 border-gray-600 hover:border-gray-500"
-          }`}
-        >
-          <div className="flex items-center justify-center gap-3">
-            {plan.cta}
-            {plan.ctaVariant === "primary" && (
-              <ArrowRight className="w-5 h-5" />
-            )}
-          </div>
-        </button>
+        <div className="mt-10 space-y-5">
+          {plan.features.map((feature) => (
+            <div key={feature} className="flex items-center gap-4">
+              <div
+                className={`
+          flex
+          h-5
+          w-5
+          shrink-0
+          items-center
+          justify-center
+          rounded-full
+
+          ${isPro ? "bg-fuchsia-500 text-white" : "bg-white text-black"}
+        `}
+              >
+                <Check size={11} strokeWidth={3} />
+              </div>
+
+              <span className="text-[17px] leading-8 text-gray-300">
+                {feature}
+              </span>
+            </div>
+          ))}
+        </div>
+
+        {/* Spacer */}
+
+        <div className="flex-1" />
+
+        {/* CTA */}
+
+        <div className="mt-10">
+          <button
+            onClick={() => router.push(isPro ? "/" : "/workspace")}
+            className={`
+            group
+            relative
+            flex
+            h-14
+            w-full
+            items-center
+            justify-center
+            overflow-hidden
+            rounded-2xl
+            font-semibold
+            text-lg
+            transition-all
+            duration-300
+
+            ${
+              isPro
+                ? `
+                  bg-linear-to-r
+                  from-violet-600
+                  via-fuchsia-500
+                  to-fuchsia-600
+                  text-white
+
+                  hover:brightness-110
+                  hover:scale-[1.015]
+                `
+                : `
+                  bg-gradient-to-r
+                  from-violet-200
+                  to-fuchsia-200
+
+                  text-gray-800
+
+                  hover:brightness-105
+                `
+            }
+          `}
+          >
+            {/* Button Glow */}
+
+            <div
+              className={`
+              absolute
+              inset-0
+              opacity-0
+              transition-opacity
+              duration-300
+
+              ${
+                isPro
+                  ? "bg-white/10 group-hover:opacity-100"
+                  : "bg-white/20 group-hover:opacity-100"
+              }
+            `}
+            />
+
+            <span className="relative flex items-center gap-2">
+              {plan.cta}
+
+              {isPro && (
+                <ArrowRight
+                  size={18}
+                  className="transition-transform duration-300 group-hover:translate-x-1"
+                />
+              )}
+            </span>
+          </button>
+        </div>
       </div>
     </div>
   );

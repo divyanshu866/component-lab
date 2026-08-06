@@ -48,7 +48,7 @@ export default function Navbar({ user }) {
   }
 
   return (
-    <nav className="h-14 bg-brand px-1 py-2 border-b border-gray-200 dark:border-darkBorder">
+    <nav className="h-14 bg-brand px-1 py-2 border-b border-gray-200 dark:border-darkBorder z-50">
       <div className="w-full h-full flex items-center justify-between">
         <div className="flex items-center w-max justify-start gap-0 text-white font-medium">
           <button
@@ -83,11 +83,11 @@ export default function Navbar({ user }) {
             }
             value={activeComponent.name}
             placeholder="Component Name"
-            className={`bg-gray-200 dark:bg-darkSecondary outline-0 ml-11 py-1 px-2 w-[300PX] text-sm ${
+            className={`bg-gray-200 dark:bg-transparent outline-0 ml-11 py-1 px-3 w-[300PX] text-sm ${
               !activeComponent.name
-                ? "border-red-600"
+                ? "border-red-900"
                 : "border-gray-300 dark:border-darkBorder"
-            } border rounded-lg`}
+            } border rounded-full`}
           />
         </div>
 

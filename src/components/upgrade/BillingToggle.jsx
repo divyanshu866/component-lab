@@ -1,48 +1,48 @@
-import { Code, Crown } from "lucide-react";
-import { useState } from "react";
-
 const BillingToggle = ({ plans, billingCycle, setBillingCycle }) => {
   const yearlyDiscount = Math.round(
     ((plans[1].price.monthly - plans[1].price.yearly) /
       plans[1].price.monthly) *
-      100
+      100,
   );
+
+  const isYearly = billingCycle === "yearly";
+
   return (
-    <div className="flex justify-center mb-16">
-      <div className="relative bg-gray-900/80 backdrop-blur-xl border border-gray-700/50 rounded-full p-2 flex">
-        <div
-          className={`absolute top-2 bottom-2 bg-gradient-to-r from-pink-500 to-purple-600 rounded-full transition-all duration-500 ${
-            billingCycle === "monthly"
-              ? "left-2 right-1/2 mr-1"
-              : "left-1/2 right-2 ml-1"
-          }`}
-        ></div>
+    <div className="flex items-center justify-center gap-4 mb-16">
+      <span
+        className={`text-lg font-medium transition-colors ${
+          !isYearly ? "text-white" : "text-zinc-400"
+        }`}
+      >
+        Monthly
+      </span>
 
-        <button
-          onClick={() => setBillingCycle("monthly")}
-          className={`relative px-8 py-4 rounded-xl font-bold transition-all duration-300 ${
-            billingCycle === "monthly"
-              ? "text-white"
-              : "text-gray-400 hover:text-white"
+      <button
+        onClick={() => setBillingCycle(isYearly ? "monthly" : "yearly")}
+        className={`relative h-8 w-16 rounded-full transition-colors duration-300 ${
+          isYearly
+            ? "bg-gradient-to-r from-violet-600 to-fuchsia-500"
+            : "bg-zinc-700"
+        }`}
+      >
+        <span
+          className={`absolute top-1 h-6 w-6 rounded-full bg-white shadow-md transition-all duration-300 ${
+            isYearly ? "left-9" : "left-1"
           }`}
-        >
-          Monthly
-        </button>
+        />
+      </button>
 
-        <button
-          onClick={() => setBillingCycle("yearly")}
-          className={`relative px-8 py-4 rounded-xl font-bold transition-all duration-300 ${
-            billingCycle === "yearly"
-              ? "text-white"
-              : "text-gray-400 hover:text-white"
-          }`}
-        >
-          Yearly
-          <span className="absolute -top-3 -right-3 bg-gradient-to-r from-green-400 to-emerald-500 text-black text-xs font-black px-3 py-1 rounded-full animate-bounce">
-            SAVE {yearlyDiscount}%
-          </span>
-        </button>
-      </div>
+      <span
+        className={`text-lg font-medium transition-colors ${
+          isYearly ? "text-white" : "text-zinc-400"
+        }`}
+      >
+        Yearly
+      </span>
+
+      <span className="rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1 text-sm font-semibold text-emerald-400">
+        Save {yearlyDiscount}%
+      </span>
     </div>
   );
 };

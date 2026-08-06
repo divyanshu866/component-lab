@@ -6,6 +6,8 @@ import {
   Zap,
   Trash,
   MoreHorizontal,
+  Search,
+  FileCode2,
 } from "lucide-react";
 // import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -115,17 +117,16 @@ export default function Sidebar({ isMobile }) {
     setReworkUI(false);
     setShowPreview(false);
     setActiveComponentIndex(null);
+    setActiveEditor("AI");
+    console.log("name==>", name);
+    setActiveComponent({
+      id: "",
+      name: name,
+      html: html,
+      css: css,
+      js: js,
+    });
 
-    if (true) {
-      console.log("name==>", name);
-      setActiveComponent({
-        id: "",
-        name: name,
-        html: html,
-        css: css,
-        js: js,
-      });
-    }
     setConsoleLogs([]);
     updatePreview();
     console.log("cleared");
@@ -133,110 +134,168 @@ export default function Sidebar({ isMobile }) {
 
   return (
     <aside
-      className={`h-full flex flex-col overflow-visible border-r border-gray-200 dark:border-darkBorder dark:bg-darkSecondary z-100 transition-all duration-100 ${
-        sidebarCollapsed ? (isMobile ? "w-0" : "w-12") : "w-75"
-      } ${isMobile ? "absolute" : "relative"}`}
+      className={`${
+        isMobile ? "absolute" : "relative"
+      } z-50 flex h-full flex-col overflow-hidden border-0 border-darkBorder bg-transparent border-r transition-all duration-300 ${
+        sidebarCollapsed ? (isMobile ? "w-0" : "w-18") : "w-70"
+      }`}
     >
-      <div
-        className={`${
-          sidebarCollapsed ? "justify-end" : "justify-between"
-        } pr-2" flex items-center min-h-10 border-b border-gray-200 dark:border-darkBorder`}
-      >
-        <h3
-          className={`${
-            sidebarCollapsed ? "hidden" : ""
-          } text-sm font-semibold text-gray-400 mx-3 m-2`}
-        >
-          Component Library
-        </h3>
-        {/* {!collapsed && ( */}
-        <button
-          onClick={() => {
-            setSidebarCollapsed(!sidebarCollapsed);
-          }}
-          className={`${isMobile ? "hidden" : ""} ${
-            sidebarCollapsed ? "opacity-100" : "opacity-100"
-          } pr-3 text-sm text-gray-400 cursor-pointer transition-all duration-100`}
-        >
-          <PanelRight width={"18px"} height={"18px"} />
-        </button>
-      </div>
+      {/* Glow */}
+      {/* <div className="pointer-events-none absolute inset-0 overflow-hidden">
+        <div className="absolute -left-20 top-10 h-56 w-56 rounded-full bg-purple-600/10 blur-3xl" />
+        <div className="absolute bottom-0 right-0 h-48 w-48 rounded-full bg-pink-500/10 blur-3xl" />
+      </div> */}
 
-      <div
-        className={`${
-          sidebarCollapsed ? "justify-end items-center" : "justify-center"
-        } flex border-b border-gray-200 dark:border-darkBorder gap-1 min-h-12 transition-all duration-100`}
-      >
+      {/* New Component */}
+
+      <div className="relative p-3">
         <button
+          disabled={isGenerating}
           onClick={() => {
             clearScreen();
+
             if (isMaximised) {
               setIsMaximised(false);
             }
           }}
-          disabled={isGenerating}
-          className={`text-gray-400 w-full bg-gray-200 dark:bg-darkSecondary hover:bg-gray-100 dark:hover:bg-darkGrey rounded text-sm flex items-center justify-center gap-2 disabled:cursor-not-allowed cursor-pointer`}
+          className={`group relative flex w-full items-center justify-center gap-3 overflow-hidden rounded-2xl border border-darkBorder bg-white/[0.03] px-5 py-3 text-sm font-medium text-white transition-all duration-300 hover:border-purple-500/30 hover:bg-white/[0.06] hover:shadow-[0_0_30px_rgba(168,85,247,0.12)] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 ${
+            sidebarCollapsed ? "px-0" : ""
+          }`}
         >
-          <Plus width={"20px"} height={"20px"} />
-          {sidebarCollapsed ? "" : "New Component"}
+          {/* Icon */}
+          <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-white/5 transition-all duration-300 group-hover:bg-purple-500/15 group-hover:text-purple-300">
+            <Plus
+              size={18}
+              className="transition-transform duration-300 group-hover:rotate-90"
+            />
+          </div>
+
+          {!sidebarCollapsed && (
+            <span className="flex-1 text-left">New Component</span>
+          )}
+
+          {!sidebarCollapsed && (
+            <span className="text-xs text-neutral-500 transition-colors duration-300 group-hover:text-neutral-300">
+              ⌘ K
+            </span>
+          )}
         </button>
-        {/* </div> */}
       </div>
 
-      {/* Components List */}
+      {/* Search */}
 
-      <div
-        className={`${
-          sidebarCollapsed ? "opacity-0" : "opacity-100"
-        } flex flex-col overflow-y-auto overflow-hidden mt-2 px-2 transition-all duration-100`}
-      >
-        <ul className="px-2">
+      {/* {!sidebarCollapsed && (
+        <div className="px-3 pb-4">
+          <div className="flex items-center gap-3 rounded-2xl border border-darkBorder bg-white/5 px-4 py-3">
+            <Search size={16} className="text-neutral-500" />
+
+            <input
+              placeholder="Search components..."
+              className="w-full bg-transparent text-sm text-white outline-none placeholder:text-neutral-500"
+            />
+          </div>
+        </div>
+      )} */}
+
+      {/* Components */}
+
+      <div className="relative flex-1 overflow-y-auto px-2 pb-4">
+        <div className={`mb-4 ${sidebarCollapsed ? "hidden" : "block"}`}>
+          <p className="px-3 text-xs font-semibold uppercase tracking-wider text-neutral-500">
+            Recent Components
+          </p>
+        </div>
+
+        <div className="space-y-1">
           {components.map((c, i) => (
-            <li
-              key={i}
+            <div
+              key={c.id ?? i}
               onClick={() => updateActiveComponent(i)}
-              className={`flex relative items-center justify-between p-2 text-sm text-nowrap cursor-pointer ${
+              className={`group relative cursor-pointer overflow-visible rounded-2xl border transition duration-300 ${
                 i === activeComponentIndex
-                  ? "bg-gray-200 dark:bg-neutral-800 border-l-3 border-neutral-600 rounded-lg"
-                  : ""
+                  ? "border-neutral-700 bg-linear-to-r from-[#232526] via-neutral-[#414345] to-neutral-500/50"
+                  : "border-transparent bg-transparent hover:border-darkBorder hover:bg-white/5"
               }`}
             >
-              <span className="min-w-0 flex-1 truncate">{c.name}</span>
-              <button
-                onMouseDown={(e) => e.stopPropagation()}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  // open menu
-                  setChatMenu(chatMenu === i ? null : i);
-                }}
-                className="p-1 rounded text-neutral-500 hover:text-gray-300 bold dark:hover:text-neutral-100 pointer"
+              <div
+                className={`flex items-center ${
+                  sidebarCollapsed ? "justify-center" : "justify-between"
+                } px-4 py-1`}
               >
-                <MoreHorizontal size={14} className="pointer" />
-              </button>
+                {!sidebarCollapsed && (
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-2">
+                      <FileCode2
+                        size={16}
+                        className={`${
+                          i === activeComponentIndex
+                            ? "text-violet-500"
+                            : "text-neutral-500"
+                        }`}
+                      />
+
+                      <h3 className="truncate text-sm font-medium text-white">
+                        {c.name}
+                      </h3>
+                    </div>
+                  </div>
+                )}
+
+                <button
+                  onMouseDown={(e) => e.stopPropagation()}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setChatMenu(chatMenu === i ? null : i);
+                  }}
+                  className={`rounded-lg p-2 text-neutral-500 transition hover:bg-white/5 hover:text-white ${
+                    sidebarCollapsed ? "hidden" : ""
+                  }`}
+                >
+                  <MoreHorizontal size={15} />
+                </button>
+              </div>
+
               {chatMenu === i && (
-                <div className="absolute right-8 top-0 z-20 w-40 rounded-lg border border-gray-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 shadow-lg">
+                <div className="absolute right-4 top-14 z-50 w-48 overflow-hidden rounded-2xl border border-darkBorder bg-neutral-900/95 shadow-2xl backdrop-blur-xl">
                   <button
                     onMouseDown={(e) => e.stopPropagation()}
                     onClick={(e) => {
                       e.stopPropagation();
-                      console.log("Edit Chat", c.id);
                       deleteComponent(c.id, i);
                     }}
-                    className="flex w-full px-4 py-2 text-left text-red-500 hover:bg-gray-100 dark:hover:bg-neutral-800"
+                    className="flex w-full items-center gap-3 px-4 py-3 text-sm text-red-400 transition hover:bg-red-500/10"
                   >
-                    <Trash
-                      width={"18px"}
-                      height={"18px"}
-                      className="bold mr-2"
-                    />
-                    Delete Chat
+                    <Trash size={16} />
+                    Delete Component
                   </button>
                 </div>
               )}
-            </li>
+            </div>
           ))}
-        </ul>
+        </div>
       </div>
+
+      {/* Footer */}
+
+      {!sidebarCollapsed && (
+        <div className="border-t border-darkBorder p-3">
+          <div className="rounded-2xl border border-darkBorder bg-gradient-to-br from-white/5 to-white/[0.02] p-4">
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-pink-700 to-purple-700">
+                <Sparkles size={18} className="text-white" />
+              </div>
+
+              <div>
+                <p className="text-sm font-medium text-white">
+                  Gemini 2.5 Flash
+                </p>
+
+                <p className="text-xs text-neutral-400">Ready to generate</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </aside>
   );
 }

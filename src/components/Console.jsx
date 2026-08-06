@@ -32,12 +32,12 @@ const Console = () => {
     <div
       className={`${
         showConsole ? " h-50" : "h-0"
-      } flex flex-col border-t rounded-t-lg overflow-hidden border-gray-200 dark:border-darkBorder transition-all duration-75`}
+      } flex flex-col border mx-1 rounded-t-2xl overflow-hidden border-gray-200 dark:border-darkBorder transition-all duration-75`}
     >
-      <div className="bg-gray-200 rounded-t-lg dark:bg-darkSecondary border-b border-gray-200 dark:border-darkBorder px-4 py-2 flex items-center justify-between">
+      <div className="bg-gray-200 rounded-t-2xl border-none dark:bg-darkSecondary border-b border-gray-200 dark:border-darkBorder px-4 py-2 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Terminal className="w-4 h-4 text-pink-600" />
-          <span className="dark:text-neutral-400 text-sm font-semibold">
+          <span className="dark:text-neutral-400 text-sm font-medium">
             Console
           </span>
           <span className="text-xs text-gray-400">
@@ -72,8 +72,8 @@ const Console = () => {
                 log.level === "error"
                   ? "text-red-400"
                   : log.level === "warn"
-                  ? "text-yellow-400"
-                  : "text-green-600"
+                    ? "text-yellow-400"
+                    : "text-green-600"
               }`}
             >
               <span className="text-gray-500">[{log.timestamp}] </span>
@@ -82,8 +82,8 @@ const Console = () => {
                   log.level === "error"
                     ? "text-red-300"
                     : log.level === "warn"
-                    ? "text-yellow-300"
-                    : "text-gray-300"
+                      ? "text-yellow-300"
+                      : "text-gray-300"
                 }`}
               >
                 {log.level.toUpperCase()}:
