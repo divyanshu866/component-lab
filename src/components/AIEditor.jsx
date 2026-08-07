@@ -479,8 +479,9 @@ const AIEditor = ({ user, isMobile }) => {
     }
 
     try {
+      setIsGenerating(true);
       setReworkUI(true);
-      let latestMessages = [...activeMessages];
+      setShowPreview(true);
       const userMessage = {
         id: null,
         role: "USER",
@@ -496,20 +497,34 @@ const AIEditor = ({ user, isMobile }) => {
         componentId: null,
         createdAt: null,
       };
-      latestMessages = [...latestMessages, userMessage, assistantPlaceholder];
-      setActiveMessages(latestMessages);
-      setShowPreview(true);
-      setIsGenerating(true);
-
       // Initialize streaming component
-      const streamingComp = {
+      const streamState = {
         name: "",
-        message: activeMessages,
+        messages: [userMessage, assistantPlaceholder],
         html: "",
         css: "",
         js: "",
       };
 
+      setActiveMessages(streamState.messages);
+
+      //Helper Update current component state
+      const updateStreamingComponent = (section, content) => {
+        streamState[section] += content;
+        setActiveComponent({ ...streamState });
+        updatePreview(streamState.html, streamState.css, streamState.js);
+      };
+      const appendAssistantMessageChunk = (content) => {
+        streamState.messages = streamState.messages.map((msg, index) =>
+          index === streamState.messages.length - 1 && msg.role === "ASSISTANT"
+            ? {
+                ...msg,
+                message: `${msg.message || ""}${content || ""}`,
+              }
+            : msg,
+        );
+        setActiveMessages(streamState.messages);
+      };
       const response = await fetch("/api/ai", {
         method: "POST",
         headers: {
@@ -518,7 +533,7 @@ const AIEditor = ({ user, isMobile }) => {
         body: JSON.stringify({
           component_type: selectedType,
           component_style: selectedStyle,
-          desc: userMessage.message,
+          prompt: userMessage.message,
           model: selectedModel,
         }),
       });
@@ -550,50 +565,23 @@ const AIEditor = ({ user, isMobile }) => {
             try {
               const data = JSON.parse(event.substring(6)); // Remove 'data: ' prefix
 
-              if (data.type === "name") {
-                streamingComp.name += data.content;
-              } else if (data.type === "message") {
-                // latestMessages[1].message += data.content;
-                // setActiveMessages(latestMessages);
-                const nextMessages = latestMessages.map((msg, index) =>
-                  index === latestMessages.length - 1 &&
-                  msg.role === "ASSISTANT"
-                    ? {
-                        ...msg,
-                        message: `${msg.message || ""}${data.content || ""}`,
-                      }
-                    : msg,
-                );
-
-                latestMessages = nextMessages;
-                setActiveMessages(nextMessages);
-              } else if (data.type === "html") {
-                // setActiveEditor("HTML");
-                streamingComp.html += data.content;
-                setActiveComponent({ ...streamingComp });
-                updatePreview(
-                  streamingComp.html,
-                  streamingComp.css,
-                  streamingComp.js,
-                );
-              } else if (data.type === "css") {
-                // setActiveEditor("CSS");
-                streamingComp.css += data.content;
-                setActiveComponent({ ...streamingComp });
-                updatePreview(
-                  streamingComp.html,
-                  streamingComp.css,
-                  streamingComp.js,
-                );
-              } else if (data.type === "js") {
-                // setActiveEditor("JS");
-                streamingComp.js += data.content;
-                setActiveComponent({ ...streamingComp });
-                updatePreview(
-                  streamingComp.html,
-                  streamingComp.css,
-                  streamingComp.js,
-                );
+              switch (data.type) {
+                case "name":
+                  streamState.name += data.content;
+                  setActiveComponent({ ...streamState });
+                  break;
+                case "message":
+                  appendAssistantMessageChunk(data.content);
+                  break;
+                case "html":
+                  updateStreamingComponent(data.type, data.content);
+                  break;
+                case "css":
+                  updateStreamingComponent(data.type, data.content);
+                  break;
+                case "js":
+                  updateStreamingComponent(data.type, data.content);
+                  break;
               }
             } catch (err) {
               console.error("Error parsing streaming data:", err);
@@ -602,15 +590,15 @@ const AIEditor = ({ user, isMobile }) => {
             // Streaming complete
             setIsGenerating(false);
             console.log(
-              "Active Messages at the end of streaming:",
-              latestMessages,
+              "Active streamState.messages at the end of streaming:",
+              streamState.messages,
             );
             createNewComponent(
-              latestMessages,
-              streamingComp.name,
-              streamingComp.html,
-              streamingComp.css,
-              streamingComp.js,
+              streamState.messages,
+              streamState.name,
+              streamState.html,
+              streamState.css,
+              streamState.js,
             );
             console.log("Streaming complete");
             return;
@@ -637,7 +625,7 @@ const AIEditor = ({ user, isMobile }) => {
     try {
       setShowPreview(true);
       setIsGenerating(true);
-      let latestMessages = [...activeMessages];
+
       const userMessage = {
         id: null,
         role: "USER",
@@ -645,7 +633,6 @@ const AIEditor = ({ user, isMobile }) => {
         componentId: activeComponent.id,
         createdAt: null,
       };
-      setChangeDesc("");
       const assistantPlaceholder = {
         id: null,
         role: "ASSISTANT",
@@ -653,20 +640,37 @@ const AIEditor = ({ user, isMobile }) => {
         componentId: activeComponent.id,
         createdAt: null,
       };
-      latestMessages = [...latestMessages, userMessage, assistantPlaceholder];
-      setActiveMessages((prev) => [...prev, latestMessages]);
-
       // Initialize streaming component with existing values
-      const streamingComp = {
+      const streamState = {
         id: activeComponent.id,
         name: "",
-        message: activeMessages,
+        messages: [...activeMessages, userMessage, assistantPlaceholder],
         html: "",
         css: "",
         js: "",
       };
-      setActiveComponent(streamingComp);
 
+      setActiveMessages(streamState.messages);
+
+      setActiveComponent(streamState);
+
+      //Helper Update current component state
+      const updateStreamingComponent = (section, content) => {
+        streamState[section] += content;
+        setActiveComponent({ ...streamState });
+        updatePreview(streamState.html, streamState.css, streamState.js);
+      };
+      const appendAssistantMessageChunk = (content) => {
+        streamState.messages = streamState.messages.map((msg, index) =>
+          index === streamState.messages.length - 1 && msg.role === "ASSISTANT"
+            ? {
+                ...msg,
+                message: `${msg.message || ""}${content || ""}`,
+              }
+            : msg,
+        );
+        setActiveMessages(streamState.messages);
+      };
       const response = await fetch("/api/ai", {
         method: "PATCH",
         headers: {
@@ -674,10 +678,11 @@ const AIEditor = ({ user, isMobile }) => {
         },
         body: JSON.stringify({
           name: activeComponent.name,
+          messages: streamState.messages,
           html: activeComponent.html,
           css: activeComponent.css,
           js: activeComponent.js,
-          changes: userMessage.message,
+
           model: selectedModel,
         }),
       });
@@ -704,52 +709,29 @@ const AIEditor = ({ user, isMobile }) => {
           if (event.startsWith("data: ")) {
             try {
               const data = JSON.parse(event.substring(6)); // Remove 'data: ' prefix
-              if (data.type === "name") {
-                streamingComp.name += data.content;
-                setActiveComponent({ ...streamingComp });
-              } else if (data.type === "message") {
-                // latestMessages[latestMessages.length - 1].message +=
-                //   data.content;
-                // setActiveMessages(latestMessages);
-                const nextMessages = latestMessages.map((msg, index) =>
-                  index === latestMessages.length - 1 &&
-                  msg.role === "ASSISTANT"
-                    ? {
-                        ...msg,
-                        message: `${msg.message || ""}${data.content || ""}`,
-                      }
-                    : msg,
-                );
+              switch (data.type) {
+                case "name":
+                  streamState.name += data.content;
+                  setActiveComponent({ ...streamState });
+                  break;
+                case "message":
+                  appendAssistantMessageChunk(data.content);
+                  break;
 
-                latestMessages = nextMessages;
-                setActiveMessages(nextMessages);
-              } else if (data.type === "html") {
-                // setActiveEditor("HTML");
-                streamingComp.html += data.content;
-                setActiveComponent({ ...streamingComp });
-                updatePreview(
-                  streamingComp.html,
-                  streamingComp.css,
-                  streamingComp.js,
-                );
-              } else if (data.type === "css") {
-                // setActiveEditor("CSS");
-                streamingComp.css += data.content;
-                setActiveComponent({ ...streamingComp });
-                updatePreview(
-                  streamingComp.html,
-                  streamingComp.css,
-                  streamingComp.js,
-                );
-              } else if (data.type === "js") {
-                // setActiveEditor("JS");
-                streamingComp.js += data.content;
-                setActiveComponent({ ...streamingComp });
-                updatePreview(
-                  streamingComp.html,
-                  streamingComp.css,
-                  streamingComp.js,
-                );
+                case "html":
+                  setActiveEditor("HTML");
+                  updateStreamingComponent(data.type, data.content);
+                  break;
+
+                case "css":
+                  setActiveEditor("CSS");
+                  updateStreamingComponent(data.type, data.content);
+                  break;
+
+                case "js":
+                  setActiveEditor("JS");
+                  updateStreamingComponent(data.type, data.content);
+                  break;
               }
             } catch (err) {
               console.error("Error parsing streaming data:", err);
@@ -759,18 +741,19 @@ const AIEditor = ({ user, isMobile }) => {
             setIsGenerating(false);
             setChangeDesc("");
             console.log(
-              "Active Messages at the end of rework streaming:",
-              latestMessages,
+              "latest streamState.messages at the end of rework streaming:",
+              streamState.messages,
             );
-            const updated = await saveComponent(
-              [
-                latestMessages[latestMessages.length - 2],
-                latestMessages[latestMessages.length - 1],
-              ],
-              streamingComp.name.trim(),
-              streamingComp.html.trim(),
-              streamingComp.css.trim(),
-              streamingComp.js.trim(),
+            console.log(
+              "Active Messages at the end of rework streaming:",
+              activeMessages,
+            );
+            await saveComponent(
+              streamState.messages.slice(-2),
+              streamState.name.trim(),
+              streamState.html.trim(),
+              streamState.css.trim(),
+              streamState.js.trim(),
             );
 
             // Update existing component
@@ -795,6 +778,7 @@ const AIEditor = ({ user, isMobile }) => {
       setChangeDesc("");
     }
   }
+
   const clearScreen = (name = "", html = "", css = "", js = "") => {
     console.log("Editor cleared from AI-EDITOR");
     setSelectedType("Custom type");
@@ -866,8 +850,8 @@ const AIEditor = ({ user, isMobile }) => {
               name="select"
               className="w-full bg-gray-100 dark:bg-darkSecondary border border-gray-300 dark:border-darkBorder rounded-full px-3 py-2 text-md transition-all duration-200 cursor-pointer"
             >
-              <option className="dark:text-gray-900" value={"custom type"}>
-                {"Custom type"}
+              <option className="dark:text-gray-700" value={"custom type"}>
+                {"Describe in prompt"}
               </option>
               {componentTypes.map((type, index) => (
                 <option key={index} value={type.name}>
@@ -880,8 +864,8 @@ const AIEditor = ({ user, isMobile }) => {
               onChange={(e) => setSelectedStyle(e.target.value)}
               className="w-full bg-gray-100 dark:bg-darkSecondary border border-gray-300 dark:border-darkBorder rounded-full px-3 py-2  text-md transition-all duration-200 cursor-pointer"
             >
-              <option className="dark:text-gray-900" value={"Custom style"}>
-                {"Custom style"}
+              <option className="dark:text-gray-700" value={"Custom style"}>
+                {"Describe in prompt"}
               </option>
               {styleOptions.map((style, index) => (
                 <option key={index} value={style.name}>

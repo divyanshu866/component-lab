@@ -6,23 +6,107 @@ const chunkSize = 10; // Set the chunk size for the mock stream
 const delay = 10; // Set the delay between chunks in milliseconds
 //API GENERATE NEW COMPONENT
 export async function POST(req) {
-  const { component_type, component_style, desc, model } = await req.json();
+  const { component_type, component_style, prompt, model } = await req.json();
 
-  const prompt = `Generate a UI component with functionality (if required) based on the following inputs:
-  Component Style: ${component_style}
-  Component Type: ${component_type}
-  Client Instructions: ${desc}
-  `;
+  const enrichedPrompt = `Create a production-ready UI component using the following requirements.
+  
+  Component Type:${component_type}
+
+  Component Style:${component_style}
+
+  User Request:${prompt}`;
+
+  //Build contents object with first user prompt
+  const contents = [
+    {
+      role: "user",
+      parts: [
+        {
+          text: enrichedPrompt,
+        },
+      ],
+    },
+  ];
+
   if (mockResponse) {
     const stream = mockStream(mockText, chunkSize, delay); // deliberately awkward chunk size
 
     return createStreamingResponse(stream);
   } else {
-    const stream = await generate(SYSTEM_PROMPT, prompt, model);
+    console.log("RUNNING GEN NEW COMP=====>>>>>>>>>>>>>>>>>>>>>>>");
+    const stream = await generate(SYSTEM_PROMPT, contents, model);
     return createStreamingResponse(stream);
   }
 }
-const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+//API MODIFY EXISTING COMPONENT
+export async function PATCH(req) {
+  const { name, messages, html, css, js, model } = await req.json();
+  //Build contents
+  const contents = buildContents(
+    { name: name, html: html, css: css, js: js },
+    messages,
+  );
+
+  if (mockResponse) {
+    const stream = mockStream(mockText, chunkSize, delay); // deliberately awkward chunk size
+    return createStreamingResponse(stream);
+  } else {
+    console.log("RUNNING GEN EDIT=====>>>>>>>>>>>>>>>>>>>>>>>");
+    console.dir(contents, { depth: null });
+    const stream = await generate(EDIT_SYSTEM_PROMPT, contents, model);
+    return createStreamingResponse(stream);
+  }
+}
+export function buildContents(component, messages) {
+  const contents = [];
+  //remove last assistant placeholder
+  const conversationMessages =
+    messages.at(-1)?.role === "ASSISTANT" ? messages.slice(0, -1) : messages;
+
+  for (let i = 0; i < conversationMessages.length; i++) {
+    const message = conversationMessages[i];
+
+    if (message.role === "USER") {
+      contents.push({
+        role: "user",
+        parts: [{ text: message.message }],
+      });
+    } else {
+      const isLatestCompletedAssistant = i === conversationMessages.length - 2;
+
+      contents.push({
+        role: "model",
+        parts: [
+          {
+            text:
+              message.message +
+              (isLatestCompletedAssistant
+                ? `
+
+Current component:
+
+###NAME_START###
+${component.name}
+###NAME_END###
+###HTML_START###
+${component.html}
+###HTML_END###
+###CSS_START###
+${component.css}
+###CSS_END###
+###JS_START###
+${component.js}
+###JS_END###`
+                : ""),
+          },
+        ],
+      });
+    }
+  }
+
+  return contents;
+}
 
 async function* mockStream(text, chunkSize = 1, delay = 50) {
   for (let i = 0; i < text.length; i += chunkSize) {
@@ -33,6 +117,7 @@ async function* mockStream(text, chunkSize = 1, delay = 50) {
     };
   }
 }
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const mockText = `###NAME_START### Brutalist Cards ###NAME_END###
 ###MESSAGE_START###A **Brutalist card collection** has been created, showcasing bold typography, strong borders, and a raw, minimalist aesthetic inspired by classic Brutalist design.
 
@@ -246,38 +331,6 @@ const mockText = `###NAME_START### Brutalist Cards ###NAME_END###
   border-color: var(--brutalist-accent-color);
 }###CSS_END###
 ###JS_START###//No javascript required###JS_END###`;
-//API MODIFY EXISTING COMPONENT
-export async function PATCH(req) {
-  const { name, html, css, js, changes, model } = await req.json();
-
-  const prompt = `
-  Your task:
-  Apply the requested changes to the component and return the updated version as a JSON object:
-  Edit Instructions/Problems to solve:
-  ${changes}
-
-  Component:
-  - name: ${name}
-
-  - HTML:
-  ${html}
-
-  - CSS:
-  ${css}
-
-  - JS:
-  ${js}
-  `;
-  if (mockResponse) {
-    const stream = mockStream(mockText, chunkSize, delay); // deliberately awkward chunk size
-    return createStreamingResponse(stream);
-  } else {
-    const stream = await generate(EDIT_SYSTEM_PROMPT, prompt, model);
-    return createStreamingResponse(stream);
-  }
-}
-
-// System prompt for generating new components
 // System prompt for generating new components
 const SYSTEM_PROMPT = `You are an expert frontend developer. Generate production-ready, fully functional UI components using semantic HTML, modern CSS, and vanilla JavaScript.
 
