@@ -574,12 +574,15 @@ const AIEditor = ({ user, isMobile }) => {
                   appendAssistantMessageChunk(data.content);
                   break;
                 case "html":
+                  setActiveEditor("HTML");
                   updateStreamingComponent(data.type, data.content);
                   break;
                 case "css":
+                  setActiveEditor("CSS");
                   updateStreamingComponent(data.type, data.content);
                   break;
                 case "js":
+                  setActiveEditor("JS");
                   updateStreamingComponent(data.type, data.content);
                   break;
               }
@@ -587,6 +590,7 @@ const AIEditor = ({ user, isMobile }) => {
               console.error("Error parsing streaming data:", err);
             }
           } else if (event.startsWith("event: end")) {
+            setActiveEditor("AI");
             // Streaming complete
             setIsGenerating(false);
             console.log(
@@ -615,6 +619,7 @@ const AIEditor = ({ user, isMobile }) => {
       alert("An Error occurred. Please try again.");
       console.error("Error calling /api/generate:", err);
       setIsGenerating(false);
+      setActiveEditor("AI");
     }
   };
   async function rework() {
@@ -737,6 +742,7 @@ const AIEditor = ({ user, isMobile }) => {
               console.error("Error parsing streaming data:", err);
             }
           } else if (event.startsWith("event: end")) {
+            setActiveEditor("AI");
             // Streaming complete
             setIsGenerating(false);
             setChangeDesc("");
@@ -776,6 +782,7 @@ const AIEditor = ({ user, isMobile }) => {
       alert("An Error occurred. Please try again.");
       setIsGenerating(false);
       setChangeDesc("");
+      setActiveEditor("AI");
     }
   }
 
