@@ -1,12 +1,23 @@
 "use client";
 import { createContext, useState, useContext, useEffect } from "react";
+import * as esbuild from "esbuild-wasm";
 
 const EditorContext = createContext();
+let esbuildInitPromise = null;
+const initializeEsbuild = () => {
+  if (!esbuildInitPromise) {
+    esbuildInitPromise = esbuild.initialize({
+      wasmURL: "/esbuild.wasm",
+    });
+  }
 
+  return esbuildInitPromise;
+};
 export function EditorProvider({ children }) {
   const [selectedType, setSelectedType] = useState();
   const [selectedStyle, setSelectedStyle] = useState();
   const [activeEditor, setActiveEditor] = useState("AI");
+  const [targetTech, setTargetTech] = useState("HTML");
 
   const [components, setComponents] = useState([]);
   const [reworkUI, setReworkUI] = useState(false);
@@ -14,9 +25,12 @@ export function EditorProvider({ children }) {
     id: "",
     messages: [],
     name: "",
+
+    targetTech: "HTML",
     html: "",
     css: "",
     js: "",
+    jsx: "",
   });
   const [activeComponentIndex, setActiveComponentIndex] = useState(null);
 
@@ -29,23 +43,116 @@ export function EditorProvider({ children }) {
 
   const [changeDesc, setChangeDesc] = useState("");
 
+  //EsBuild
   const [previewKey, setPreviewKey] = useState(0);
+  const [esbuildReady, setEsbuildReady] = useState(false);
+  const [error, setError] = useState(null);
 
   const [isSaving, setIsSaving] = useState(false);
-  const [previewCode, setPreviewCode] = useState("");
+  const [htmlPreviewDocument, setHtmlPreviewDocument] = useState("");
+  const reactDefaultPreview = `function App() {
+      return <h1>Hello ComponentLab</h1>;
+    }
+
+    export default App;`;
+  const [reactPreviewDocument, setReactPreviewDocument] = useState("");
+
+  // Initialize esbuild once.
+  useEffect(() => {
+    let cancelled = false;
+
+    initializeEsbuild()
+      .then(() => {
+        if (!cancelled) {
+          setEsbuildReady(true);
+          console.log("====>>> esbuild initialized");
+        }
+      })
+      .catch((error) => {
+        console.error("Failed to initialize esbuild:", error);
+
+        if (!cancelled) {
+          setError(error.message);
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const compileJSX = async (jsx) => {
+    try {
+      setError(null);
+
+      const result = await esbuild.transform(jsx, {
+        loader: "jsx",
+        target: "es2020",
+        format: "iife",
+        globalName: "Component",
+      });
+
+      console.log("COMPILED JS:");
+      console.log(result.code);
+
+      return result.code;
+    } catch (error) {
+      console.error("ESBUILD ERROR:", error);
+
+      setError(error.message);
+      return "";
+    }
+  };
+
+  function reset() {
+    //Clear Everything
+    setActiveComponentIndex(null);
+    setActiveComponent({
+      id: "",
+      messages: [],
+      targetTech: targetTech,
+      jsx: "",
+      name: "",
+      html: "",
+      css: "",
+      js: "",
+    });
+    updatePreview();
+    setReworkUI(false);
+    setShowPreview(false);
+    setActiveMessages([]);
+    setActiveEditor("AI");
+
+    // Not currently available
+    // setConsoleLogs([]);
+  }
   useEffect(() => {
     updatePreview();
   }, []);
-  const saveComponent = async (messages, name, html, css, js) => {
-    if (!name.trim()) {
+  const saveComponent = async (component) => {
+    // (messages, name, html, css, js);
+    if (!component.name.trim()) {
+      console.log("EMPTY COMP PASSE DTO saveComp()=========>>>>>>>>>>");
       return;
     }
-
-    const payload = { messages, name, html, css, js };
+    console.log(
+      "NEW MAESSAGES FROM save comp==========>>>",
+      component.messages,
+    );
+    const payload = {
+      id: component.id,
+      messages: component.messages,
+      name: component.name,
+      html: component.html,
+      css: component.css,
+      js: component.js,
+      jsx: component.jsx,
+      targetTech: component.targetTech,
+    };
     console.log("Payload for saving component>>> (saveComponent()):", payload);
-    if (activeComponent?.id) {
+    if (component?.id) {
       // Update existing component
-      const res = await fetch(`/api/components/${activeComponent.id}`, {
+      const res = await fetch(`/api/components/${component.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -73,6 +180,8 @@ export function EditorProvider({ children }) {
         id: created.id,
         messages: created.prompts || [],
         name: created.name,
+        targetTech: created.targetTech,
+        jsx: created.jsx,
         html: created.html,
         css: created.css,
         js: created.js,
@@ -80,15 +189,22 @@ export function EditorProvider({ children }) {
 
       setActiveComponentIndex(0);
       console.log(activeComponent);
-      console.log(created);
       console.log("created.......");
     }
   };
-  const createNewComponent = async (messages, name, html, css, js) => {
-    if (!name.trim()) {
+  const createNewComponent = async (component) => {
+    if (!component.name.trim()) {
       return;
     }
-    const payload = { messages, name, html, css, js };
+    const payload = {
+      messages: component.messages,
+      name: component.name,
+      html: component.html,
+      css: component.css,
+      js: component.js,
+      jsx: component.jsx,
+      targetTech: component.targetTech,
+    };
 
     // Create new component
     const res = await fetch("/api/components", {
@@ -100,8 +216,11 @@ export function EditorProvider({ children }) {
     setComponents((prev) => [created, ...prev]);
     setActiveComponent({
       id: created.id,
-      messages: messages,
+
+      messages: created.messages,
       name: created.name.trim(),
+      targetTech: created.targetTech,
+      jsx: created.jsx,
       html: created.html.trim(),
       css: created.css.trim(),
       js: created.js.trim(),
@@ -111,8 +230,19 @@ export function EditorProvider({ children }) {
 
     console.log("created.......", created);
   };
-  const updatePreview = (html = "", css = "", js = "") => {
-    const boilerCss = `body {
+  const updatePreview = async (
+    component = {
+      id: "",
+      name: "",
+      html: "",
+      css: "",
+      js: "",
+      jsx: reactDefaultPreview,
+      targetTech: targetTech,
+    },
+  ) => {
+    if (component.targetTech === "HTML") {
+      const boilerCss = `body {
                     margin: 0;
   padding: 0;
   width: 100%;
@@ -131,7 +261,7 @@ export function EditorProvider({ children }) {
     width: 100%;
 }  
                   `;
-    const finalHtml = `
+      const finalHtml = `
      <!DOCTYPE html>
             <html>
               <head>
@@ -139,16 +269,16 @@ export function EditorProvider({ children }) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Component Preview</title>
     <style>
-                ${css ? "" : boilerCss}         
+                ${component.css ? "" : boilerCss}         
 
-                  ${css}
+                  ${component.css}
                 </style>
               </head>
               <body>
                 ${
-                  !html && !css && !js
+                  !component.html && !component.css && !component.js
                     ? ' <img src="/newlogo.svg" alt="Logo"/>'
-                    : html
+                    : component.html
                 }
                 <script>
                   // Override console methods to send messages to parent
@@ -191,7 +321,7 @@ export function EditorProvider({ children }) {
                     });
                 });
                   try {
-                    ${js}
+                    ${component.js}
                   } catch (e) {
                     console.error('JavaScript error:', e.message);
                   }
@@ -200,8 +330,46 @@ export function EditorProvider({ children }) {
             </html>
     `;
 
-    setPreviewCode(finalHtml);
-    console.log("activeIndex Code", html);
+      setHtmlPreviewDocument(finalHtml);
+    }
+
+    if (component.targetTech === "REACT") {
+      const compiledJsx = await compileJSX(component.jsx);
+      const constructedReactDoc = `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <meta charset="UTF-8" />
+
+        <style>
+          ${component.css}
+        </style>
+      </head>
+
+      <body>
+        <div id="root"></div>
+<script src="https://cdn.tailwindcss.com"></script>
+        <script type="module">
+          import React from "https://esm.sh/react@19";
+          import ReactDOMClient from "https://esm.sh/react-dom@19/client";
+
+          ${compiledJsx ? compiledJsx : ""}
+
+          const root = ReactDOMClient.createRoot(
+            document.getElementById("root")
+          );
+
+          root.render(
+            React.createElement(Component.default)
+          );
+        </script>
+      </body>
+    </html>
+  `;
+      setReactPreviewDocument(constructedReactDoc);
+    }
+
+    // console.log("activeIndex Code", component.html);
   };
 
   return (
@@ -217,8 +385,10 @@ export function EditorProvider({ children }) {
         setActiveEditor,
         activeComponent,
         setActiveComponent,
-        previewCode,
-        setPreviewCode,
+        htmlPreviewDocument,
+        setHtmlPreviewDocument,
+        reactPreviewDocument,
+        setReactPreviewDocument,
         previewKey,
         setPreviewKey,
         updatePreview,
@@ -242,6 +412,8 @@ export function EditorProvider({ children }) {
         setIsMaximised,
         reworkUI,
         setReworkUI,
+        targetTech,
+        setTargetTech,
       }}
     >
       {children}

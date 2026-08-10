@@ -3,6 +3,7 @@ const startMarkers = {
   "###NAME_START###": "name",
   "###MESSAGE_START###": "message",
   "###HTML_START###": "html",
+  "###JSX_START###": "jsx",
   "###CSS_START###": "css",
   "###JS_START###": "js",
 };
@@ -11,6 +12,7 @@ const endMarkers = {
   "###NAME_END###": "name",
   "###MESSAGE_END###": "message",
   "###HTML_END###": "html",
+  "###JSX_END###": "jsx",
   "###CSS_END###": "css",
   "###JS_END###": "js",
 };

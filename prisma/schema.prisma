@@ -64,13 +64,20 @@ model VerificationToken {
  
   @@id([identifier, token])
 }
-
+enum TargetTech {
+  HTML
+  REACT
+  VUE
+}
 model Component{
   id Int @id @default(autoincrement())
   name String @default("New Component")
-  html String
-  css String
-  js String
+  targetTech TargetTech @default(HTML)
+
+  html String @default("")
+  css String @default("")
+  js String @default("")
+  jsx String @default("")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

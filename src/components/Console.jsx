@@ -32,7 +32,7 @@ const Console = () => {
     <div
       className={`${
         showConsole ? " h-50" : "h-0"
-      } flex flex-col border mx-1 rounded-t-2xl overflow-hidden border-gray-200 dark:border-darkBorder transition-all duration-75`}
+      } flex flex-col border mx-1 rounded-t-2xl overflow-hidden border-gray-200 dark:border-lightBorder transition-all duration-75`}
     >
       <div className="bg-gray-200 rounded-t-2xl border-none dark:bg-darkSecondary border-b border-gray-200 dark:border-darkBorder px-4 py-2 flex items-center justify-between">
         <div className="flex items-center gap-2">

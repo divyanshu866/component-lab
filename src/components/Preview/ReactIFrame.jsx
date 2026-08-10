@@ -1,19 +1,19 @@
 "use client";
-import { useConsole } from "@/context/ConsoleContext";
+
+import { useEffect, useState } from "react";
 import { useEditorContext } from "@/context/EditorContext";
-import AILoader from "@/components/AILoader";
-import { useState } from "react";
 import { Maximize2, Minimize2 } from "lucide-react";
-const Preview = ({ isMobile }) => {
+
+const ReactIFrame = ({ isMobile }) => {
   const {
-    previewCode,
+    reactPreviewDocument,
     previewKey,
     isGenerating,
     showPreview,
     isMaximised,
     setIsMaximised,
   } = useEditorContext();
-  const { consoleLogs, setConsoleLogs } = useConsole();
+
   return (
     <div
       className={`${
@@ -27,7 +27,6 @@ const Preview = ({ isMobile }) => {
       } ${
         isMobile ? "" : ""
       }  flex h-full justify-center items-center border-l rounded-2xl overflow-hidden border-gray-200 dark:border-darkBorder relative transition-all duration-200`}
-      //   dangerouslySetInnerHTML={{ __html: html }}
     >
       <button
         onClick={() => setIsMaximised(!isMaximised)}
@@ -37,15 +36,17 @@ const Preview = ({ isMobile }) => {
       </button>
       <iframe
         key={previewKey}
-        srcDoc={previewCode}
-        sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-presentation"
-        className={`w-full h-full ${showPreview ? "" : "opacity-0"} ${
-          isGenerating ? "" : ""
-        } transition-all duration-75`}
+        title="React Preview"
+        sandbox="allow-scripts"
+        srcDoc={reactPreviewDocument}
+        style={{
+          width: "100%",
+          height: "100%",
+          border: "none",
+        }}
       />
-      <AILoader isActive={isGenerating} />
     </div>
   );
 };
 
-export default Preview;
+export default ReactIFrame;

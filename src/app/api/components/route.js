@@ -2,7 +2,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth"; // ← your NextAuth v5 helper
 import { prisma } from "@/lib/prisma";
-import { PromptRole } from "@prisma/client";
+import { PromptRole, TargetTech } from "@prisma/client";
 export async function POST(request) {
   // 1. Check session
 
@@ -12,7 +12,16 @@ export async function POST(request) {
   }
 
   // 2. Pull payload
-  const { messages = [], name, html, css, js } = await request.json();
+  const {
+    messages = [],
+    name,
+    html,
+    css,
+    js,
+    jsx,
+    targetTech,
+  } = await request.json();
+
   console.log("This is the Prompt from the frontend>>>>>: ", messages);
   // 3. Create component tied to the authenticated user
   const component = await prisma.$transaction(async (tx) => {
@@ -23,6 +32,9 @@ export async function POST(request) {
           html: html.trim() || "",
           css: css.trim() || "",
           js: js.trim() || "",
+          jsx: jsx.trim() || "",
+          targetTech:
+            targetTech === "HTML" ? TargetTech.HTML : TargetTech.REACT,
           user: { connect: { id: session.user.id } },
         },
         include: {
@@ -39,10 +51,12 @@ export async function POST(request) {
 
     const component = await tx.component.create({
       data: {
-        name: name || "New Component",
-        html: html || "",
-        css: css || "",
-        js: js || "",
+        name: name.trim() || "New Component",
+        html: html.trim() || "",
+        css: css.trim() || "",
+        js: js.trim() || "",
+        jsx: jsx.trim() || "",
+        targetTech: targetTech === "HTML" ? TargetTech.HTML : TargetTech.REACT,
         user: { connect: { id: session.user.id } },
         prompts: {
           create: [

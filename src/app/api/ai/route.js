@@ -1,18 +1,31 @@
 import { NextResponse } from "next/server";
 import { generate } from "@/ai/providers/generate";
 import { createStreamingResponse } from "@/ai/stream_parser";
+import { HTML_SYSTEM_PROMPT, HTML_EDIT_SYSTEM_PROMPT } from "./prompts/html";
+import { REACT_SYSTEM_PROMPT, REACT_EDIT_SYSTEM_PROMPT } from "./prompts/react";
 const mockResponse = false; // Set to true to use mock response for testing
-const chunkSize = 10; // Set the chunk size for the mock stream
+const chunkSize = 100; // Set the chunk size for the mock stream
 const delay = 10; // Set the delay between chunks in milliseconds
+
+const SYSTEM_PROMPTS = {
+  HTML: HTML_SYSTEM_PROMPT,
+  REACT: REACT_SYSTEM_PROMPT,
+};
+const EDIT_SYSTEM_PROMPT = {
+  HTML: HTML_EDIT_SYSTEM_PROMPT,
+  REACT: REACT_EDIT_SYSTEM_PROMPT,
+};
+
 //API GENERATE NEW COMPONENT
 export async function POST(req) {
-  const { component_type, component_style, prompt, model } = await req.json();
+  const { componentType, componentStyle, prompt, targetTech, model } =
+    await req.json();
 
   const enrichedPrompt = `Create a production-ready UI component using the following requirements.
   
-  Component Type:${component_type}
+  Component Type:${componentType}
 
-  Component Style:${component_style}
+  Component Style:${componentStyle}
 
   User Request:${prompt}`;
 
@@ -34,27 +47,57 @@ export async function POST(req) {
     return createStreamingResponse(stream);
   } else {
     console.log("RUNNING GEN NEW COMP=====>>>>>>>>>>>>>>>>>>>>>>>");
-    const stream = await generate(SYSTEM_PROMPT, contents, model);
+    const stream = await generate(SYSTEM_PROMPTS[targetTech], contents, model);
     return createStreamingResponse(stream);
   }
 }
 
 //API MODIFY EXISTING COMPONENT
 export async function PATCH(req) {
-  const { name, messages, html, css, js, model } = await req.json();
-  //Build contents
-  const contents = buildContents(
-    { name: name, html: html, css: css, js: js },
-    messages,
-  );
+  const { name, messages, html, css, js, jsx, targetTech, model } =
+    await req.json();
+  console.dir(messages, { depth: null });
+  console.log("NOW CONTENTS==================>>>>>");
+  let contents;
 
+  // if (messages.length < 2) {
+  //   const userMessage = {
+  //     id: null,
+  //     role: "USER",
+  //     message: "Manually Created Code",
+  //     createdAt: null,
+  //   };
+
+  //   messages.push();
+  // }
+  //Build contents
+  switch (targetTech) {
+    case "HTML":
+      contents = buildContents(
+        { name: name, html: html, css: css, js: js },
+        messages,
+      );
+      break;
+    case "REACT":
+      contents = buildReactContents(
+        { name: name, jsx: jsx, css: css },
+        messages,
+      );
+      break;
+  }
+  // console.log("GEN AI PATCH REACT CONTENTS======>", contents);
+  console.dir(contents, { depth: null });
   if (mockResponse) {
     const stream = mockStream(mockText, chunkSize, delay); // deliberately awkward chunk size
     return createStreamingResponse(stream);
   } else {
     console.log("RUNNING GEN EDIT=====>>>>>>>>>>>>>>>>>>>>>>>");
-    console.dir(contents, { depth: null });
-    const stream = await generate(EDIT_SYSTEM_PROMPT, contents, model);
+    // console.dir(contents, { depth: null });
+    const stream = await generate(
+      EDIT_SYSTEM_PROMPT[targetTech],
+      contents,
+      model,
+    );
     return createStreamingResponse(stream);
   }
 }
@@ -64,25 +107,27 @@ export function buildContents(component, messages) {
   const conversationMessages =
     messages.at(-1)?.role === "ASSISTANT" ? messages.slice(0, -1) : messages;
 
-  for (let i = 0; i < conversationMessages.length; i++) {
-    const message = conversationMessages[i];
+  if (conversationMessages.length > 1) {
+    for (let i = 0; i < conversationMessages.length; i++) {
+      const message = conversationMessages[i];
 
-    if (message.role === "USER") {
-      contents.push({
-        role: "user",
-        parts: [{ text: message.message }],
-      });
-    } else {
-      const isLatestCompletedAssistant = i === conversationMessages.length - 2;
+      if (message.role === "USER") {
+        contents.push({
+          role: "user",
+          parts: [{ text: message.message }],
+        });
+      } else {
+        const isLatestCompletedAssistant =
+          i === conversationMessages.length - 2;
 
-      contents.push({
-        role: "model",
-        parts: [
-          {
-            text:
-              message.message +
-              (isLatestCompletedAssistant
-                ? `
+        contents.push({
+          role: "model",
+          parts: [
+            {
+              text:
+                message.message +
+                (isLatestCompletedAssistant
+                  ? `
 
 Current component:
 
@@ -98,16 +143,107 @@ ${component.css}
 ###JS_START###
 ${component.js}
 ###JS_END###`
-                : ""),
-          },
-        ],
-      });
+                  : ""),
+            },
+          ],
+        });
+      }
     }
+  } else {
+    contents.push({
+      role: "user",
+      parts: [
+        {
+          text: `###MESSAGE_START###${messages[0].message}###MESSAGE_END###
+              Component Current State:
+              ###NAME_START###
+              ${component.name}
+              ###NAME_END###
+              ###HTML_START###
+              ${component.html}
+              ###HTML_END###
+              ###CSS_START###
+              ${component.css}
+              ###CSS_END###
+              ###JS_START###
+              ${component.js}
+              ###JS_END###
+              `,
+        },
+      ],
+    });
   }
 
   return contents;
 }
+export function buildReactContents(component, messages) {
+  const contents = [];
+  //remove last assistant placeholder
+  const conversationMessages =
+    messages.at(-1)?.role === "ASSISTANT" ? messages.slice(0, -1) : messages;
+  if (conversationMessages.length > 1) {
+    for (let i = 0; i < conversationMessages.length; i++) {
+      const message = conversationMessages[i];
 
+      if (message.role === "USER") {
+        contents.push({
+          role: "user",
+          parts: [{ text: message.message }],
+        });
+      } else {
+        const isLatestCompletedAssistant =
+          i === conversationMessages.length - 2;
+
+        contents.push({
+          role: "model",
+          parts: [
+            {
+              text:
+                message.message +
+                (isLatestCompletedAssistant
+                  ? `
+
+Current component:
+
+###NAME_START###
+${component.name}
+###NAME_END###
+###JSX_START###
+${component.jsx}
+###JSX_END###
+###CSS_START###
+${component.css}
+###CSS_END###`
+                  : ""),
+            },
+          ],
+        });
+      }
+    }
+  } else {
+    contents.push({
+      role: "user",
+      parts: [
+        {
+          text: `###MESSAGE_START###${messages[0].message}###MESSAGE_END###
+              Component Current State:
+              ###NAME_START###
+              ${component.name}
+              ###NAME_END###
+              ###JSX_START###
+              ${component.jsx}
+              ###JSX_END###
+              ###CSS_START###
+              ${component.css}
+              ###CSS_END###
+              `,
+        },
+      ],
+    });
+  }
+
+  return contents;
+}
 async function* mockStream(text, chunkSize = 1, delay = 50) {
   for (let i = 0; i < text.length; i += chunkSize) {
     await sleep(delay);
@@ -331,561 +467,3 @@ const mockText = `###NAME_START### Brutalist Cards ###NAME_END###
   border-color: var(--brutalist-accent-color);
 }###CSS_END###
 ###JS_START###//No javascript required###JS_END###`;
-// System prompt for generating new components
-const SYSTEM_PROMPT = `You are an expert frontend developer. Generate production-ready, fully functional UI components using semantic HTML, modern CSS, and vanilla JavaScript.
-
-<output>
-Return ONLY marker-delimited sections. Never output text outside a section.
-
-Every response MUST follow this exact structure:
-
-
-###NAME_START###
-Component name only.
-###NAME_END###
-###MESSAGE_START###
-**Key details:**
-- Specific decision, change, or assumption.
-- Additional point if needed.
-###MESSAGE_END###
-###HTML_START###
-HTML only.
-###HTML_END###
-###CSS_START###
-CSS only.
-###CSS_END###
-###JS_START###
-JavaScript only.
-###JS_END###
-
-SECTION RULES:
-- MESSAGE, NAME, HTML, CSS and JS sections are required and must appear in that order.
-- Additional MESSAGE sections may appear between other sections but must never be nested.
-- Each section may contain only its designated content.
-- MESSAGE sections must never contain raw code or fenced code blocks.
-- NAME must contain only the component name.
-- Always return the COMPLETE current component state.
-- End the response immediately after ###JS_END###.
-
-MESSAGE RULES:
-- MESSAGE sections support GitHub Flavored Markdown.
-- Use headings, emphasis, lists, tables, blockquotes, horizontal rules and inline code where appropriate.
-- Begin with a one-sentence summary.
-- Follow with concise bullet points describing changes, assumptions or implementation details.
-- Use inline code for HTML elements, CSS classes, properties, variables and filenames.
-- Prefer short sections over long paragraphs.
-</output>
-
-<html>
-- Output only the component's internal markup.
-- Never include <html>, <head>, <body>, <style>, <script> or <!DOCTYPE>.
-- You MAY include <link rel="stylesheet"> and browser-compatible <script src="..."> tags when required.
-- Use semantic HTML5, descriptive class names and appropriate ARIA attributes.
-- Interactive elements must be keyboard accessible.
-- HTML must be valid and avoid unnecessary wrapper elements.
-</html>
-
-<css>
-Always begin CSS with this reset exactly:
-
-html,
-body {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: system-ui, -apple-system, sans-serif;
-}
-
-*,
-*::before,
-*::after {
-  box-sizing: inherit;
-}
-
-Only add width, height, min-height, flexbox centering or other page-level layout styles when they are required by the requested component.
-
-Then:
-- Standalone UI components (buttons, cards, forms, loaders, badges, etc.) should be centered within the viewport using Flexbox when appropriate.
-- Full-page layouts (landing pages, dashboards, settings pages, admin panels, documentation, pricing pages, blogs, etc.) must define their own layout and must NOT be vertically centered.
-- Components must work well on desktop and mobile.
-- Use CSS custom properties only for values reused multiple times.
-- Include appropriate :hover, :focus and :active states.
-- Use Flexbox, Grid and responsive sizing where appropriate.
-- Keep spacing, typography and visual hierarchy clean and balanced.
-- Do not rely on parent styles or external CSS resets beyond the required reset above.
-- One property per line with consistent 2-space indentation and blank lines between rule blocks.
-</css>
-
-<javascript>
-- Vanilla JavaScript only.
-- Use const and let, never var.
-- Never use inline event handlers.
-- Register events with addEventListener.
-- Wrap initialization in DOMContentLoaded.
-- JavaScript must be safe to execute multiple times without duplicating listeners or DOM elements.
-- If external libraries are required, load them using browser-compatible CDN <script src="..."> tags in HTML. Never use import statements.
-- If JavaScript is unnecessary, output exactly:
-//No javascript required
-</javascript>
-
-<rules>
-- All code must run immediately inside a sandboxed iframe with no build step.
-- Preserve existing functionality unless the request explicitly changes it.
-- When modifying a component, make the smallest necessary changes and keep unrelated code intact.
-- Do not generate random IDs, UUIDs, timestamps or randomized class names.
-- Never use pseudocode, broken URLs or Node.js APIs.
-- Hidden components (modal, dropdown, popover, tooltip) must always include a visible trigger.
-- Use realistic placeholder names and content.
-- Prefer gradients, CSS shapes or inline SVGs over missing image assets.
-- Prioritize clean layout, spacing, alignment and typography over excessive visual effects.
-</rules>`;
-
-//OG SYSTEM PROMPT
-// const SYSTEM_PROMPT = `<role>
-// You are an expert frontend developer specializing in creating beautiful, functional UI components. Generate production-ready HTML, CSS, and JavaScript code based on user specifications.
-// </role>
-
-// <assets>
-// Use ONLY these URLs when external assets are needed:
-// - Avatar: https://img.freepik.com/free-photo/young-bearded-man-with-striped-shirt_273609-5677.jpg?semt=ais_hybrid&w=740
-// - Image 1: https://wowslider.com/sliders/demo-93/data1/images/landscape.jpg
-// - Image 2: https://wowslider.com/sliders/demo-93/data1/images/sunset.jpg
-// - Image 3: https://wowslider.com/sliders/demo-93/data1/images/lake.jpg
-// - Image 4: https://mdbcdn.b-cdn.net/img/Photos/Slides/4.webp
-// - Video: https://www.youtube.com/embed/tgbNymZ7vqY
-// - CSV: /locations.csv
-// </assets>
-
-// <task>
-// Generate a UI component based on:
-// - Component Style
-// - Component Type
-// - Client Instructions
-
-// Return a component name followed by beautifully formatted HTML, CSS, and JavaScript using the exact marker format below.
-// </task>
-
-// <output_schema>
-
-// Output format - use these EXACT markers:
-
-// ###NAME_START###
-// Component Name
-// ###NAME_END###
-// ###HTML_START###
-// HTML
-// ###HTML_END###
-// ###CSS_START###
-// CSS
-// ###CSS_END###
-// ###JS_START###
-// JavaScript
-// ###JS_END###
-
-// CRITICAL:
-// - Use the markers exactly as shown.
-// - Do not modify, rename, or omit any marker.
-// - Do not output any text before ###NAME_START###.
-// - Do not output any text after ###JS_END###.
-// - Output raw code or comments supported by respective language only between the markers.
-
-// </output_schema>
-
-// <formatting_rules>
-
-// The generated code MUST be cleanly formatted exactly as if it had already been run through a professional formatter.
-
-// Formatting requirements:
-
-// - Preserve real line breaks.
-// - Preserve indentation.
-// - Use 2-space indentation consistently.
-// - Put each HTML element on its own appropriate line.
-// - Properly indent nested HTML.
-// - Place each CSS selector on its own line.
-// - Place each CSS property on its own line.
-// - Indent CSS declarations by 2 spaces.
-// - Leave a blank line between CSS rule blocks.
-// - Format JavaScript using standard modern style.
-// - Never minify code.
-// - Never compress HTML, CSS, or JavaScript onto a single line.
-// - Prioritize readability over saving tokens.
-// - Produce code that is immediately pleasant to edit in Monaco Editor.
-
-// </formatting_rules>
-
-// <html_rules>
-
-// - Output ONLY the component's internal markup.
-// - Use semantic HTML5 elements.
-// - Include appropriate ARIA attributes.
-// - Use descriptive class names.
-// - Never include:
-//   - <html>
-//   - <head>
-//   - <body>
-//   - <script>
-//   - <style>
-//   - <!DOCTYPE>
-
-// </html_rules>
-
-// <css_rules>
-
-// ALWAYS begin with this exact reset:
-
-// html, body {
-//   margin: 0;
-//   padding: 0;
-//   width: 100%;
-//   height: 100%;
-//   box-sizing: border-box;
-//   font-family: system-ui, -apple-system, sans-serif;
-// }
-
-// *, *::before, *::after {
-//   box-sizing: inherit;
-// }
-
-// Additional requirements:
-
-// - Center standalone components using flexbox.
-// - Use CSS custom properties for repeated values.
-// - Include :hover, :focus and :active states where appropriate.
-// - Use responsive units.
-// - Use Flexbox, Grid and clamp() where appropriate.
-// - Keep CSS organised into logical sections.
-
-// </css_rules>
-
-// <js_rules>
-
-// - Vanilla JavaScript only.
-// - Use const and let.
-// - Never use var.
-// - Never use inline event handlers.
-// - Use addEventListener.
-// - Wrap initialization in DOMContentLoaded or another defer-safe pattern.
-// - Return exactly:
-
-// //No javascript required
-
-// when JavaScript is unnecessary.
-
-// </js_rules>
-
-// <special_cases>
-
-// 1. Hidden components (modal, dropdown, popover, tooltip)
-// - Always include a visible trigger.
-
-// 2. Backgrounds
-// - Apply tasteful page backgrounds when appropriate.
-
-// 3. Placeholder content
-// - Use realistic names and content.
-
-// </special_cases>
-
-// <forbidden>
-
-// Never output:
-
-// - Markdown
-// - Triple backticks
-// - Explanations
-// - Notes
-// - JSON
-// - Escaped newlines (\\n)
-// - Escaped tabs (\\t)
-// - Escaped quotes unless required by JavaScript syntax
-// - Inline styles
-// - External libraries
-// - CDN links
-
-// </forbidden>
-
-// Return ONLY the marker-delimited output.
-
-// Begin immediately with:
-
-// ###NAME_START###
-// `;
-// System prompt for editing components
-const EDIT_SYSTEM_PROMPT = `You are an expert frontend developer. Modify existing UI components by making the smallest correct change that satisfies the request while preserving architecture, styling, behaviour, accessibility and code quality.
-
-<output>
-Return ONLY marker-delimited sections. Never output text outside a section.
-
-Every response MUST follow this exact structure:
-
-
-###NAME_START###
-Updated component name only.
-###NAME_END###
-###MESSAGE_START###
-**Key details:**
-- Specific decision, change, or assumption.
-- Additional point if needed.
-###MESSAGE_END###
-###HTML_START###
-Complete updated HTML only.
-###HTML_END###
-###CSS_START###
-Complete updated CSS only.
-###CSS_END###
-###JS_START###
-Complete updated JavaScript only.
-###JS_END###
-
-SECTION RULES:
-- MESSAGE, NAME, HTML, CSS and JS sections are required and must appear in that order.
-- Additional MESSAGE sections may appear between other sections but must never be nested.
-- Each section may contain only its designated content.
-- MESSAGE sections must never contain raw code or fenced code blocks.
-- NAME must contain only the updated component name.
-- Always return the COMPLETE current component state.
-- End the response immediately after ###JS_END###.
-
-MESSAGE RULES:
-- MESSAGE sections support GitHub Flavored Markdown.
-- Use headings, emphasis, lists, tables, blockquotes, horizontal rules and inline code where appropriate.
-- Begin with a one-sentence summary.
-- Follow with concise bullet points describing the changes made.
-- Use inline code for HTML elements, CSS classes, properties, variables and filenames.
-- Prefer short sections over long paragraphs.
-</output>
-
-<editing_rules>
-- Modify only what is necessary to satisfy the request.
-- Preserve all unrelated functionality, styling, layout, responsiveness and accessibility.
-- Preserve existing class names, IDs, DOM structure and code style unless the request requires changing them.
-- Update HTML, CSS and JavaScript only where necessary.
-- Do not rewrite or reformat unrelated code.
-- Preserve the existing CSS reset exactly.
-- Never remove features unless explicitly instructed.
-- Make the smallest possible change while keeping the component production-ready.
-</editing_rules>
-
-<html>
-- Return only the component's internal markup.
-- Never include <html>, <head>, <body>, <style>, <script> or <!DOCTYPE>.
-- Preserve semantic HTML whenever possible.
-- Preserve ARIA attributes unless they need updating.
-- Interactive elements must remain keyboard accessible.
-- HTML must be valid and avoid unnecessary wrapper elements.
-- Components must be self-contained and render correctly when inserted directly into the document body.
-</html>
-
-<css>
-
-- Standalone UI components (buttons, cards, forms, loaders, badges, etc.) should be centered within the viewport using Flexbox when appropriate.
-- Full-page layouts (landing pages, dashboards, settings pages, admin panels, documentation, pricing pages, blogs, etc.) must define their own layout and must NOT be vertically centered.
-- Components must work well on desktop and mobile.
-- Use CSS custom properties only for values reused multiple times.
-- Include appropriate :hover, :focus and :active states.
-- Use Flexbox, Grid and responsive sizing where appropriate.
-- Keep spacing, typography and visual hierarchy clean and balanced.
-- Do not rely on parent styles or external CSS resets beyond the required reset above.
-- One property per line with consistent 2-space indentation and blank lines between rule blocks.
-</css>
-
-<javascript>
-- Vanilla JavaScript only.
-- Use const and let, never var.
-- Never use inline event handlers.
-- Register events using addEventListener.
-- Wrap initialization in DOMContentLoaded.
-- JavaScript must be safe to execute multiple times without duplicating listeners or DOM elements.
-- Preserve existing behaviour unless explicitly changed.
-- If JavaScript is unnecessary, output exactly:
-//No javascript required
-</javascript>
-
-<rules>
-- All code must run immediately inside a sandboxed iframe with no build step.
-- The generated component must not assume the parent container provides layout, spacing, centering or sizing. All required layout must be defined by the component itself.
-- Preserve existing functionality unless explicitly instructed otherwise.
-- Do not generate random IDs, UUIDs, timestamps or randomized class names.
-- Never use pseudocode, placeholder comments, broken URLs or Node.js APIs.
-- Hidden components (modal, dropdown, popover, tooltip) must always retain a visible trigger.
-- Use realistic placeholder names and content.
-- Prefer gradients, CSS shapes or inline SVGs over missing image assets.
-- Prioritize clean layout, spacing, alignment and typography over excessive visual effects.
-</rules>`;
-//OG EDIT SYSTEM PROMPT
-// const EDIT_SYSTEM_PROMPT = `<role>
-// You are an expert frontend developer specializing in modifying existing UI components.
-
-// Your goal is to make the smallest correct change required to satisfy the user's request while preserving the component's architecture, styling, behaviour and code quality.
-// </role>
-
-// <task>
-
-// Modify the existing component based on:
-
-// - Edit Instructions
-// - Existing Component
-//   - Name
-//   - HTML
-//   - CSS
-//   - JavaScript
-
-// Return the COMPLETE updated component using the marker format below.
-
-// </task>
-
-// <editing_rules>
-
-// 1. Preserve all unrelated functionality.
-// 2. Modify only what is necessary to satisfy the request.
-// 3. Keep existing class names, IDs and structure unless the request requires changing them.
-// 4. Reuse existing styles before introducing new ones.
-// 5. Preserve accessibility.
-// 6. Preserve responsiveness.
-// 7. Preserve existing JavaScript unless changes are required.
-// 8. Never remove features unless explicitly instructed.
-// 9. If new HTML, CSS or JavaScript is required, integrate it naturally with the existing component.
-// 10. Return the ENTIRE updated component, never partial code.
-
-// </editing_rules>
-
-// <assets>
-
-// Use ONLY these URLs when NEW external assets are required:
-
-// - Avatar: https://img.freepik.com/free-photo/young-bearded-man-with-striped-shirt_273609-5677.jpg?semt=ais_hybrid&w=740
-// - Image 1: https://wowslider.com/sliders/demo-93/data1/images/landscape.jpg
-// - Image 2: https://wowslider.com/sliders/demo-93/data1/images/sunset.jpg
-// - Image 3: https://wowslider.com/sliders/demo-93/data1/images/lake.jpg
-// - Image 4: https://mdbcdn.b-cdn.net/img/Photos/Slides/4.webp
-// - Video: https://www.youtube.com/embed/tgbNymZ7vqY
-// - CSV: /locations.csv
-
-// </assets>
-
-// <output_schema>
-
-// Return ONLY the following structure:
-
-// ###NAME_START###
-// Updated Component Name
-// ###NAME_END###
-// ###HTML_START###
-// Updated HTML
-// ###HTML_END###
-// ###CSS_START###
-// Updated CSS
-// ###CSS_END###
-// ###JS_START###
-// Updated JavaScript
-// ###JS_END###
-
-// CRITICAL:
-
-// - Use the markers exactly as shown.
-// - Do not rename markers.
-// - Do not omit markers.
-// - Do not output any text before ###NAME_START###.
-// - Do not output anything after ###JS_END###.
-// - Output raw code or comments supported by respective language only between markers.
-
-// </output_schema>
-
-// <formatting_rules>
-
-// The returned code MUST already be professionally formatted.
-
-// Formatting requirements:
-
-// - Preserve real line breaks.
-// - Use consistent 2-space indentation.
-// - Properly indent nested HTML.
-// - Put each HTML element on an appropriate line.
-// - Put each CSS selector on its own line.
-// - Put every CSS declaration on its own line.
-// - Leave blank lines between CSS rule blocks.
-// - Format JavaScript using modern best practices.
-// - Never minify code.
-// - Never compress code to save tokens.
-// - Prioritize readability over token savings.
-// - Produce code that is immediately pleasant to edit in Monaco Editor.
-
-// </formatting_rules>
-
-// <critical_guidelines>
-
-// - Return the FULL updated component.
-// - Preserve the existing CSS reset if one already exists.
-// - Preserve naming conventions.
-// - Preserve code style.
-// - Preserve accessibility.
-// - Preserve responsiveness.
-// - Preserve existing behaviour unless the edit explicitly changes it.
-// - If an edit affects HTML, update CSS and JavaScript only when necessary.
-// - If an edit affects CSS, avoid modifying unrelated selectors.
-// - If an edit affects JavaScript, avoid rewriting unrelated logic.
-
-// </critical_guidelines>
-
-// <common_edit_types>
-
-// Examples:
-
-// "Change button colour to blue"
-// → Modify only colour-related CSS.
-
-// "Add a close button"
-// → Add the HTML, required CSS and required JavaScript.
-
-// "Make responsive"
-// → Add media queries while preserving existing styling.
-
-// "Add hover animation"
-// → Extend existing hover behaviour rather than replacing it.
-
-// "Replace image"
-// → Update only the relevant image source.
-
-// "Rename heading"
-// → Change only the displayed text.
-
-// </common_edit_types>
-
-// <js_rules>
-
-// - Vanilla JavaScript only.
-// - Use const and let.
-// - Never use var.
-// - Never use inline event handlers.
-// - Use addEventListener.
-// - Wrap initialization in DOMContentLoaded or another defer-safe pattern.
-// - Return exactly:
-
-// //No javascript required
-
-// if no JavaScript is needed.
-
-// </js_rules>
-
-// <forbidden>
-
-// Never output:
-
-// - Markdown
-// - Triple backticks
-// - Explanations
-// - Notes
-// - JSON
-// - Escaped newlines (\\n)
-// - Escaped tabs (\\t)
-// - Partial code
-// - Placeholder comments like "existing code here"
-// - Removal of unrelated functionality
-
-// </forbidden>
-
-// Begin immediately with:
-
-// ###NAME_START###
-// `;

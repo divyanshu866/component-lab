@@ -13,7 +13,7 @@ const Profile = ({ user }) => {
         <img
           src={user.image}
           alt=""
-          className="rounded-full contain-content h-full w-full bg-gradient-to-br from-pink-500 to-purple-500 bg-clip-border border-3 border-transparent"
+          className="rounded-full contain-content h-full w-full bg-linear-to-br from-pink-500 to-purple-500 bg-clip-border border-3 border-transparent"
         />
       </button>
       {showProfileModal && (

@@ -15,7 +15,9 @@
   /* custom colors */
   --color-darkGrey: #0f0f0f;
   --color-darkSecondary: #141414;
-  --color-darkBorder: #272528;
+  /* --color-darkBorder: #272528; */
+  --color-darkBorder: #171717;
+  --color-lightBorder: #272528;
   --color-lightGrey: #2e2d2b;
   --color-activeRed: #2d161d;
   --color-activeRedBorder: #ff006e;

@@ -7,10 +7,34 @@ import { useEditorContext } from "@/context/EditorContext";
 import "@/styles/editor.css";
 
 export default function ComponentEditor({ code, onChange, language }) {
-  const editorRef = useRef(null);
   const { isGenerating } = useEditorContext();
-
+  const editorRef = useRef(null);
+  let editorLanguage;
+  switch (language) {
+    case "html":
+      editorLanguage = "html";
+      break;
+    case "css":
+      editorLanguage = "css";
+      break;
+    case "javascript":
+      editorLanguage = "javascript";
+      break;
+    case "jsx":
+      editorLanguage = "javascript";
+      break;
+  }
   function handleEditorWillMount(monaco) {
+    // Enable JSX/React support in Monaco's JavaScript language service
+    monaco.languages.typescript.javascriptDefaults.setCompilerOptions({
+      jsx: monaco.languages.typescript.JsxEmit.ReactJSX,
+      allowJs: true,
+      allowNonTsExtensions: true,
+      target: monaco.languages.typescript.ScriptTarget.ES2020,
+      moduleResolution: monaco.languages.typescript.ModuleResolutionKind.NodeJs,
+      module: monaco.languages.typescript.ModuleKind.ESNext,
+    });
+
     // Optional: Setup any monaco configurations before mounting
   }
 
@@ -52,7 +76,7 @@ export default function ComponentEditor({ code, onChange, language }) {
     <div className="relative flex items-center justify-center h-full">
       <Editor
         height="100%"
-        defaultLanguage={language} // "html", "css", or "javascript"
+        defaultLanguage={editorLanguage} // "jsx", "html", "css", or "javascript"
         value={code}
         theme="vs-dark"
         onChange={onChange}

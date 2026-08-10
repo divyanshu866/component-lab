@@ -2,7 +2,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
-
+import { TargetTech } from "@prisma/client";
 export async function DELETE(req, context) {
   const { id } = await context.params; // <-- await params
   const session = await auth();
@@ -38,8 +38,25 @@ export async function PATCH(req, context) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const { messages = [], name, html, css, js } = await req.json();
-
+  const {
+    messages = [],
+    name,
+    html,
+    css,
+    js,
+    jsx,
+    targetTech,
+  } = await req.json();
+  console.log(
+    "SAVE PATCH REACT COMP====>> TARGET TECH",
+    // name,
+    messages,
+    // html,
+    // css,
+    // js,
+    // jsx,
+    targetTech,
+  );
   const component = await prisma.component.findUnique({
     where: { id: Number(id) },
   });
@@ -56,6 +73,8 @@ export async function PATCH(req, context) {
         html,
         css,
         js,
+        jsx,
+        targetTech: targetTech === "HTML" ? TargetTech.HTML : TargetTech.REACT,
       },
     });
 

@@ -25,6 +25,8 @@ const Editor = ({ user, isMobile }) => {
     isGenerating,
     setActiveMessages,
     setActiveComponentIndex,
+    targetTech,
+    setTargetTech,
   } = useEditorContext();
 
   useEffect(() => {
@@ -44,18 +46,31 @@ const Editor = ({ user, isMobile }) => {
         id: c.id,
         messages: c.prompts || [],
         name: c.name,
+        targetTech: c.targetTech,
+        jsx: c.jsx,
         html: c.html,
         css: c.css,
         js: c.js,
       });
+      setTargetTech(c.targetTech);
       setConsoleLogs([]);
 
-      updatePreview(c.html, c.css, c.js);
+      updatePreview(c);
     }
   }, [activeComponentIndex]);
 
   // Add keyboard shortcut for Cmd/Ctrl + S
   useEffect(() => {
+    const updatedComponent = {
+      id: activeComponent.id,
+      name: activeComponent.name,
+      messages: [],
+      html: activeComponent.html,
+      css: activeComponent.css,
+      js: activeComponent.js,
+      jsx: activeComponent.jsx,
+      targetTech: targetTech,
+    };
     const handleSaveShortcut = (e) => {
       if ((e.metaKey || e.ctrlKey) && e.key === "s") {
         setShowPreview(true);
@@ -63,18 +78,9 @@ const Editor = ({ user, isMobile }) => {
         e.preventDefault(); // Prevent default browser "Save page"
         console.log("Preview updated via Cmd/Ctrl + S");
         setConsoleLogs([]);
-        updatePreview(
-          activeComponent.html,
-          activeComponent.css,
-          activeComponent.js,
-        );
-        saveComponent(
-          [],
-          activeComponent.name,
-          activeComponent.html,
-          activeComponent.css,
-          activeComponent.js,
-        );
+        updatePreview(activeComponent);
+        //Previously msessages:[]
+        saveComponent(updatedComponent);
         setReworkUI(true);
       }
     };
@@ -102,6 +108,8 @@ const Editor = ({ user, isMobile }) => {
           id: "",
           messages: [],
           name: "",
+          targetTech: targetTech,
+          jsx: "",
           html: "",
           css: "",
           js: "",
@@ -124,14 +132,17 @@ const Editor = ({ user, isMobile }) => {
     <div
       className={`${
         isMobile ? "w-full h-full absolute" : "w-0"
-      } ${isMaximised ? "hidden" : ""} flex flex-col flex-1 border-r-0 dark:border-darkBorder bg-transparent`}
+      } ${isMaximised ? "hidden" : ""} flex flex-col flex-1 border-r-0 dark:border-lightBorder bg-transparent`}
     >
       <div className="w-full h-full p-1 pb-0 pt-0 overflow-hidden">
-        <div className="flex h-full w-full flex-col overflow-hidden border-x border-darkBorder">
+        <div className="flex h-full w-full flex-col overflow-hidden border-r border-darkBorder">
           {/* EditorTabs Prefered Spot */}
           <EditorTabs
             activeEditor={activeEditor}
             setActiveEditor={setActiveEditor}
+            targetTech={targetTech}
+            setTargetTech={setTargetTech}
+            activeComponentIndex={activeComponentIndex}
           />
           {/* AI Editor */}
           <AIEditor
@@ -140,21 +151,40 @@ const Editor = ({ user, isMobile }) => {
             activeEditor={activeEditor}
           />
           {/* Editors */}
-          <div
-            className={`${
-              activeEditor == "HTML" ? "" : "hidden"
-            } flex flex-col flex-1 h-full py-4 overflow-hidden relative`}
-          >
-            <div className="flex-1 h-0">
-              <ComponentEditor
-                code={activeComponent.html}
-                onChange={(val) =>
-                  setActiveComponent((prev) => ({ ...prev, html: val }))
-                }
-                language="html"
-              />
+          {targetTech === "REACT" && (
+            <div
+              className={`${
+                activeEditor == "JSX" ? "" : "hidden"
+              } flex flex-col flex-1 h-full py-4 overflow-hidden relative`}
+            >
+              <div className="flex-1 h-0">
+                <ComponentEditor
+                  code={activeComponent.jsx}
+                  onChange={(val) =>
+                    setActiveComponent((prev) => ({ ...prev, jsx: val }))
+                  }
+                  language="jsx"
+                />
+              </div>
             </div>
-          </div>
+          )}
+          {targetTech === "HTML" && (
+            <div
+              className={`${
+                activeEditor == "HTML" ? "" : "hidden"
+              } flex flex-col flex-1 h-full py-4 overflow-hidden relative`}
+            >
+              <div className="flex-1 h-0">
+                <ComponentEditor
+                  code={activeComponent.html}
+                  onChange={(val) =>
+                    setActiveComponent((prev) => ({ ...prev, html: val }))
+                  }
+                  language="html"
+                />
+              </div>
+            </div>
+          )}
 
           <div
             className={`${
@@ -171,22 +201,23 @@ const Editor = ({ user, isMobile }) => {
               />
             </div>
           </div>
-
-          <div
-            className={`${
-              activeEditor == "JS" ? "" : "hidden"
-            } flex flex-col h-full flex-1 py-4 overflow-hidden`}
-          >
-            <div className="flex-1 h-0">
-              <ComponentEditor
-                code={activeComponent.js}
-                onChange={(val) =>
-                  setActiveComponent((prev) => ({ ...prev, js: val }))
-                }
-                language="javascript"
-              />
+          {targetTech === "HTML" && (
+            <div
+              className={`${
+                activeEditor == "JS" ? "" : "hidden"
+              } flex flex-col h-full flex-1 py-4 overflow-hidden`}
+            >
+              <div className="flex-1 h-0">
+                <ComponentEditor
+                  code={activeComponent.js}
+                  onChange={(val) =>
+                    setActiveComponent((prev) => ({ ...prev, js: val }))
+                  }
+                  language="javascript"
+                />
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
     </div>

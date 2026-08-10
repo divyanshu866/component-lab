@@ -37,7 +37,6 @@ export default function Sidebar({ isMobile }) {
     activeEditor,
     setActiveEditor,
     setChangeDesc,
-    createNewComponent,
     isGenerating,
     setIsGenerating,
     setShowPreview,
@@ -48,6 +47,7 @@ export default function Sidebar({ isMobile }) {
     setReworkUI,
     isMaximised,
     setIsMaximised,
+    targetTech,
   } = useEditorContext();
   const { setConsoleLogs, showConsole, setShowConsole } = useConsole();
   async function deleteComponent(id, componentIndex) {
@@ -111,7 +111,7 @@ export default function Sidebar({ isMobile }) {
     }
     fetchComponents();
   }, []);
-  const clearScreen = (name = "", html = "", css = "", js = "") => {
+  const clearScreen = (name = "", html = "", css = "", js = "", jsx = "") => {
     if (isGenerating) {
       return;
     }
@@ -127,6 +127,8 @@ export default function Sidebar({ isMobile }) {
     setActiveComponent({
       id: "",
       name: name,
+      targetTech: targetTech,
+      jsx: jsx,
       html: html,
       css: css,
       js: js,
@@ -141,8 +143,8 @@ export default function Sidebar({ isMobile }) {
     <aside
       className={`${
         isMobile ? "absolute" : "relative"
-      } z-50 flex h-full flex-col overflow-hidden border-0 border-darkBorder bg-transparent border-r transition-all duration-300 ${
-        sidebarCollapsed ? (isMobile ? "w-0" : "w-18") : "w-70"
+      } z-50 flex h-full flex-col overflow-hidden border-r rounded-2xl border-darkBorder bg-transparent transition-all duration-150 ${
+        sidebarCollapsed ? (isMobile ? "w-0" : "w-12") : "w-70"
       }`}
     >
       {/* Glow */}
@@ -153,7 +155,7 @@ export default function Sidebar({ isMobile }) {
 
       {/* New Component */}
 
-      <div className="relative p-3">
+      <div className={`${sidebarCollapsed === true ? "p-0" : "p-2"} relative`}>
         <button
           disabled={isGenerating}
           onClick={() => {
@@ -163,27 +165,31 @@ export default function Sidebar({ isMobile }) {
               setIsMaximised(false);
             }
           }}
-          className={`group relative flex w-full items-center justify-center gap-3 overflow-hidden rounded-2xl border border-darkBorder bg-white/[0.03] px-5 py-3 text-sm font-medium text-white transition-all duration-300 hover:border-purple-500/30 hover:bg-white/[0.06] hover:shadow-[0_0_30px_rgba(168,85,247,0.12)] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 ${
-            sidebarCollapsed ? "px-0" : ""
+          className={`group relative flex w-full items-center justify-center gap-3 overflow-hidden border text-sm font-medium text-white transition-all duration-150 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer ${
+            sidebarCollapsed
+              ? "p-0 m-0 pt-2 h-full w-auto border border-transparent bg-transparent"
+              : "px-5 py-3 rounded-2xl border-lightBorder bg-white/3  hover:border-purple-500/30 hover:bg-white/6 hover:shadow-[0_0_30px_rgba(168,85,247,0.12)]"
           }`}
         >
           {/* Icon */}
-          <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-white/5 transition-all duration-300 group-hover:bg-purple-500/15 group-hover:text-purple-300">
+          <div
+            className={`${sidebarCollapsed ? "h-full w-auto p-2 bg-white/8 border border-lightBorder" : "p-1"} bg-white/5 rounded-lg`}
+          >
             <Plus
-              size={18}
-              className="transition-transform duration-300 group-hover:rotate-90"
+              className={`${sidebarCollapsed ? "size-4" : "size-5"} transition-transform duration-300 group-hover:rotate-90`}
             />
           </div>
+          <span
+            className={`${sidebarCollapsed && "hidden"} w-full text-nowrap transition-all duration-150 flex-1 text-left`}
+          >
+            New Component
+          </span>
 
-          {!sidebarCollapsed && (
-            <span className="flex-1 text-left">New Component</span>
-          )}
-
-          {!sidebarCollapsed && (
-            <span className="text-xs text-neutral-500 transition-colors duration-300 group-hover:text-neutral-300">
-              ⌘ K
-            </span>
-          )}
+          <span
+            className={`${sidebarCollapsed && "hidden"} text-xs text-nowrap text-neutral-500 transition-colors duration-100 group-hover:text-neutral-300`}
+          >
+            ⌘ K
+          </span>
         </button>
       </div>
 
@@ -191,7 +197,7 @@ export default function Sidebar({ isMobile }) {
 
       {/* {!sidebarCollapsed && (
         <div className="px-3 pb-4">
-          <div className="flex items-center gap-3 rounded-2xl border border-darkBorder bg-white/5 px-4 py-3">
+          <div className="flex items-center gap-3 rounded-2xl border border-lightBorder bg-white/5 px-4 py-3">
             <Search size={16} className="text-neutral-500" />
 
             <input
@@ -203,10 +209,11 @@ export default function Sidebar({ isMobile }) {
       )} */}
 
       {/* Components */}
-
-      <div className="relative flex-1 overflow-y-auto px-2 pb-4">
-        <div className={`mb-4 ${sidebarCollapsed ? "hidden" : "block"}`}>
-          <p className="px-3 text-xs font-semibold uppercase tracking-wider text-neutral-500">
+      <div
+        className={`${sidebarCollapsed === true ? "hidden" : "w-full"} relative overflow-y-auto text-nowrap mt-3 px-2 pb-4`}
+      >
+        <div className={`mb-4 overflow-hidden`}>
+          <p className="px-3 text-xs text-nowrap font-semibold uppercase tracking-wider text-neutral-500">
             Recent Components
           </p>
         </div>
@@ -216,35 +223,29 @@ export default function Sidebar({ isMobile }) {
             <div
               key={c.id ?? i}
               onClick={() => updateActiveComponent(i)}
-              className={`group relative cursor-pointer overflow-visible rounded-2xl border transition duration-300 ${
+              className={`group relative cursor-pointer overflow-visible rounded-2xl border ${
                 i === activeComponentIndex
                   ? "border-neutral-700 bg-linear-to-r from-[#232526] via-neutral-[#414345] to-neutral-500/50"
-                  : "border-transparent bg-transparent hover:border-darkBorder hover:bg-white/5"
+                  : "border-transparent bg-transparent hover:border-lightBorder hover:bg-white/5"
               }`}
             >
-              <div
-                className={`flex items-center ${
-                  sidebarCollapsed ? "justify-center" : "justify-between"
-                } px-4 py-1`}
-              >
-                {!sidebarCollapsed && (
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-2">
-                      <FileCode2
-                        size={16}
-                        className={`${
-                          i === activeComponentIndex
-                            ? "text-violet-500"
-                            : "text-neutral-500"
-                        }`}
-                      />
+              <div className={`flex items-center justify-between px-4 py-1`}>
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center text-nowrap gap-2">
+                    <FileCode2
+                      size={16}
+                      className={`${
+                        i === activeComponentIndex
+                          ? "text-violet-500"
+                          : "text-neutral-500"
+                      }`}
+                    />
 
-                      <h3 className="truncate text-sm font-medium text-white">
-                        {c.name}
-                      </h3>
-                    </div>
+                    <h3 className="truncate text-sm font-medium text-white">
+                      {c.name}
+                    </h3>
                   </div>
-                )}
+                </div>
 
                 <button
                   onMouseDown={(e) => e.stopPropagation()}
@@ -261,7 +262,7 @@ export default function Sidebar({ isMobile }) {
               </div>
 
               {chatMenu === i && (
-                <div className="absolute right-4 top-14 z-50 w-48 overflow-hidden rounded-2xl border border-darkBorder bg-neutral-900/95 shadow-2xl backdrop-blur-xl">
+                <div className="absolute right-4 top-14 z-50 w-48 overflow-hidden rounded-2xl border border-lightBorder bg-neutral-900/95 shadow-2xl backdrop-blur-xl">
                   <button
                     onMouseDown={(e) => e.stopPropagation()}
                     onClick={(e) => {
@@ -283,8 +284,8 @@ export default function Sidebar({ isMobile }) {
       {/* Footer */}
 
       {!sidebarCollapsed && (
-        <div className="border-t border-darkBorder p-3">
-          <div className="rounded-2xl border border-darkBorder bg-gradient-to-br from-white/5 to-white/[0.02] p-4">
+        <div className="border-t border-lightBorder p-3">
+          <div className="rounded-2xl border border-lightBorder bg-gradient-to-br from-white/5 to-white/[0.02] p-4">
             <div className="flex items-center gap-3">
               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-pink-700 to-purple-700">
                 <Sparkles size={18} className="text-white" />
@@ -292,7 +293,7 @@ export default function Sidebar({ isMobile }) {
 
               <div>
                 <p className="text-sm font-medium text-white">
-                  Gemini 2.5 Flash
+                  Gemini 3.5 Flash-Lite
                 </p>
 
                 <p className="text-xs text-neutral-400">Ready to generate</p>
