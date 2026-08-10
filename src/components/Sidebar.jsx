@@ -233,20 +233,16 @@ export default function Sidebar({ isMobile }) {
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center text-nowrap gap-3">
                     {c.targetTech === "REACT" && (
-                      <img className="size-4" src="/jsx.svg" alt="" />
+                      <img className="size-3.5" src="/jsx.svg" alt="React" />
                     )}
 
                     {c.targetTech === "HTML" && (
-                      <img className="size-4" src="/globe2_red.svg" alt="" />
+                      <img
+                        className="size-3.5"
+                        src="/globe2_red.svg"
+                        alt="Web Bundle"
+                      />
                     )}
-                    {/* <FileCode2
-                      size={16}
-                      className={`${
-                        i === activeComponentIndex
-                          ? "text-violet-500"
-                          : "text-neutral-500"
-                      }`}
-                    /> */}
 
                     <h3 className="truncate text-sm font-medium text-white">
                       {c.name}
