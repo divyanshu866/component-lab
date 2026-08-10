@@ -8,7 +8,7 @@ export async function generateWithGemini(systemPrompt, contents, model) {
     config: {
       systemInstruction: systemPrompt,
       thinkingConfig: {
-        thinkingLevel: "minimal",
+        thinkingLevel: "low",
       },
     },
   });

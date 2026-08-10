@@ -223,7 +223,7 @@ export default function Sidebar({ isMobile }) {
             <div
               key={c.id ?? i}
               onClick={() => updateActiveComponent(i)}
-              className={`group relative cursor-pointer overflow-visible rounded-2xl border ${
+              className={`group relative cursor-pointer overflow-visible rounded-2xl py-1.5 border ${
                 i === activeComponentIndex
                   ? "border-neutral-700 bg-linear-to-r from-[#232526] via-neutral-[#414345] to-neutral-500/50"
                   : "border-transparent bg-transparent hover:border-lightBorder hover:bg-white/5"
@@ -231,15 +231,22 @@ export default function Sidebar({ isMobile }) {
             >
               <div className={`flex items-center justify-between px-4 py-1`}>
                 <div className="min-w-0 flex-1">
-                  <div className="flex items-center text-nowrap gap-2">
-                    <FileCode2
+                  <div className="flex items-center text-nowrap gap-3">
+                    {c.targetTech === "REACT" && (
+                      <img className="size-4" src="/jsx.svg" alt="" />
+                    )}
+
+                    {c.targetTech === "HTML" && (
+                      <img className="size-4" src="/globe2_red.svg" alt="" />
+                    )}
+                    {/* <FileCode2
                       size={16}
                       className={`${
                         i === activeComponentIndex
                           ? "text-violet-500"
                           : "text-neutral-500"
                       }`}
-                    />
+                    /> */}
 
                     <h3 className="truncate text-sm font-medium text-white">
                       {c.name}
@@ -253,7 +260,7 @@ export default function Sidebar({ isMobile }) {
                     e.stopPropagation();
                     setChatMenu(chatMenu === i ? null : i);
                   }}
-                  className={`rounded-lg p-2 text-neutral-500 transition hover:bg-white/5 hover:text-white ${
+                  className={`rounded-lg px-2 text-neutral-400 transition hover:text-white hidden cursor-pointer group-hover:block ${
                     sidebarCollapsed ? "hidden" : ""
                   }`}
                 >
