@@ -287,7 +287,7 @@ export default function Sidebar({ isMobile }) {
       {/* Footer */}
 
       {!sidebarCollapsed && (
-        <div className="border-t border-lightBorder p-3">
+        <div className="border-t border-lightBorder p-3 mt-auto">
           <div className="rounded-2xl border border-lightBorder bg-gradient-to-br from-white/5 to-white/[0.02] p-4">
             <div className="flex items-center gap-3">
               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-pink-700 to-purple-700">
