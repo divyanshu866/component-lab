@@ -4,7 +4,7 @@ import { createStreamingResponse } from "@/ai/stream_parser";
 import { HTML_SYSTEM_PROMPT, HTML_EDIT_SYSTEM_PROMPT } from "./prompts/html";
 import { REACT_SYSTEM_PROMPT, REACT_EDIT_SYSTEM_PROMPT } from "./prompts/react";
 const mockResponse = false; // Set to true to use mock response for testing
-const chunkSize = 100; // Set the chunk size for the mock stream
+const chunkSize = 1000; // Set the chunk size for the mock stream
 const delay = 10; // Set the delay between chunks in milliseconds
 
 const SYSTEM_PROMPTS = {

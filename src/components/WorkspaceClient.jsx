@@ -15,10 +15,12 @@ const WorkspaceClient = ({ user }) => {
       <div className="flex flex-1 h-0 bg-transparent">
         <Sidebar isMobile={isMobile} />
         <div className={`flex flex-col flex-1 w-0 relative bg-transparent`}>
-          <div className={`flex flex-1 justify-end h-0 bg-transparent`}>
+          <div
+            className={`flex flex-1 justify-end h-0 bg-transparent relative`}
+          >
             <Editor user={user} isMobile={isMobile} />
-            {targetTech === "HTML" && <HtmlIFrame isMobile={isMobile} />}
-            {targetTech === "REACT" && <ReactIFrame isMobile={isMobile} />}
+            <HtmlIFrame isMobile={isMobile} />
+            <ReactIFrame isMobile={isMobile} />
           </div>
           <Console />
         </div>

@@ -105,7 +105,28 @@ model Prompt {
   componentId Int
   component Component @relation(fields: [componentId], references: [id], onDelete: Cascade)
 
+  // AI REQUEST NAV
+  aiRequest   AIRequest?
+  
   createdAt DateTime @default(now())
 
   @@index([componentId, createdAt])
+}
+
+
+model AIRequest {
+  id             Int      @id @default(autoincrement())
+
+  promptId       Int      @unique
+  prompt         Prompt   @relation(fields: [promptId], references: [id])
+
+  model          String
+  targetTech     TargetTech
+
+  inputTokens    Int?
+  outputTokens   Int?
+  thinkingTokens Int?
+  totalTokens    Int?
+
+  createdAt      DateTime @default(now())
 }

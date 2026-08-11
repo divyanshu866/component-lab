@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useEditorContext } from "@/context/EditorContext";
 import { Maximize2, Minimize2 } from "lucide-react";
+import { TargetTech } from "@prisma/client";
 
 const ReactIFrame = ({ isMobile }) => {
   const {
@@ -12,11 +13,12 @@ const ReactIFrame = ({ isMobile }) => {
     showPreview,
     isMaximised,
     setIsMaximised,
+    targetTech,
   } = useEditorContext();
 
   return (
     <div
-      className={`${
+      className={`${targetTech != "REACT" && "hidden"} absolute top-0 right-0 ${
         showPreview
           ? isMobile
             ? "w-full h-full absolute mt-10 bg-white"

@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth"; // ← your NextAuth v5 helper
 import { prisma } from "@/lib/prisma";
 import { PromptRole, TargetTech } from "@prisma/client";
+import { create } from "domain";
 export async function POST(request) {
   // 1. Check session
 
@@ -20,11 +21,14 @@ export async function POST(request) {
     js,
     jsx,
     targetTech,
+    usageMetadata,
+    model,
   } = await request.json();
 
   console.log("This is the Prompt from the frontend>>>>>: ", messages);
   // 3. Create component tied to the authenticated user
   const component = await prisma.$transaction(async (tx) => {
+    //If component is manually codes (no prompts)
     if (messages.length < 2) {
       const component = await tx.component.create({
         data: {
@@ -48,7 +52,7 @@ export async function POST(request) {
 
       return component;
     }
-
+    //If component is AI Generated (User Prompt + Model Response)
     const component = await tx.component.create({
       data: {
         name: name.trim() || "New Component",
@@ -63,6 +67,22 @@ export async function POST(request) {
             {
               message: messages[messages.length - 2]?.message,
               role: PromptRole.USER,
+
+              aiRequest: usageMetadata
+                ? {
+                    create: {
+                      model,
+                      targetTech:
+                        targetTech === "HTML"
+                          ? TargetTech.HTML
+                          : TargetTech.REACT,
+                      inputTokens: usageMetadata.promptTokenCount ?? 0,
+                      outputTokens: usageMetadata.candidatesTokenCount ?? 0,
+                      thinkingTokens: usageMetadata?.thoughtsTokenCount ?? 0,
+                      totalTokens: usageMetadata?.totalTokenCount ?? 0,
+                    },
+                  }
+                : undefined,
             },
             {
               message: messages[messages.length - 1]?.message,
@@ -76,10 +96,12 @@ export async function POST(request) {
           orderBy: {
             id: "asc",
           },
+          include: {
+            aiRequest: true,
+          },
         },
       },
     });
-
     return component;
   });
 
@@ -102,6 +124,9 @@ export async function GET() {
       prompts: {
         orderBy: {
           id: "asc",
+        },
+        include: {
+          aiRequest: true,
         },
       },
     },

@@ -12,11 +12,12 @@ const HtmlIFrame = ({ isMobile }) => {
     showPreview,
     isMaximised,
     setIsMaximised,
+    targetTech,
   } = useEditorContext();
   const { consoleLogs, setConsoleLogs } = useConsole();
   return (
     <div
-      className={`${
+      className={`${targetTech != "HTML" && "hidden"} absolute top-0 right-0 ${
         showPreview
           ? isMobile
             ? "w-full h-full absolute mt-10 bg-white"
@@ -27,7 +28,6 @@ const HtmlIFrame = ({ isMobile }) => {
       } ${
         isMobile ? "" : ""
       }  flex h-full justify-center items-center border-l rounded-2xl overflow-hidden border-gray-200 dark:border-darkBorder relative transition-all duration-200`}
-      //   dangerouslySetInnerHTML={{ __html: html }}
     >
       <button
         onClick={() => setIsMaximised(!isMaximised)}

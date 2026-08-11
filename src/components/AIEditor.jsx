@@ -33,7 +33,6 @@ const AIEditor = ({ user, isMobile }) => {
     setActiveComponentIndex,
     reworkUI,
     setReworkUI,
-    createNewComponent,
     previewKey,
     setPreviewKey,
     saveComponent,
@@ -484,6 +483,7 @@ const AIEditor = ({ user, isMobile }) => {
       setIsGenerating(true);
       setReworkUI(true);
       setShowPreview(true);
+      let usageMetadata;
       const userMessage = {
         id: null,
         role: "USER",
@@ -508,6 +508,8 @@ const AIEditor = ({ user, isMobile }) => {
         js: "",
         jsx: "",
         targetTech: targetTech,
+        usageMetadata: null,
+        model: selectedModel,
       };
 
       setActiveMessages(streamState.messages);
@@ -594,6 +596,9 @@ const AIEditor = ({ user, isMobile }) => {
                   setActiveEditor("JSX");
                   updateStreamingComponent(data.type, data.content);
                   break;
+                case "usage_metadata":
+                  streamState.usageMetadata = data.content;
+                  break;
               }
             } catch (err) {
               console.error("Error parsing streaming data:", err);
@@ -610,7 +615,7 @@ const AIEditor = ({ user, isMobile }) => {
             );
 
             //presist to db
-            await createNewComponent(streamState);
+            await saveComponent(streamState);
             console.log("Streaming complete");
 
             return;
@@ -646,6 +651,8 @@ const AIEditor = ({ user, isMobile }) => {
         componentId: activeComponent.id,
         createdAt: null,
       };
+      setChangeDesc("");
+
       const assistantPlaceholder = {
         id: null,
         role: "ASSISTANT",
@@ -663,6 +670,8 @@ const AIEditor = ({ user, isMobile }) => {
         js: "",
         jsx: "",
         targetTech: targetTech,
+        usageMetadata: null,
+        model: selectedModel,
       };
 
       console.log(
@@ -761,6 +770,9 @@ const AIEditor = ({ user, isMobile }) => {
                   setActiveEditor("JSX");
                   updateStreamingComponent(data.type, data.content);
                   break;
+                case "usage_metadata":
+                  streamState.usageMetadata = data.content;
+                  break;
               }
             } catch (err) {
               console.error("Error parsing streaming data:", err);
@@ -789,7 +801,6 @@ const AIEditor = ({ user, isMobile }) => {
             await saveComponent(streamState);
             // Streaming complete
             setIsGenerating(false);
-            setChangeDesc("");
             console.log(
               "latest streamState.messages at the end of rework streaming:",
               streamState.messages,
@@ -808,7 +819,6 @@ const AIEditor = ({ user, isMobile }) => {
             const errorData = JSON.parse(event.substring(12)); // Remove 'event: error\ndata: ' prefix
             console.error("Streaming error:", errorData.error);
             setIsGenerating(false);
-            setChangeDesc("");
             alert("An Error occurred. Please try again.");
             return;
           }
@@ -818,7 +828,6 @@ const AIEditor = ({ user, isMobile }) => {
       console.error("Error calling /api/generate:", err);
       alert("An Error occurred. Please try again.");
       setIsGenerating(false);
-      setChangeDesc("");
       setActiveEditor("AI");
     }
   }

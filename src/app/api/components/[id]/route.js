@@ -46,6 +46,8 @@ export async function PATCH(req, context) {
     js,
     jsx,
     targetTech,
+    usageMetadata,
+    model,
   } = await req.json();
   console.log(
     "SAVE PATCH REACT COMP====>> TARGET TECH",
@@ -77,13 +79,32 @@ export async function PATCH(req, context) {
         targetTech: targetTech === "HTML" ? TargetTech.HTML : TargetTech.REACT,
       },
     });
-
-    for (const [index, message] of messages.entries()) {
+    if (messages.length >= 2) {
       await tx.prompt.create({
         data: {
           componentId: Number(id),
-          role: message.role,
-          message: message.message,
+          role: messages[0]?.role,
+          message: messages[0]?.message,
+          aiRequest: usageMetadata
+            ? {
+                create: {
+                  model,
+                  targetTech:
+                    targetTech === "HTML" ? TargetTech.HTML : TargetTech.REACT,
+                  inputTokens: usageMetadata.promptTokenCount ?? 0,
+                  outputTokens: usageMetadata.candidatesTokenCount ?? 0,
+                  thinkingTokens: usageMetadata?.thoughtsTokenCount ?? 0,
+                  totalTokens: usageMetadata?.totalTokenCount ?? 0,
+                },
+              }
+            : undefined,
+        },
+      });
+      await tx.prompt.create({
+        data: {
+          componentId: Number(id),
+          role: messages[1]?.role,
+          message: messages[1]?.message,
         },
       });
     }
@@ -94,6 +115,9 @@ export async function PATCH(req, context) {
         prompts: {
           orderBy: {
             id: "asc",
+          },
+          include: {
+            aiRequest: true,
           },
         },
       },

@@ -17,6 +17,8 @@ export default function Navbar({ user }) {
     setSidebarCollapsed,
     setReworkUI,
     updatePreview,
+    activeMessages,
+    targetTech,
   } = useEditorContext();
 
   // const { isSaving, setIsSaving } = useSave();
@@ -28,10 +30,23 @@ export default function Navbar({ user }) {
   }
   function onSave() {
     if (
-      (activeComponent.html || activeComponent.css || activeComponent.js) &&
-      activeComponent.name
+      (activeComponent?.html ||
+        activeComponent?.css ||
+        activeComponent?.js ||
+        activeComponent?.jsx) &&
+      activeComponent?.name
     ) {
-      saveComponent(activeComponent);
+      const componentState = {
+        id: activeComponent?.id,
+        name: activeComponent?.name,
+        messages: [],
+        html: activeComponent?.html,
+        css: activeComponent?.css,
+        js: activeComponent?.js,
+        jsx: activeComponent?.jsx,
+        targetTech: targetTech,
+      };
+      saveComponent(componentState);
       setShowPreview(true);
       setReworkUI(true);
     }
@@ -90,7 +105,7 @@ export default function Navbar({ user }) {
             value={activeComponent.name}
             placeholder="Component Name"
             className={`bg-gray-200 dark:bg-transparent outline-0 ml-11 py-2 px-3 w-[300PX] text-sm ${
-              !activeComponent.name
+              !activeComponent?.name
                 ? "border-red-600/50"
                 : "border-gray-300 dark:border-lightBorder"
             } border rounded-xl`}

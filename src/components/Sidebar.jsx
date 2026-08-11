@@ -123,15 +123,15 @@ export default function Sidebar({ isMobile }) {
     setShowPreview(false);
     setActiveComponentIndex(null);
     setActiveEditor("AI");
-    console.log("name==>", name);
     setActiveComponent({
       id: "",
-      name: name,
+      name: "",
+      messages: [],
+      html: "",
+      css: "",
+      jsx: "",
+      js: "",
       targetTech: targetTech,
-      jsx: jsx,
-      html: html,
-      css: css,
-      js: js,
     });
 
     setConsoleLogs([]);
@@ -265,14 +265,14 @@ export default function Sidebar({ isMobile }) {
               </div>
 
               {chatMenu === i && (
-                <div className="absolute right-4 top-14 z-50 w-48 overflow-hidden rounded-2xl border border-lightBorder bg-neutral-900/95 shadow-2xl backdrop-blur-xl">
+                <div className="absolute right-14 top-0 z-50 w-48 overflow-hidden rounded-2xl border border-lightBorder bg-neutral-900/95 shadow-2xl backdrop-blur-xl">
                   <button
                     onMouseDown={(e) => e.stopPropagation()}
                     onClick={(e) => {
                       e.stopPropagation();
                       deleteComponent(c.id, i);
                     }}
-                    className="flex w-full items-center gap-3 px-4 py-3 text-sm text-red-400 transition hover:bg-red-500/10"
+                    className="flex w-full items-center gap-3 px-4 py-2 text-sm text-red-400 transition hover:bg-red-500/10"
                   >
                     <Trash size={16} />
                     Delete Component

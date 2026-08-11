@@ -19,6 +19,7 @@ const endMarkers = {
 export async function createStreamingResponse(stream) {
   // Create a ReadableStream for SSE
   const encoder = new TextEncoder();
+  let usageMetadata = null;
 
   const readable = new ReadableStream({
     async start(controller) {
@@ -26,8 +27,10 @@ export async function createStreamingResponse(stream) {
         let accumulator = "";
         let inSection = false;
         let currSection = null;
-
         for await (const chunk of stream) {
+          if (chunk.usageMetadata) {
+            usageMetadata = chunk.usageMetadata;
+          }
           const chunkText = chunk.text || "";
           accumulator += chunkText;
 
@@ -146,10 +149,30 @@ export async function createStreamingResponse(stream) {
 
         // Send end event
         console.log("Streaming completed.");
+        console.log("Final Gemini usage:", {
+          promptTokens: usageMetadata?.promptTokenCount,
+          outputTokens: usageMetadata?.candidatesTokenCount,
+          thinkingTokens: usageMetadata?.thoughtsTokenCount,
+          totalTokens: usageMetadata?.totalTokenCount,
+        });
+        controller.enqueue(
+          encoder.encode(
+            `data: ${JSON.stringify({
+              type: "usage_metadata",
+              content: usageMetadata,
+            })}\n\n`,
+          ),
+        );
         controller.enqueue(encoder.encode("event: end\ndata: {}\n\n"));
         controller.close();
       } catch (error) {
         console.error("Streaming error:", error);
+        console.log("Final Gemini usage:", {
+          promptTokens: usageMetadata?.promptTokenCount,
+          outputTokens: usageMetadata?.candidatesTokenCount,
+          thinkingTokens: usageMetadata?.thoughtsTokenCount,
+          totalTokens: usageMetadata?.totalTokenCount,
+        });
         controller.enqueue(
           encoder.encode(
             `event: error\ndata: ${JSON.stringify({

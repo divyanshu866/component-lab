@@ -104,41 +104,15 @@ export function EditorProvider({ children }) {
     }
   };
 
-  function reset() {
-    //Clear Everything
-    setActiveComponentIndex(null);
-    setActiveComponent({
-      id: "",
-      messages: [],
-      targetTech: targetTech,
-      jsx: "",
-      name: "",
-      html: "",
-      css: "",
-      js: "",
-    });
-    updatePreview();
-    setReworkUI(false);
-    setShowPreview(false);
-    setActiveMessages([]);
-    setActiveEditor("AI");
-
-    // Not currently available
-    // setConsoleLogs([]);
-  }
   useEffect(() => {
     updatePreview();
   }, []);
+
   const saveComponent = async (component) => {
     // (messages, name, html, css, js);
     if (!component.name.trim()) {
-      console.log("EMPTY COMP PASSE DTO saveComp()=========>>>>>>>>>>");
       return;
     }
-    console.log(
-      "NEW MAESSAGES FROM save comp==========>>>",
-      component.messages,
-    );
     const payload = {
       id: component.id,
       messages: component.messages,
@@ -148,9 +122,31 @@ export function EditorProvider({ children }) {
       js: component.js,
       jsx: component.jsx,
       targetTech: component.targetTech,
+      usageMetadata: component.usageMetadata,
+      model: component.model,
     };
-    console.log("Payload for saving component>>> (saveComponent()):", payload);
-    if (component?.id) {
+    // Is New Component generation?
+    if (!component?.id) {
+      const res = await fetch("/api/components", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const created = await res.json();
+      setActiveMessages(created?.prompts || []);
+      setComponents((prev) => [created, ...prev]);
+      setActiveComponentIndex(0);
+      setActiveComponent({
+        id: created.id,
+        messages: created.prompts || [],
+        name: created.name,
+        targetTech: created.targetTech,
+        html: created.html,
+        css: created.css,
+        js: created.js,
+        jsx: created.jsx,
+      });
+    } else {
       // Update existing component
       const res = await fetch(`/api/components/${component.id}`, {
         method: "PATCH",
@@ -161,74 +157,19 @@ export function EditorProvider({ children }) {
       setComponents((prev) =>
         prev.map((c) => (c.id === updated.id ? updated : c)),
       );
-      // set the new active component
-      setActiveComponent(updated);
-      setActiveMessages(updated.prompts || []);
 
-      console.log("Updated", updated);
-    } else {
-      // Create new component
-      const res = await fetch("/api/components", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-      const created = await res.json();
-      setComponents((prev) => [created, ...prev]);
-      console.log(components);
       setActiveComponent({
-        id: created.id,
-        messages: created.prompts || [],
-        name: created.name,
-        targetTech: created.targetTech,
-        jsx: created.jsx,
-        html: created.html,
-        css: created.css,
-        js: created.js,
-      }); // set the new active component
-
-      setActiveComponentIndex(0);
-      console.log(activeComponent);
-      console.log("created.......");
+        id: updated.id,
+        messages: updated.prompts || [],
+        name: updated.name,
+        html: updated.html,
+        css: updated.css,
+        js: updated.js,
+        targetTech: updated.targetTech,
+        jsx: updated.jsx,
+      });
+      setActiveMessages(updated?.prompts || []);
     }
-  };
-  const createNewComponent = async (component) => {
-    if (!component.name.trim()) {
-      return;
-    }
-    const payload = {
-      messages: component.messages,
-      name: component.name,
-      html: component.html,
-      css: component.css,
-      js: component.js,
-      jsx: component.jsx,
-      targetTech: component.targetTech,
-    };
-
-    // Create new component
-    const res = await fetch("/api/components", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
-    const created = await res.json();
-    setComponents((prev) => [created, ...prev]);
-    setActiveComponent({
-      id: created.id,
-
-      messages: created.messages,
-      name: created.name.trim(),
-      targetTech: created.targetTech,
-      jsx: created.jsx,
-      html: created.html.trim(),
-      css: created.css.trim(),
-      js: created.js.trim(),
-    }); // set the new active component
-    // setActiveMessages(created.prompts || []); // set the new active messages
-    setActiveComponentIndex(0);
-
-    console.log("created.......", created);
   };
   const updatePreview = async (
     component = {
@@ -237,7 +178,7 @@ export function EditorProvider({ children }) {
       html: "",
       css: "",
       js: "",
-      jsx: reactDefaultPreview,
+      jsx: "",
       targetTech: targetTech,
     },
   ) => {
@@ -405,7 +346,7 @@ export function EditorProvider({ children }) {
         showPreview,
         setShowPreview,
         saveComponent,
-        createNewComponent,
+
         isSaving,
         setIsSaving,
         isMaximised,
