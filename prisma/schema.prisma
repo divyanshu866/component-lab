@@ -85,7 +85,7 @@ model Component{
   prompts   Prompt[]  //Added relation to prompt
 
   //relation back to user
-  user User @relation(fields: [userId],references: [id])
+  user User @relation(fields: [userId],references: [id], onDelete: Cascade)
   userId String
 
   @@index([userId])
@@ -118,7 +118,7 @@ model AIRequest {
   id             Int      @id @default(autoincrement())
 
   promptId       Int      @unique
-  prompt         Prompt   @relation(fields: [promptId], references: [id])
+  prompt         Prompt   @relation(fields: [promptId], references: [id], onDelete: Cascade)
 
   model          String
   targetTech     TargetTech

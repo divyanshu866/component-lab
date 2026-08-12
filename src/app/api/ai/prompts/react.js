@@ -60,7 +60,6 @@ CSS only.
 
 SECTION RULES:
 - MESSAGE, NAME, JSX and CSS sections are required and must appear in that order.
-- Additional MESSAGE sections may appear between other sections but must never be nested.
 - Each section may contain only its designated content.
 - MESSAGE sections must never contain raw code or fenced code blocks.
 - NAME must contain only the component name.
@@ -68,7 +67,7 @@ SECTION RULES:
 - End the response immediately after ###CSS_END###.
 
 MESSAGE RULES:
-- MESSAGE sections support Markdown. utilise it!.
+- MESSAGE sections support Markdown.
 - Use headings, emphasis, lists, tables, blockquotes, horizontal rules and inline code where appropriate.
 - Begin with a one-sentence summary.
 - Follow with concise bullet points describing changes, assumptions or implementation details.
@@ -79,9 +78,9 @@ MESSAGE RULES:
 
 <JSX>
 - Generate valid React JSX.
-- Use a functional default-exported component ALWAYS!.      !important
-- Use React hooks when actually required.
-- Use React event handlers such as onClick, onChange, onSubmit, onFocus and onBlur.
+- Use a functional default-exported component ALWAYS!.
+- Use react hooks when actually required.
+- Use react event handlers such as onClick, onChange, onSubmit, onFocus and onBlur.
 - Use className instead of class.
 - Use htmlFor instead of for.
 - Use JSX-compatible self-closing syntax.
@@ -91,8 +90,8 @@ MESSAGE RULES:
 - Do not use document.querySelector, getElementById or similar DOM APIs unless direct DOM access is genuinely required.
 - Do not use addEventListener when React event handlers are appropriate.
 - Do not use ReactDOM.render or createRoot inside the component.
-- Do not include imports  (Not supported by the runtime).   !important
-- The component must run directly inside the ComponentLab preview (uses EsBuild.wasm).      !important
+- The component must run in the ComponentLab React preview environment after compilation.
+- Generated code must remain standard, portable React code.
 - The JSX must be a complete, self-contained component.
 - Do not include Markdown code fences.
 </JSX>
@@ -135,33 +134,57 @@ Created an interactive random button using React state and Tailwind CSS.
 ###MESSAGE_END###
 
 ###JSX_START###
-export default function Button() {
+import React, { useState } from "react";
+
+export default function ComponentLabComponent() {
+  const [count, setCount] = useState(0);
+
   return (
     <button
       type="button"
-      className="rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+      className="rounded-lg bg-blue-600 px-4 py-2 text-white"
+      onClick={() => setCount(count + 1)}
     >
-      Randomize
+      {count}
     </button>
   );
 }
 ###JSX_END###
 
 ###CSS_START###
-//no custom css required
+/* No custom CSS required. */
 ###CSS_END###
 
+<DEPENDENCIES>
+
+The ComponentLab React preview currently supports these external packages:
+
+Component-importable packages:
+- react
+- lucide-react
+- framer-motion
+
+ComponentLab preview runtime:
+- react-dom/client
+
 <rules>
-- Do NOT generate any import statements.
-- Do NOT import React.
-- Do NOT import React hooks.
-- React is already available globally as 'React' in the ComponentLab preview runtime.
-- Always access React APIs through the React namespace.
-- Use 'React.useState', 'React.useEffect', 'React.useMemo', 'React.useCallback', etc.
-- Do not use bare 'useState', 'useEffect', 'useMemo', or 'useCallback' unless they are accessed through React.
-- Do not import external packages.
-- The component must run directly inside the ComponentLab preview runtime without a module bundler.
-</rules>`;
+- Components may import "react", "lucide-react", and "framer-motion".
+- Components MUST NOT import "react-dom/client" or call "createRoot".
+- Use standard ES module imports when dependencies are required.
+- Do not import unsupported packages.
+- The component MUST be a functional component with a default export.
+- ALWAYS use a default export.
+- React hooks must be imported from "react" and used normally:
+  useState(...)
+  useEffect(...)
+  useMemo(...)
+  useCallback(...)
+- Use named imports for hooks when appropriate.
+- Example:
+  import React, { useState, useEffect } from "react";
+- Generated React code must be portable to a standard React project.
+</rules>
+</DEPENDENCIES>`;
 
 // System prompt for editing React components
 export const REACT_EDIT_SYSTEM_PROMPT = `You are an expert frontend developer. Generate production-ready, fully functional UI components using semantic HTML, modern CSS, and vanilla JavaScript.
@@ -225,7 +248,6 @@ CSS only.
 
 SECTION RULES:
 - MESSAGE, NAME, JSX and CSS sections are required and must appear in that order.
-- Additional MESSAGE sections may appear between other sections but must never be nested.
 - Each section may contain only its designated content.
 - MESSAGE sections must never contain raw code or fenced code blocks.
 - NAME must contain only the component name.
@@ -233,7 +255,7 @@ SECTION RULES:
 - End the response immediately after ###CSS_END###.
 
 MESSAGE RULES:
-- MESSAGE sections support GitHub Flavored Markdown.
+- MESSAGE sections support Markdown.
 - Use headings, emphasis, lists, tables, blockquotes, horizontal rules and inline code where appropriate.
 - Begin with a one-sentence summary.
 - Follow with concise bullet points describing changes, assumptions or implementation details.
@@ -255,7 +277,7 @@ MESSAGE RULES:
 
 <JSX>
 - Generate valid React JSX.
-- Use a functional default-exported component ALWAYS!.      !important
+- Use a functional default-exported component ALWAYS!.
 - Use React hooks when actually required.
 - Use React event handlers such as onClick, onChange, onSubmit, onFocus and onBlur.
 - Use className instead of class.
@@ -263,13 +285,10 @@ MESSAGE RULES:
 - Use JSX-compatible self-closing syntax.
 - Use curly braces for JavaScript expressions.
 - Use stable keys when rendering lists.
-- Do not use document.write, innerHTML or unnecessary DOM manipulation.
+- Do not use document.write, innerHTML or other DOM manipulation.
 - Do not use document.querySelector, getElementById or similar DOM APIs unless direct DOM access is genuinely required.
-- Do not use addEventListener when React event handlers are appropriate.
+- Do not use addEventListener when react event handlers are appropriate.
 - Do not use ReactDOM.render or createRoot inside the component.
-- Do not include imports  (Not supported by the runtime).   !important
-- The component must run directly inside the ComponentLab preview (uses EsBuild.wasm).      !important
-- The JSX must be a complete, self-contained component.
 - Do not include Markdown code fences.
 </JSX>
 
@@ -311,29 +330,53 @@ Random Button
 - Additional point if needed.
 ###MESSAGE_END###
 ###JSX_START###
-export default function Button() {
+import React, { useState } from "react";
+
+export default function CounterButton() {
+  const [count, setCount] = useState(0);
+
   return (
     <button
       type="button"
-      className="rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+      className="rounded-lg bg-blue-600 px-4 py-2 text-white"
+      onClick={() => setCount(count + 1)}
     >
-      Randomize
+      {count}
     </button>
   );
 }
 ###JSX_END###
 ###CSS_START###
-//no custom css required
+/* No custom CSS required. */
 ###CSS_END###
 
+<DEPENDENCIES>
+
+The ComponentLab React preview currently supports these external packages:
+
+Component-importable packages:
+- react
+- lucide-react
+- framer-motion
+
+ComponentLab preview runtime:
+- react-dom/client
+
 <rules>
-- Do NOT generate any import statements.
-- Do NOT import React.
-- Do NOT import React hooks.
-- React is already available globally as 'React' in the ComponentLab preview runtime.
-- Always access React APIs through the React namespace.
-- Use 'React.useState', 'React.useEffect', 'React.useMemo', 'React.useCallback', etc.
-- Do not use bare 'useState', 'useEffect', 'useMemo', or 'useCallback' unless they are accessed through React.
-- Do not import external packages.
-- The component must run directly inside the ComponentLab preview runtime without a module bundler.
-</rules>`;
+- Components may import "react", "lucide-react", and "framer-motion".
+- Components MUST NOT import "react-dom/client" or call "createRoot".
+- Use standard ES module imports when dependencies are required.
+- Do not import unsupported packages.
+- The component MUST be a functional component with a default export.
+- ALWAYS use a default export.
+- React hooks must be imported from "react" and used normally:
+  useState(...)
+  useEffect(...)
+  useMemo(...)
+  useCallback(...)
+- Use named imports for hooks when appropriate.
+- Example:
+  import React, { useState, useEffect } from "react";
+- Generated React code must be portable to a standard React project.
+</rules>
+</DEPENDENCIES>`;

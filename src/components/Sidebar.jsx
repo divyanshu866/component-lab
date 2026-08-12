@@ -167,7 +167,7 @@ export default function Sidebar({ isMobile }) {
           }}
           className={`group relative flex w-full items-center justify-center gap-3 overflow-hidden border text-sm font-medium text-white transition-all duration-150 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer ${
             sidebarCollapsed
-              ? "p-0 m-0 pt-2 h-full w-auto border border-transparent bg-transparent"
+              ? "p-0 m-0 pt-3.5 h-full w-auto border border-transparent bg-transparent"
               : "px-5 py-3 rounded-2xl border-lightBorder bg-white/3  hover:border-purple-500/30 hover:bg-white/6 hover:shadow-[0_0_30px_rgba(168,85,247,0.12)]"
           }`}
         >

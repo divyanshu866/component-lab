@@ -1,11 +1,19 @@
-// import OpenAI from "openai";
+import OpenAI from "openai";
+const client = new OpenAI();
 
-// const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+const response = await client.responses.create({
+  model: "gpt-5.6",
+  reasoning: { effort: "low" },
+  input: [
+    {
+      role: "developer",
+      content: "Talk like a pirate.",
+    },
+    {
+      role: "user",
+      content: "Are semicolons optional in JavaScript?",
+    },
+  ],
+});
 
-// export async function generateWithOpenAI(prompt, model = "gpt-4o-mini") {
-//   const response = await client.responses.create({
-//     model,
-//     input: prompt,
-//   });
-//   return response.output_text; // Clean text output
-// }
+console.log(response.output_text);

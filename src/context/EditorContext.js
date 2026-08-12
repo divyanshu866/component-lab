@@ -1,18 +1,9 @@
 "use client";
 import { createContext, useState, useContext, useEffect } from "react";
-import * as esbuild from "esbuild-wasm";
-
+import { buildReactPreviewDocument } from "@/components/Preview/reactRuntime";
+import { buildHtmlPreviewDocument } from "@/components/Preview/htmlRuntime";
 const EditorContext = createContext();
-let esbuildInitPromise = null;
-const initializeEsbuild = () => {
-  if (!esbuildInitPromise) {
-    esbuildInitPromise = esbuild.initialize({
-      wasmURL: "/esbuild.wasm",
-    });
-  }
 
-  return esbuildInitPromise;
-};
 export function EditorProvider({ children }) {
   const [selectedType, setSelectedType] = useState();
   const [selectedStyle, setSelectedStyle] = useState();
@@ -25,7 +16,6 @@ export function EditorProvider({ children }) {
     id: "",
     messages: [],
     name: "",
-
     targetTech: "HTML",
     html: "",
     css: "",
@@ -45,8 +35,6 @@ export function EditorProvider({ children }) {
 
   //EsBuild
   const [previewKey, setPreviewKey] = useState(0);
-  const [esbuildReady, setEsbuildReady] = useState(false);
-  const [error, setError] = useState(null);
 
   const [isSaving, setIsSaving] = useState(false);
   const [htmlPreviewDocument, setHtmlPreviewDocument] = useState("");
@@ -56,53 +44,6 @@ export function EditorProvider({ children }) {
 
     export default App;`;
   const [reactPreviewDocument, setReactPreviewDocument] = useState("");
-
-  // Initialize esbuild once.
-  useEffect(() => {
-    let cancelled = false;
-
-    initializeEsbuild()
-      .then(() => {
-        if (!cancelled) {
-          setEsbuildReady(true);
-          console.log("====>>> esbuild initialized");
-        }
-      })
-      .catch((error) => {
-        console.error("Failed to initialize esbuild:", error);
-
-        if (!cancelled) {
-          setError(error.message);
-        }
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  const compileJSX = async (jsx) => {
-    try {
-      setError(null);
-
-      const result = await esbuild.transform(jsx, {
-        loader: "jsx",
-        target: "es2020",
-        format: "iife",
-        globalName: "Component",
-      });
-
-      console.log("COMPILED JS:");
-      console.log(result.code);
-
-      return result.code;
-    } catch (error) {
-      console.error("ESBUILD ERROR:", error);
-
-      setError(error.message);
-      return "";
-    }
-  };
 
   useEffect(() => {
     updatePreview();
@@ -183,134 +124,14 @@ export function EditorProvider({ children }) {
     },
   ) => {
     if (component.targetTech === "HTML") {
-      const boilerCss = `body {
-                    margin: 0;
-  padding: 0;
-  width: 100%;
-  min-height: 100vh;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  background: transparent;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  color: white;
-                  }
-                  img{
-    max-width: 400px;
-    max-height: 400px;
-    height: 100%;
-    width: 100%;
-}  
-                  `;
-      const finalHtml = `
-     <!DOCTYPE html>
-            <html>
-              <head>
-                <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Component Preview</title>
-    <style>
-                ${component.css ? "" : boilerCss}         
-
-                  ${component.css}
-                </style>
-              </head>
-              <body>
-                ${
-                  !component.html && !component.css && !component.js
-                    ? ' <img src="/newlogo.svg" alt="Logo"/>'
-                    : component.html
-                }
-                <script>
-                  // Override console methods to send messages to parent
-                  const originalLog = console.log;
-                  const originalError = console.error;
-                  const originalWarn = console.warn;
-                  console.log = function(...args) {
-                    window.parent.postMessage({
-                      type: 'console',
-                      level: 'log',
-                      message: args.map(arg => typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)).join(' ')
-                    }, '*');
-                    originalLog.apply(console, args);
-                  };
-                  console.error = function(...args) {
-                    window.parent.postMessage({
-                      type: 'console',
-                      level: 'error',
-                      message: args.map(arg => typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)).join(' ')
-                    }, '*');
-                    originalError.apply(console, args);
-                  };
-                  console.warn = function(...args) {
-                    window.parent.postMessage({
-                      type: 'console',
-                      level: 'warn',
-                      message: args.map(arg => typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)).join(' ')
-                    }, '*');
-                    originalWarn.apply(console, args);
-                  };
-                  // Catch unhandled errors
-                  window.addEventListener('error', function(e) {
-                    console.error('Error:', e.message, 'at', e.filename + ':' + e.lineno);
-                  });
-                   document.querySelectorAll('a').forEach(link => {
-                    link.addEventListener('click', e => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        console.log('Link clicked:', link.href);
-                    });
-                });
-                  try {
-                    ${component.js}
-                  } catch (e) {
-                    console.error('JavaScript error:', e.message);
-                  }
-                </script>
-              </body>
-            </html>
-    `;
-
-      setHtmlPreviewDocument(finalHtml);
+      const document = await buildHtmlPreviewDocument(component);
+      setHtmlPreviewDocument(document);
     }
 
     if (component.targetTech === "REACT") {
-      const compiledJsx = await compileJSX(component.jsx);
-      const constructedReactDoc = `
-    <!DOCTYPE html>
-    <html>
-      <head>
-        <meta charset="UTF-8" />
-
-        <style>
-          ${component.css}
-        </style>
-      </head>
-
-      <body>
-        <div id="root"></div>
-<script src="https://cdn.tailwindcss.com"></script>
-        <script type="module">
-          import React from "https://esm.sh/react@19";
-          import ReactDOMClient from "https://esm.sh/react-dom@19/client";
-
-          ${compiledJsx ? compiledJsx : ""}
-
-          const root = ReactDOMClient.createRoot(
-            document.getElementById("root")
-          );
-
-          root.render(
-            React.createElement(Component.default)
-          );
-        </script>
-      </body>
-    </html>
-  `;
-      setReactPreviewDocument(constructedReactDoc);
+      const document = await buildReactPreviewDocument(component);
+      setReactPreviewDocument(document);
     }
-
-    // console.log("activeIndex Code", component.html);
   };
 
   return (

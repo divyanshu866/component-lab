@@ -18,7 +18,7 @@ function TargetTechTabs() {
       <div className="relative inline-flex gap-1 rounded-xl p-1 bg-white/5 border border-white/10 backdrop-blur-md">
         {[
           { id: "HTML", label: "Web Bundle", src: "/globe2_red.svg" },
-          { id: "REACT", label: "React JSX :", src: "/jsx.svg" },
+          { id: "REACT", label: "React JSX", src: "/jsx.svg" },
         ].map((item) => {
           const active = targetTech === item.id;
           return (
@@ -34,9 +34,6 @@ function TargetTechTabs() {
                 style={{ width: 13, height: 13, opacity: 1 }}
               />
               {item.label}
-              {item.id === "REACT" && (
-                <span className="text-yellow-400">Experimental</span>
-              )}
             </button>
           );
         })}
