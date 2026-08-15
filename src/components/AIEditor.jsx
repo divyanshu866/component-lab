@@ -608,7 +608,7 @@ const AIEditor = ({ user, isMobile }) => {
             streamState.targetTech === "REACT" && updatePreview(streamState);
             setActiveEditor("AI");
             // Streaming complete
-            setIsGenerating(false);
+
             console.log(
               "Active streamState.messages at the end of streaming:",
               streamState.messages,
@@ -633,6 +633,8 @@ const AIEditor = ({ user, isMobile }) => {
       console.error("Error calling /api/generate:", err);
       setIsGenerating(false);
       setActiveEditor("AI");
+    } finally {
+      setIsGenerating(false);
     }
   };
   async function rework() {
@@ -800,7 +802,6 @@ const AIEditor = ({ user, isMobile }) => {
             );
             await saveComponent(streamState);
             // Streaming complete
-            setIsGenerating(false);
             console.log(
               "latest streamState.messages at the end of rework streaming:",
               streamState.messages,
@@ -829,6 +830,8 @@ const AIEditor = ({ user, isMobile }) => {
       alert("An Error occurred. Please try again.");
       setIsGenerating(false);
       setActiveEditor("AI");
+    } finally {
+      setIsGenerating(false);
     }
   }
 

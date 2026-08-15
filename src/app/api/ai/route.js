@@ -42,7 +42,11 @@ export async function POST(req) {
   ];
 
   if (mockResponse) {
-    const stream = mockStream(mockText, chunkSize, delay); // deliberately awkward chunk size
+    const stream = mockStream(
+      targetTech === "REACT" ? mockReactText : mockText,
+      chunkSize,
+      delay,
+    ); // deliberately awkward chunk size
 
     return createStreamingResponse(stream);
   } else {
@@ -60,16 +64,6 @@ export async function PATCH(req) {
   console.log("NOW CONTENTS==================>>>>>");
   let contents;
 
-  // if (messages.length < 2) {
-  //   const userMessage = {
-  //     id: null,
-  //     role: "USER",
-  //     message: "Manually Created Code",
-  //     createdAt: null,
-  //   };
-
-  //   messages.push();
-  // }
   //Build contents
   switch (targetTech) {
     case "HTML":
@@ -88,7 +82,11 @@ export async function PATCH(req) {
   // console.log("GEN AI PATCH REACT CONTENTS======>", contents);
   console.dir(contents, { depth: null });
   if (mockResponse) {
-    const stream = mockStream(mockText, chunkSize, delay); // deliberately awkward chunk size
+    const stream = mockStream(
+      targetTech === "REACT" ? mockReactText : mockText,
+      chunkSize,
+      delay,
+    ); // deliberately awkward chunk size
     return createStreamingResponse(stream);
   } else {
     console.log("RUNNING GEN EDIT=====>>>>>>>>>>>>>>>>>>>>>>>");
@@ -467,3 +465,137 @@ const mockText = `###NAME_START### Brutalist Cards ###NAME_END###
   border-color: var(--brutalist-accent-color);
 }###CSS_END###
 ###JS_START###//No javascript required###JS_END###`;
+const mockReactText = `
+###NAME_START###
+Framer Motion Rotation Component
+###NAME_END###
+###MESSAGE_START###
+Created an interactive rotation component demonstrating Framer Motion animations with Tailwind CSS.
+
+- Implemented smooth rotation, scaling, and dragging using \`framer-motion\`.
+- Added control buttons to trigger infinite spin, stop, flip, and pulse effects.
+- Styled with a modern dark theme using Tailwind CSS and Lucide icons.
+###MESSAGE_END###
+###JSX_START###
+import React, { useState } from "react";
+import { motion, useAnimation } from "framer-motion";
+import { RotateCw, Square, Sparkles, Play, Pause, RefreshCw } from "lucide-react";
+
+export default function ComponentLabComponent() {
+  const [isSpinning, setIsSpinning] = useState(false);
+  const [spinSpeed, setSpinSpeed] = useState(2);
+  const controls = useAnimation();
+
+  const handleToggleSpin = () => {
+    if (isSpinning) {
+      controls.start({ rotate: 0, transition: { duration: 0.5 } });
+      setIsSpinning(false);
+    } else {
+      controls.start({
+        rotate: 360,
+        transition: {
+          repeat: Infinity,
+          duration: spinSpeed,
+          ease: "linear",
+        },
+      });
+      setIsSpinning(true);
+    }
+  };
+
+  const handleSpeedChange = (newSpeed) => {
+    setSpinSpeed(newSpeed);
+    if (isSpinning) {
+      controls.start({
+        rotate: 360,
+        transition: {
+          repeat: Infinity,
+          duration: newSpeed,
+          ease: "linear",
+        },
+      });
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col items-center justify-center p-6">
+      <div className="max-w-md w-full bg-slate-900 border border-slate-800 rounded-2xl p-8 shadow-2xl flex flex-col items-center">
+        
+        <div className="text-center mb-8">
+          <h1 className="text-2xl font-bold bg-linear-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent">
+            Motion Rotation Lab
+          </h1>
+          <p className="text-sm text-slate-400 mt-1">
+            Test smooth Framer Motion rotations and gestures
+          </p>
+        </div>
+
+        {/* Animated Element */}
+        <div className="relative w-48 h-48 flex items-center justify-center mb-8">
+          <div className="absolute inset-0 bg-indigo-500/10 rounded-full blur-xl" />
+          
+          <motion.div
+            animate={controls}
+            drag
+            dragConstraints={{ left: -50, right: 50, top: -50, bottom: 50 }}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="w-36 h-36 bg-linear-to-br from-indigo-500 via-purple-500 to-pink-500 rounded-2xl shadow-lg flex flex-col items-center justify-center cursor-grab active:cursor-grabbing border border-white/20 select-none"
+          >
+            <Sparkles className="w-8 h-8 text-white mb-2 animate-pulse" />
+            <span className="text-xs font-semibold tracking-wider uppercase text-white/90">
+              Drag & Rotate
+            </span>
+          </motion.div>
+        </div>
+
+        {/* Controls */}
+        <div className="w-full space-y-4">
+          <button
+            onClick={handleToggleSpin}
+            className={\`w-full py-3 px-4 rounded-xl font-medium flex items-center justify-center gap-2 transition-all shadow-lg \${
+              isSpinning
+                ? "bg-rose-600 hover:bg-rose-500 text-white shadow-rose-600/20"
+                : "bg-indigo-600 hover:bg-indigo-500 text-white shadow-indigo-600/20"
+            }\`}
+          >
+            {isSpinning ? (
+              <>
+                <Pause className="w-5 h-5" /> Stop Rotation
+              </>
+            ) : (
+              <>
+                <Play className="w-5 h-5" /> Start Infinite Spin
+              </>
+            )}
+          </button>
+
+          <div className="grid grid-cols-3 gap-2 pt-2">
+            {[
+              { label: "Fast (1s)", speed: 1 },
+              { label: "Normal (2s)", speed: 2 },
+              { label: "Slow (4s)", speed: 4 },
+            ].map((item) => (
+              <button
+                key={item.speed}
+                onClick={() => handleSpeedChange(item.speed)}
+                className={\`py-2 px-3 text-xs rounded-lg border font-medium transition-colors \${
+                  spinSpeed === item.speed
+                    ? "bg-indigo-500/20 border-indigo-500 text-indigo-300"
+                    : "bg-slate-800/50 border-slate-700 text-slate-400 hover:bg-slate-800 hover:text-slate-200"
+                }\`}
+              >
+                {item.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+      </div>
+    </div>
+  );
+}
+###JSX_END###
+###CSS_START###
+ /* No custom CSS required Tailwind utilities are fully sufficient */
+###CSS_END###`;

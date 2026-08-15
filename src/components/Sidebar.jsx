@@ -10,7 +10,7 @@ import {
   FileCode2,
 } from "lucide-react";
 // import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { act, useEffect, useState } from "react";
 import { useEditorContext } from "@/context/EditorContext";
 import { useConsole } from "@/context/ConsoleContext";
 import { AI_MODELS } from "@/ai/models";
@@ -52,6 +52,15 @@ export default function Sidebar({ isMobile }) {
   const { setConsoleLogs, showConsole, setShowConsole } = useConsole();
   async function deleteComponent(id, componentIndex) {
     setChatMenu(null);
+
+    //if requested delete component was active
+    const wasActive = activeComponent?.id === id;
+    const activeComponentIndexLocal = activeComponentIndex;
+
+    if (wasActive) {
+      clearScreen();
+      setActiveEditor("AI");
+    }
     // Implementation for deleting a component
     const res = await fetch(`/api/components/${id}`, {
       method: "DELETE",
@@ -62,17 +71,17 @@ export default function Sidebar({ isMobile }) {
       return;
     }
     // Handle active component highlighting
-    if (activeComponentIndex != 0 && activeComponentIndex > componentIndex) {
-      setActiveComponentIndex(activeComponentIndex - 1);
+    if (
+      activeComponentIndexLocal != 0 &&
+      activeComponentIndexLocal > componentIndex
+    ) {
+      setActiveComponentIndex(activeComponentIndexLocal - 1);
     }
+
     // Update the components state after deletion
     setComponents((prev) => prev.filter((c) => c.id !== id));
-
-    if (activeComponent?.id === id) {
-      clearScreen();
-      setActiveEditor("AI");
-    }
   }
+
   const hideChatMenu = () => {
     setChatMenu(null);
   };

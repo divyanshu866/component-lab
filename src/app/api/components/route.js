@@ -25,86 +25,121 @@ export async function POST(request) {
     model,
   } = await request.json();
 
+  console.log("=== COMPONENT CREATE DEBUG ===");
+  console.log("messages:", messages);
+  console.log("name:", name);
+  console.log("targetTech:", targetTech);
+  console.log("model:", model);
+  console.log("usageMetadata:", usageMetadata);
+  console.log("usageMetadata type:", typeof usageMetadata);
+  const userPrompt = messages[messages.length - 2]?.message;
+  const assistantPrompt = messages[messages.length - 1]?.message;
+
+  console.log("USER PROMPT:", userPrompt);
+  console.log("ASSISTANT PROMPT:", assistantPrompt);
   console.log("This is the Prompt from the frontend>>>>>: ", messages);
+  let component;
   // 3. Create component tied to the authenticated user
-  const component = await prisma.$transaction(async (tx) => {
-    //If component is manually codes (no prompts)
-    if (messages.length < 2) {
-      const component = await tx.component.create({
-        data: {
-          name: name.trim() || "New Component",
-          html: html.trim() || "",
-          css: css.trim() || "",
-          js: js.trim() || "",
-          jsx: jsx.trim() || "",
-          targetTech:
-            targetTech === "HTML" ? TargetTech.HTML : TargetTech.REACT,
-          user: { connect: { id: session.user.id } },
-        },
-        include: {
-          prompts: {
-            orderBy: {
-              id: "asc",
+  try {
+    component = await prisma.$transaction(
+      async (tx) => {
+        //If component is manually codes (no prompts)
+        if (messages.length < 2) {
+          const component = await tx.component.create({
+            data: {
+              name: name.trim() || "New Component",
+              html: html.trim() || "",
+              css: css.trim() || "",
+              js: js.trim() || "",
+              jsx: jsx.trim() || "",
+              targetTech:
+                targetTech === "HTML" ? TargetTech.HTML : TargetTech.REACT,
+              user: { connect: { id: session.user.id } },
             },
-          },
-        },
-      });
+            include: {
+              prompts: {
+                orderBy: {
+                  id: "asc",
+                },
+              },
+            },
+          });
 
-      return component;
-    }
-    //If component is AI Generated (User Prompt + Model Response)
-    const component = await tx.component.create({
-      data: {
-        name: name.trim() || "New Component",
-        html: html.trim() || "",
-        css: css.trim() || "",
-        js: js.trim() || "",
-        jsx: jsx.trim() || "",
-        targetTech: targetTech === "HTML" ? TargetTech.HTML : TargetTech.REACT,
-        user: { connect: { id: session.user.id } },
-        prompts: {
-          create: [
-            {
-              message: messages[messages.length - 2]?.message,
-              role: PromptRole.USER,
+          return component;
+        }
+        //If component is AI Generated (User Prompt + Model Response)
+        const component = await tx.component.create({
+          data: {
+            name: name.trim() || "New Component",
+            html: html.trim() || "",
+            css: css.trim() || "",
+            js: js.trim() || "",
+            jsx: jsx.trim() || "",
+            targetTech:
+              targetTech === "HTML" ? TargetTech.HTML : TargetTech.REACT,
+            user: { connect: { id: session.user.id } },
+            prompts: {
+              create: [
+                {
+                  message: messages[messages.length - 2]?.message,
+                  role: PromptRole.USER,
 
-              aiRequest: usageMetadata
-                ? {
-                    create: {
-                      model,
-                      targetTech:
-                        targetTech === "HTML"
-                          ? TargetTech.HTML
-                          : TargetTech.REACT,
-                      inputTokens: usageMetadata.promptTokenCount ?? 0,
-                      outputTokens: usageMetadata.candidatesTokenCount ?? 0,
-                      thinkingTokens: usageMetadata?.thoughtsTokenCount ?? 0,
-                      totalTokens: usageMetadata?.totalTokenCount ?? 0,
-                    },
-                  }
-                : undefined,
+                  aiRequest: usageMetadata
+                    ? {
+                        create: {
+                          model,
+                          targetTech:
+                            targetTech === "HTML"
+                              ? TargetTech.HTML
+                              : TargetTech.REACT,
+                          inputTokens: usageMetadata.promptTokenCount ?? 0,
+                          outputTokens: usageMetadata.candidatesTokenCount ?? 0,
+                          thinkingTokens:
+                            usageMetadata?.thoughtsTokenCount ?? 0,
+                          totalTokens: usageMetadata?.totalTokenCount ?? 0,
+                        },
+                      }
+                    : undefined,
+                },
+                {
+                  message: messages[messages.length - 1]?.message,
+                  role: PromptRole.ASSISTANT,
+                },
+              ],
             },
-            {
-              message: messages[messages.length - 1]?.message,
-              role: PromptRole.ASSISTANT,
-            },
-          ],
-        },
-      },
-      include: {
-        prompts: {
-          orderBy: {
-            id: "asc",
           },
           include: {
-            aiRequest: true,
+            prompts: {
+              orderBy: {
+                id: "asc",
+              },
+              include: {
+                aiRequest: true,
+              },
+            },
           },
-        },
+        });
+        return component;
       },
-    });
-    return component;
-  });
-
+      {
+        timeout: 10_000,
+      },
+    );
+  } catch (error) {
+    console.error("=== COMPONENT CREATE FAILED ===");
+    console.error("code:", error.code);
+    console.error("message:", error.message);
+    console.error("meta:", JSON.stringify(error.meta, null, 2));
+    console.error("stack:", error.stack);
+    return NextResponse.json(
+      {
+        error: error.message,
+        code: error.code,
+        meta: error.meta,
+      },
+      { status: 500 },
+    );
+  }
   return NextResponse.json(component, { status: 201 });
 }
 
