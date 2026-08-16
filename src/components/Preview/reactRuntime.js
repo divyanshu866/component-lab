@@ -10,6 +10,7 @@ const SUPPORTED_REACT_DEPENDENCIES = {
     // Animation
     "framer-motion": "https://esm.sh/framer-motion",
     motion: "https://esm.sh/motion",
+    "canvas-confetti": "https://esm.sh/canvas-confetti",
 
     // Charts / data visualization
     recharts: "https://esm.sh/recharts",
@@ -52,6 +53,8 @@ const SUPPORTED_REACT_DEPENDENCIES = {
     "@radix-ui/react-switch":
       "https://esm.sh/@radix-ui/react-switch?external=react",
 
+    "@floating-ui/react": "https://esm.sh/@floating-ui/react",
+
     // Notifications
     sonner: "https://esm.sh/sonner?external=react",
 
@@ -69,6 +72,11 @@ const SUPPORTED_REACT_DEPENDENCIES = {
 
     // Data / server state
     "@tanstack/react-query": "https://esm.sh/@tanstack/react-query",
+    "@tanstack/react-table": "https://esm.sh/@tanstack/react-table@8.21.3",
+    "@tanstack/react-virtual": "https://esm.sh/@tanstack/react-virtual",
+    "@headlessui/react": "https://esm.sh/@headlessui/react?external=react",
+    "react-aria-components":
+      "https://esm.sh/react-aria-components@1.20.0?external=react",
 
     // Routing
     "react-router": "https://esm.sh/react-router",

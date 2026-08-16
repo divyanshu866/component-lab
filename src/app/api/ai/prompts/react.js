@@ -148,6 +148,7 @@ Icons:
 Animation:
 - framer-motion
 - motion
+- canvas-confetti
 
 Charts and data visualization:
 - recharts
@@ -216,6 +217,9 @@ ComponentLab preview runtime:
 Rules:
 - Use standard ES module imports.
 - Only import packages from the supported list above.
+- Only import packages from the supported list above.
+- Never invent or assume unsupported npm packages.
+- If a requested library is unsupported, do not import it; use a supported dependency or native browser functionality when a reasonable alternative exists.
 - Use APIs supported by the ComponentLab preview runtime and its latest versions.
 - Do not use 'require()'.
 - Do not load dependencies through CDN '<script>' tags, global browser variables, or dynamically injected external scripts.
@@ -405,6 +409,7 @@ Icons:
 Animation:
 - framer-motion
 - motion
+- canvas-confetti
 
 Charts and data visualization:
 - recharts
@@ -438,6 +443,7 @@ UI primitives:
 - @radix-ui/react-select
 - @radix-ui/react-checkbox
 - @radix-ui/react-switch
+- @floating-ui/react
 
 Notifications:
 - sonner
@@ -448,6 +454,9 @@ Drag and drop:
 
 Data fetching and routing:
 - @tanstack/react-query
+- @tanstack/react-table
+- @tanstack/react-virtual
+- @headlessui/react
 - react-router
 
 Layout and interaction:
@@ -473,6 +482,9 @@ ComponentLab preview runtime:
 Rules:
 - Use standard ES module imports.
 - Only import packages from the supported list above.
+- Only import packages from the supported list above.
+- Never invent or assume unsupported npm packages.
+- If a requested library is unsupported, do not import it; use a supported dependency or native browser functionality when a reasonable alternative exists.
 - Use APIs supported by the ComponentLab preview runtime and its latest versions.
 - Do not use 'require()'.
 - Do not load dependencies through CDN '<script>' tags, global browser variables, or dynamically injected external scripts.
