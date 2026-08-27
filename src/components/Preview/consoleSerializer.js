@@ -1,4 +1,4 @@
-export function serializeConsoleValue(value, seen = new WeakSet()) {
+export const SERIALIZE_CONSOLE_VALUE_SOURCE = /*javascript*/ `function serializeConsoleValue(value, seen = new WeakSet()) {
   if (value === null) {
     return {
       type: "null",
@@ -43,7 +43,8 @@ export function serializeConsoleValue(value, seen = new WeakSet()) {
     return {
       type: "bigint",
       value: null,
-      preview: `${value}n`,
+      preview: \`\${value}n
+      \`,
     };
   }
 
@@ -51,7 +52,7 @@ export function serializeConsoleValue(value, seen = new WeakSet()) {
     return {
       type: "function",
       value: null,
-      preview: value.name ? `ƒ ${value.name}()` : "ƒ ()",
+      preview: value.name ? \`ƒ \${value.name}()\` : "ƒ ()",
     };
   }
 
@@ -63,7 +64,7 @@ export function serializeConsoleValue(value, seen = new WeakSet()) {
         message: value.message,
         stack: value.stack ?? null,
       },
-      preview: `${value.name}: ${value.message}`,
+      preview: \`\${value.name}: \${value.message}\`,
     };
   }
 
@@ -109,7 +110,7 @@ export function serializeConsoleValue(value, seen = new WeakSet()) {
           serializeConsoleValue(key, seen),
           serializeConsoleValue(mapValue, seen),
         ]),
-        preview: `Map(${value.size})`,
+        preview: \`Map(\${value.size})\`,
       };
     }
 
@@ -117,7 +118,7 @@ export function serializeConsoleValue(value, seen = new WeakSet()) {
       return {
         type: "set",
         value: [...value].map((item) => serializeConsoleValue(item, seen)),
-        preview: `Set(${value.size})`,
+        preview: \`Set(\${value.size})\`,
       };
     }
 
@@ -139,4 +140,4 @@ export function serializeConsoleValue(value, seen = new WeakSet()) {
     value: null,
     preview: String(value),
   };
-}
+}`;

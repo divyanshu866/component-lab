@@ -1,5 +1,5 @@
 import * as esbuild from "esbuild-wasm";
-import { serializeConsoleValue } from "@/components/Preview/consoleSerializer";
+import { SERIALIZE_CONSOLE_VALUE_SOURCE } from "@/components/Preview/consoleSerializer";
 const SUPPORTED_REACT_DEPENDENCIES = {
   exact: {
     // React
@@ -377,8 +377,8 @@ export async function buildReactPreviewDocument(component) {
           }
 
           
-         
-          ${serializeConsoleValue}
+
+          ${SERIALIZE_CONSOLE_VALUE_SOURCE}
           function reportConsoleMessage(method, severity, args) {
   const serializedArguments = args.map(
   (arg) => serializeConsoleValue(arg)
