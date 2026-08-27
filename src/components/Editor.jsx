@@ -52,7 +52,6 @@ const Editor = ({ user, isMobile }) => {
         css: c.css,
         js: c.js,
       });
-      console.log(c.prompts);
       setTargetTech(c.targetTech);
       setConsoleLogs([]);
 

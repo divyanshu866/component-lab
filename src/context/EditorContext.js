@@ -119,12 +119,16 @@ export function EditorProvider({ children }) {
     },
   ) => {
     if (component.targetTech === "HTML") {
+      //CLEAR REACT PREVIEW
+      setReactPreviewDocument("");
       const document = await buildwebBundleDocument(component);
       setHtmlPreviewDocument(document);
     }
 
     if (component.targetTech === "REACT") {
       try {
+        //CLEAR WEB BUNDLE PREVIEW
+        setHtmlPreviewDocument("");
         const document = await buildReactPreviewDocument(component);
         setReactPreviewDocument(document);
       } catch (errors) {
@@ -135,6 +139,8 @@ export function EditorProvider({ children }) {
         appendConsoleLog(errors.diagnostics);
       }
     }
+
+    // setPreviewKey((prev) => prev + 1);
   };
 
   return (

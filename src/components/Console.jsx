@@ -295,6 +295,13 @@ export default function Console() {
     };
   }, [appendConsoleLog, setShowConsole]);
 
+  useEffect(() => {
+    if (consoleLogs.length > 0) {
+      setShowConsole(true);
+    } else {
+      setShowConsole(false);
+    }
+  }, [consoleLogs]);
   const clearConsole = () => {
     setConsoleLogs([]);
     setShowConsole(false);
