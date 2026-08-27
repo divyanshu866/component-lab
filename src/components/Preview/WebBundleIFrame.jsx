@@ -4,7 +4,7 @@ import { useEditorContext } from "@/context/EditorContext";
 import AILoader from "@/components/AILoader";
 import { useState } from "react";
 import { Maximize2, Minimize2 } from "lucide-react";
-const HtmlIFrame = ({ isMobile }) => {
+const WebBundleIFrame = ({ isMobile }) => {
   const {
     htmlPreviewDocument,
     previewKey,
@@ -50,4 +50,4 @@ const HtmlIFrame = ({ isMobile }) => {
   );
 };
 
-export default HtmlIFrame;
+export default WebBundleIFrame;

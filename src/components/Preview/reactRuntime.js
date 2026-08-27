@@ -311,7 +311,7 @@ export async function compileReact(jsx) {
         source: "compiler",
         targetTech: "REACT",
         severity: "error",
-        type: "compile",
+        type: "syntax",
         message: error.text,
         stack: null,
         location: {
@@ -406,8 +406,8 @@ export async function buildReactPreviewDocument(component) {
           
           //Preserve original implementation
           const originalConsoleLog = console.log;
-          const originalConsoleInfo = console.info;
           const originalConsoleWarn = console.warn;
+          const originalConsoleInfo = console.info;
           const originalConsoleError = console.error;
 
           //WRAP ORIGINAL LOG WITH NEW IMPLEMENTATION
@@ -417,6 +417,16 @@ export async function buildReactPreviewDocument(component) {
             reportConsoleMessage(
               "log",
               "info",
+              args,
+            );
+          };
+           //WRAP ORIGINAL WARN WITH NEW IMPLEMENTATION
+          console.warn = (...args) => {
+            originalConsoleWarn(...args);
+            
+            reportConsoleMessage(
+              "warn",
+              "warning",
               args,
             );
           };
@@ -430,31 +440,10 @@ export async function buildReactPreviewDocument(component) {
               args,
             );
           };
-          //WRAP ORIGINAL WARN WITH NEW IMPLEMENTATION
-          console.warn = (...args) => {
-            originalConsoleWarn(...args);
-            
-            reportConsoleMessage(
-              "warn",
-              "warning",
-              args,
-            );
-          };
-          //WRAP ORIGINAL ERROE WITH NEW IMPLEMENTATION RENDER
-          //console.error = (...args) => {
-          //  originalConsoleError(...args);
-//
-          //  reportConsoleMessage(
-          //    "error",
-          //    "error",
-          //    args,
-          //  );
-          //};
-
           // Declare before the console overrides
           const boundaryHandledErrors = new WeakSet();
-
-
+          
+          //WRAP ORIGINAL ERROR WITH NEW IMPLEMENTATION RENDER
           console.error = (...args) => {
             originalConsoleError(...args); // always log to real console immediately
           
@@ -507,15 +496,47 @@ export async function buildReactPreviewDocument(component) {
           }
           //HANDLE UNHANELED RUNTIME ERRORS
           window.addEventListener("error", (event) => {
+            const isResourceError =
+              event.target &&
+              event.target !== window &&
+              event.target.tagName;
+
+              if (isResourceError) {
+                reportPreviewDiagnostic({
+                  source: "preview",
+                  severity: "error",
+                  type: "resource",
+                  message: \`Failed to load \${event.target.tagName.toLowerCase()} resource.\`,
+                  stack: null,
+                  location: {
+                    file: "Component.jsx",
+                    line: null,
+                    column: null,
+                  },
+                  metadata: {
+                    tagName: event.target.tagName,
+                    source:
+                      event.target.src ??
+                      event.target.href ??
+                      null,
+                  },
+                });
+              
+                return;
+              }
+            const type =
+              event.error instanceof SyntaxError
+                ? "syntax"
+                : "runtime";
             reportPreviewDiagnostic({
               source: "preview",
               severity: "error",
-              type: "runtime",
+              type: type,
               message: event.message || "Unhandled runtime error.",
               stack: event.error?.stack ?? null,
               location: extractStackLocation(event.error?.stack),
             });
-          });
+          },true);
 
           //HANDLE UNHANELED PROMISE REJECTION ERRORS
           window.addEventListener("unhandledrejection", (event) => {

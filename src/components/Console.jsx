@@ -276,40 +276,6 @@ export default function Console() {
   } = useConsole();
 
   useEffect(() => {
-    const handleMessage = (event) => {
-      if (event.data?.type !== "console") {
-        return;
-      }
-
-      const logEntry = [
-        {
-          source: "preview",
-          targetTech: "HTML",
-          severity: event.data.level,
-          type: event.data.level,
-          message: event.data.message,
-          stack: null,
-          location: {
-            file: "component.html",
-            line: null,
-            column: null,
-          },
-          metadata: {},
-        },
-      ];
-
-      setConsoleLogs((previousLogs) => [...previousLogs, ...logEntry]);
-      setShowConsole(true);
-    };
-
-    window.addEventListener("message", handleMessage);
-
-    return () => {
-      window.removeEventListener("message", handleMessage);
-    };
-  }, [setConsoleLogs, setShowConsole]);
-
-  useEffect(() => {
     const handlePreviewMessage = (event) => {
       if (event.data?.type !== "preview-diagnostics") {
         return;

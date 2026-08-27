@@ -80,15 +80,14 @@ Recent milestones
 - [x] React component generation + preview pipeline
 - [x] Multi-model AI generation and editing
 - [x] React preview diagnostics and integrated developer console
-
-- [ ] Web Bundle diagnostics
+- [x] Web Bundle diagnostics
 - [ ] AI interaction modes — Ask, Rework, and Auto
-- [ ] Version history & rollback
 - [ ] Framework export
+- [ ] Version history & rollback
+- [ ] Mobile-responsive workspace
 - [ ] AI-powered design improvements
-- [ ] Vue component generation
 - [ ] Component collections
-- [ ] Mobile-optimized workspace
+- [ ] Vue component generation
 - [ ] Custom themes
 - [ ] Team collaboration
 

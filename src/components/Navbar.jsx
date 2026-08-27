@@ -114,13 +114,13 @@ export default function Navbar({ user }) {
         <div className="flex items-center justify-between py-1 h-full gap-5">
           <button
             onClick={onSave}
-            className={`flex items-center px-2 h-full dark:text-neutral-100 dark:bg-linear-to-r dark:from-orange-600/80 dark:to-orange-500/80 border rounded-md dark:hover:to-orange-600/80 dark:border-orange-400 cursor-pointer`}
+            className={`flex items-center px-2 h-full dark:text-neutral-100 dark:bg-linear-to-r dark:from-orange-600/80 dark:via-orange-400/80 dark:to-orange-400/80 border rounded-md dark:hover:to-orange-500/80 dark:border-orange-400 cursor-pointer`}
           >
             <Save className="w-4 h-4" />
           </button>
           <button
             onClick={() => setShowConsole((prev) => !prev)}
-            className={`flex items-center px-2 h-full dark:text-neutral-100 dark:bg-linear-to-r dark:from-pink-600/80 dark:to-pink-400/80 border rounded-md dark:hover:to-pink-600/80 dark:border-pink-400 cursor-pointer`}
+            className={`flex items-center px-2 h-full dark:text-neutral-100 dark:bg-linear-to-r dark:from-pink-500/80 dark:via-pink-400/80 dark:to-pink-400/80 border rounded-md dark:hover:to-pink-600/80 dark:border-pink-400 cursor-pointer`}
           >
             <SquareTerminal className="w-4 h-4" />
           </button>

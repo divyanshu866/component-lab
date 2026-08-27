@@ -1,7 +1,7 @@
 "use client";
 import { createContext, useState, useContext, useEffect } from "react";
 import { buildReactPreviewDocument } from "@/components/Preview/reactRuntime";
-import { buildHtmlPreviewDocument } from "@/components/Preview/htmlRuntime";
+import { buildwebBundleDocument } from "@/components/Preview/webBundleRuntime";
 import { DEFAULT_JSX } from "@/components/Preview/defaults";
 import { useConsole } from "./ConsoleContext";
 const EditorContext = createContext();
@@ -119,7 +119,7 @@ export function EditorProvider({ children }) {
     },
   ) => {
     if (component.targetTech === "HTML") {
-      const document = await buildHtmlPreviewDocument(component);
+      const document = await buildwebBundleDocument(component);
       setHtmlPreviewDocument(document);
     }
 

@@ -4,7 +4,7 @@ import Console from "@/components/Console";
 import Sidebar from "@/components/Sidebar";
 import { useEditorContext } from "@/context/EditorContext";
 import React, { useState } from "react";
-import HtmlIFrame from "@/components/Preview/HtmlIFrame";
+import WebBundleIFrame from "@/components/Preview/WebBundleIFrame";
 import ReactIFrame from "./Preview/ReactIFrame";
 const WorkspaceClient = ({ user }) => {
   const { targetTech } = useEditorContext();
@@ -19,7 +19,7 @@ const WorkspaceClient = ({ user }) => {
             className={`flex flex-1 justify-end h-0 bg-transparent relative`}
           >
             <Editor user={user} isMobile={isMobile} />
-            <HtmlIFrame isMobile={isMobile} />
+            <WebBundleIFrame isMobile={isMobile} />
             <ReactIFrame isMobile={isMobile} />
           </div>
           <Console />
