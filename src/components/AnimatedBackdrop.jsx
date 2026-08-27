@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-
 export default function AnimatedBackdrop({ children }) {
   const [mouse, setMouse] = useState({ x: 0, y: 0 });
 

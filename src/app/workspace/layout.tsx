@@ -9,14 +9,14 @@ export default function WorkspaceLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <EditorProvider>
-      <SaveProvider>
-        <ConsoleProvider>
+    <ConsoleProvider>
+      <EditorProvider>
+        <SaveProvider>
           <main className="w-full h-full flex flex-col">
             <div className="h-full w-full flex flex-col">{children}</div>
           </main>
-        </ConsoleProvider>
-      </SaveProvider>
-    </EditorProvider>
+        </SaveProvider>
+      </EditorProvider>{" "}
+    </ConsoleProvider>
   );
 }

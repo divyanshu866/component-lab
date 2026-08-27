@@ -1,5 +1,5 @@
 "use client";
-import React, { act, useState } from "react";
+import React, { useState } from "react";
 import { useEditorContext } from "@/context/EditorContext";
 import { SlidersHorizontal } from "lucide-react";
 import {
@@ -514,6 +514,18 @@ const AIEditor = ({ user, isMobile }) => {
 
       setActiveMessages(streamState.messages);
 
+      //Enrich messages for ai call
+      const enrichedPrompt = `Create a production-ready UI component using the following requirements.
+  
+  Component Type:${selectedType}
+
+  Component Style:${selectedStyle}
+
+  User Request:${changeDesc}`;
+      const messages = [
+        { role: "USER", message: enrichedPrompt },
+        { role: "ASSISTANT", message: "" },
+      ];
       //Helper Update current component state
       const updateStreamingComponent = (section, content) => {
         streamState[section] += content;
@@ -531,15 +543,14 @@ const AIEditor = ({ user, isMobile }) => {
         );
         setActiveMessages(streamState.messages);
       };
+      console.log("messages right before generate api call====>", messages);
       const response = await fetch("/api/ai", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          componentType: selectedType,
-          componentStyle: selectedStyle,
-          prompt: userMessage.message,
+          messages: messages,
           targetTech: targetTech,
           model: selectedModel,
         }),
@@ -706,6 +717,7 @@ const AIEditor = ({ user, isMobile }) => {
         );
         setActiveMessages(streamState.messages);
       };
+
       const response = await fetch("/api/ai", {
         method: "PATCH",
         headers: {

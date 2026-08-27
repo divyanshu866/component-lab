@@ -16,7 +16,7 @@ const ChatList = () => {
     <div className="h-full w-full relative">
       <div
         ref={chatListRef}
-        className={`${reworkUI ? "" : "hidden"} leading-6 w-full h-full overflow-y-auto px-4 pt-12 pb-22 space-y-5`}
+        className={`${reworkUI ? "" : "hidden"} leading-6 w-full h-full overflow-y-auto overflow-x-hidden px-4 pt-12 pb-22 space-y-5`}
       >
         {activeMessages?.map((prompt, index) => (
           <Fragment key={index}>

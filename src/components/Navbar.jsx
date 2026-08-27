@@ -1,9 +1,8 @@
 "use client";
-import { PanelRight, Play, SaveAllIcon, Terminal } from "lucide-react";
+import { RefreshCcw, Save, SquareTerminal } from "lucide-react";
 import { useConsole } from "@/context/ConsoleContext";
 import { useEditorContext } from "@/context/EditorContext";
 import Profile from "@/components/Profile";
-import Link from "next/link";
 export default function Navbar({ user }) {
   const { showConsole, setShowConsole, setConsoleLogs } = useConsole();
   const {
@@ -115,21 +114,21 @@ export default function Navbar({ user }) {
         <div className="flex items-center justify-between py-1 h-full gap-5">
           <button
             onClick={onSave}
-            className="flex items-center px-4 h-full bg-gray-100 dark:bg-darkGrey border rounded-lg hover:bg-gray-200 dark:hover:bg-darkSecondary dark:border-lightBorder cursor-pointer"
+            className={`flex items-center px-2 h-full dark:text-neutral-100 dark:bg-linear-to-r dark:from-orange-600/80 dark:to-orange-500/80 border rounded-md dark:hover:to-orange-600/80 dark:border-orange-400 cursor-pointer`}
           >
-            <SaveAllIcon className="w-4 h-4 stroke-1" />
+            <Save className="w-4 h-4" />
           </button>
           <button
             onClick={() => setShowConsole((prev) => !prev)}
-            className={`flex items-center px-4 h-full text-pink-600 bg-gray-100 dark:bg-darkGrey border rounded-lg hover:bg-gray-200 dark:hover:bg-darkSecondary dark:border-lightBorder cursor-pointer`}
+            className={`flex items-center px-2 h-full dark:text-neutral-100 dark:bg-linear-to-r dark:from-pink-600/80 dark:to-pink-400/80 border rounded-md dark:hover:to-pink-600/80 dark:border-pink-400 cursor-pointer`}
           >
-            <Terminal className="w-4 h-4" />
+            <SquareTerminal className="w-4 h-4" />
           </button>
           <button
             onClick={reRender}
-            className="flex items-center justify-center px-4 h-full border border-green-600 text-white rounded-lg bg-gradient-to-r from-green-800 to-green-700 hover:from-green-900  hover:to-green-800 transition-all cursor-pointer"
+            className="flex items-center justify-center px-4 mr-2 h-full border border-green-600 text-white rounded-md bg-linear-to-r from-green-800 to-green-700 hover:from-green-900  hover:to-green-800 transition-all cursor-pointer"
           >
-            <Play className="w-4 h-4 stroke-1" />
+            <RefreshCcw className="w-4 h-4" />
           </button>
           <Profile user={user} />
         </div>

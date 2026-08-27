@@ -20,14 +20,17 @@ Generate production-ready UI from natural language, refine it through conversati
 
 # ✨ Features
 
-- 🤖 Generate complete frontend components from natural language
-- 🧠 Multi-turn conversational AI editing with context awareness
-- 🎨 Generate production-ready HTML, CSS, and JavaScript
+- 🤖 Generate production-ready frontend components from natural language
+- 🧠 Multi-turn conversational AI editing with context-aware rework
+- 🔀 Support multiple AI models from Google and OpenAI
+- ⚡ Stream AI-generated responses directly into the editor
+- 🎨 Generate HTML, CSS, JavaScript, and React components
 - 🧩 Multiple component styles and design presets
-- ⚡ Stream AI-generated code directly into the editor
 - 📝 Built-in Monaco editor with IDE-level syntax highlighting and code completion
-- 🖥️ Live preview with sandboxed execution
-- 📟 Integrated JavaScript console
+- 🖥️ Live preview with sandboxed component execution
+- 📟 Integrated developer console with runtime and component diagnostics
+- 🐛 React compile-time, runtime, render, dependency, and Promise error reporting
+- 🧪 Structured console output with expandable objects, arrays, Maps, Sets, Errors, and other values
 - 📚 Persistent component library
 - 💾 Save, organize, and revisit components
 - 🗂️ Persistent AI conversation history
@@ -64,21 +67,30 @@ Refine existing components using natural language. ComponentLab maintains conver
 | **Styling**   | Tailwind CSS             |
 | **Editor**    | Monaco Editor            |
 | **Database**  | PostgreSQL + Prisma      |
-| **AI**        | Google Gemini            |
+| **AI**        | Google Gemini + Open AI  |
 | **Streaming** | Server-Sent Events (SSE) |
 
 ---
 
 # 🚀 Roadmap
 
-- [ ] React & Vue component generation
-- [ ] Mobile-optimized workspace
+Recent milestones
+
+- [x] Web component generation + preview pipeline
+- [x] React component generation + preview pipeline
+- [x] Multi-model AI generation and editing
+- [x] React preview diagnostics and integrated developer console
+
+- [ ] Web Bundle diagnostics
+- [ ] AI interaction modes — Ask, Rework, and Auto
 - [ ] Version history & rollback
-- [ ] Component collections
-- [ ] AI-powered design improvements
 - [ ] Framework export
-- [ ] Team collaboration
+- [ ] AI-powered design improvements
+- [ ] Vue component generation
+- [ ] Component collections
+- [ ] Mobile-optimized workspace
 - [ ] Custom themes
+- [ ] Team collaboration
 
 ---
 
@@ -95,6 +107,8 @@ AUTH_GITHUB_SECRET=''
 AUTH_SECRET=""
 
 GEMINI_API_KEY=""
+
+OPENAI_API_KEY=""
 
 AUTH_TRUST_HOST=true
 ```

@@ -150,6 +150,9 @@ Animation:
 - motion
 - canvas-confetti
 
+3D:
+- three
+
 Charts and data visualization:
 - recharts
 - react-chartjs-2
@@ -410,6 +413,9 @@ Animation:
 - framer-motion
 - motion
 - canvas-confetti
+
+3D:
+- three
 
 Charts and data visualization:
 - recharts

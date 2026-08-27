@@ -1,16 +1,7 @@
 "use client";
-import {
-  PanelRight,
-  Plus,
-  Sparkles,
-  Zap,
-  Trash,
-  MoreHorizontal,
-  Search,
-  FileCode2,
-} from "lucide-react";
-// import { usePathname } from "next/navigation";
-import { act, useEffect, useState } from "react";
+import { Plus, Sparkles, Trash, MoreHorizontal } from "lucide-react";
+import { DEFAULT_JSX } from "@/components/Preview/defaults";
+import { useEffect, useState } from "react";
 import { useEditorContext } from "@/context/EditorContext";
 import { useConsole } from "@/context/ConsoleContext";
 import { AI_MODELS } from "@/ai/models";
@@ -120,7 +111,13 @@ export default function Sidebar({ isMobile }) {
     }
     fetchComponents();
   }, []);
-  const clearScreen = (name = "", html = "", css = "", js = "", jsx = "") => {
+  const clearScreen = (
+    name = "",
+    html = "",
+    css = "",
+    js = "",
+    jsx = DEFAULT_JSX,
+  ) => {
     if (isGenerating) {
       return;
     }
@@ -134,12 +131,12 @@ export default function Sidebar({ isMobile }) {
     setActiveEditor("AI");
     setActiveComponent({
       id: "",
-      name: "",
+      name: name,
       messages: [],
-      html: "",
-      css: "",
-      jsx: "",
-      js: "",
+      html: html,
+      css: css,
+      jsx: jsx,
+      js: js,
       targetTech: targetTech,
     });
 

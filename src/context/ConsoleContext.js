@@ -7,7 +7,10 @@ const ConsoleContext = createContext(null);
 export const ConsoleProvider = ({ children }) => {
   const [showConsole, setShowConsole] = useState(false);
   const [consoleLogs, setConsoleLogs] = useState([]);
-
+  const appendConsoleLog = (diagnostics) => {
+    //append errors
+    setConsoleLogs((prev) => [...prev, ...diagnostics]);
+  };
   return (
     <ConsoleContext.Provider
       value={{
@@ -15,6 +18,7 @@ export const ConsoleProvider = ({ children }) => {
         setShowConsole,
         consoleLogs,
         setConsoleLogs,
+        appendConsoleLog,
       }}
     >
       {children}

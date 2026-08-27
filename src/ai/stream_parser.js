@@ -28,8 +28,8 @@ export async function createStreamingResponse(stream) {
         let inSection = false;
         let currSection = null;
         for await (const chunk of stream) {
-          if (chunk.usageMetadata) {
-            usageMetadata = chunk.usageMetadata;
+          if (chunk.type === "usage") {
+            usageMetadata = chunk.usage;
           }
           const chunkText = chunk.text || "";
           accumulator += chunkText;
@@ -149,12 +149,12 @@ export async function createStreamingResponse(stream) {
 
         // Send end event
         console.log("Streaming completed.");
-        console.log("Final Gemini usage:", {
-          promptTokens: usageMetadata?.promptTokenCount,
-          outputTokens: usageMetadata?.candidatesTokenCount,
-          thinkingTokens: usageMetadata?.thoughtsTokenCount,
-          totalTokens: usageMetadata?.totalTokenCount,
-        });
+        // console.log("Final Gemini usage:", {
+        //   promptTokens: usageMetadata.inputTokens,
+        //   outputTokens: usageMetadata.outputTokens,
+        //   thinkingTokens: usageMetadata.reasoningTokens,
+        //   totalTokens: usageMetadata.totalTokens,
+        // });
         controller.enqueue(
           encoder.encode(
             `data: ${JSON.stringify({

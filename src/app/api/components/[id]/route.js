@@ -49,16 +49,7 @@ export async function PATCH(req, context) {
     usageMetadata,
     model,
   } = await req.json();
-  console.log(
-    "SAVE PATCH REACT COMP====>> TARGET TECH",
-    // name,
-    messages,
-    // html,
-    // css,
-    // js,
-    // jsx,
-    targetTech,
-  );
+
   const component = await prisma.component.findUnique({
     where: { id: Number(id) },
   });
@@ -91,10 +82,10 @@ export async function PATCH(req, context) {
                   model,
                   targetTech:
                     targetTech === "HTML" ? TargetTech.HTML : TargetTech.REACT,
-                  inputTokens: usageMetadata.promptTokenCount ?? 0,
-                  outputTokens: usageMetadata.candidatesTokenCount ?? 0,
-                  thinkingTokens: usageMetadata?.thoughtsTokenCount ?? 0,
-                  totalTokens: usageMetadata?.totalTokenCount ?? 0,
+                  inputTokens: usageMetadata.inputTokens ?? 0,
+                  outputTokens: usageMetadata.outputTokens ?? 0,
+                  thinkingTokens: usageMetadata?.reasoningTokens ?? 0,
+                  totalTokens: usageMetadata?.totalTokens ?? 0,
                 },
               }
             : undefined,

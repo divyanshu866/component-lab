@@ -1,5 +1,5 @@
 "use client";
-import { Download, Heart, LogOut, Settings, User } from "lucide-react";
+import { LogOut } from "lucide-react";
 import React, { useState } from "react";
 import { signOut } from "next-auth/react";
 const Profile = ({ user }) => {

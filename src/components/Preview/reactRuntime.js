@@ -1,4 +1,5 @@
 import * as esbuild from "esbuild-wasm";
+import { serializeConsoleValue } from "@/components/Preview/consoleSerializer";
 const SUPPORTED_REACT_DEPENDENCIES = {
   exact: {
     // React
@@ -11,6 +12,7 @@ const SUPPORTED_REACT_DEPENDENCIES = {
     "framer-motion": "https://esm.sh/framer-motion",
     motion: "https://esm.sh/motion",
     "canvas-confetti": "https://esm.sh/canvas-confetti",
+    three: "https://esm.sh/three",
 
     // Charts / data visualization
     recharts: "https://esm.sh/recharts",
@@ -52,7 +54,9 @@ const SUPPORTED_REACT_DEPENDENCIES = {
       "https://esm.sh/@radix-ui/react-checkbox?external=react",
     "@radix-ui/react-switch":
       "https://esm.sh/@radix-ui/react-switch?external=react",
+    "@headlessui/react": "https://esm.sh/@headlessui/react?external=react",
 
+    // Positioning / interaction
     "@floating-ui/react": "https://esm.sh/@floating-ui/react",
 
     // Notifications
@@ -63,18 +67,11 @@ const SUPPORTED_REACT_DEPENDENCIES = {
     "@dnd-kit/sortable": "https://esm.sh/@dnd-kit/sortable",
 
     //TIER 2
-    // Core
-    react: "https://esm.sh/react@19",
-
-    // Icons / animation
-    "lucide-react": "https://esm.sh/lucide-react",
-    "framer-motion": "https://esm.sh/framer-motion",
 
     // Data / server state
     "@tanstack/react-query": "https://esm.sh/@tanstack/react-query",
     "@tanstack/react-table": "https://esm.sh/@tanstack/react-table@8.21.3",
     "@tanstack/react-virtual": "https://esm.sh/@tanstack/react-virtual",
-    "@headlessui/react": "https://esm.sh/@headlessui/react?external=react",
     "react-aria-components":
       "https://esm.sh/react-aria-components@1.20.0?external=react",
 
@@ -104,6 +101,8 @@ const SUPPORTED_REACT_DEPENDENCIES = {
   },
 };
 const RUNTIME_DEPENDENCIES = {
+  // React
+  react: "https://esm.sh/react@19",
   "react-dom/client": "https://esm.sh/react-dom@19/client",
   "react/jsx-runtime": "https://esm.sh/react@19/jsx-runtime",
 };
@@ -119,23 +118,69 @@ const RUNTIME_DEPENDENCIES = {
 // };
 let esbuildInitPromise = null;
 
-const initializeEsbuild = () => {
-  if (!esbuildInitPromise) {
-    esbuildInitPromise = esbuild.initialize({
-      wasmURL: "/esbuild.wasm",
+const initializeEsbuild = async () => {
+  try {
+    if (!esbuildInitPromise) {
+      esbuildInitPromise = esbuild.initialize({
+        wasmURL: "/esbuild.wasm",
+      });
+    }
+    await esbuildInitPromise;
+  } catch (error) {
+    esbuildInitPromise = null;
+    const agnosticErrorList = [];
+    //console.log("ESBUILD INITIALIZATION ERROR======>");
+    //console.dir(error, { depth: null });
+
+    //append all errors to list
+    agnosticErrorList.push({
+      source: "compiler",
+      targetTech: "REACT",
+      severity: "error",
+      type: "infrastructure",
+      message: error?.message ?? "Failed to initialize esbuild.",
+      stack: error?.stack ?? null,
+      location: {
+        file: null,
+        line: null,
+        column: null,
+      },
+      metadata: {},
     });
+
+    //console.log("ESBUILD INITIALIZATION AGNOSTIC_ERRORS======>");
+    //console.dir(agnosticErrorList, { depth: null });
+    throw new EsBuildError(agnosticErrorList);
   }
-  return esbuildInitPromise;
 };
+function getSourceLocation(source, index) {
+  const before = source.slice(0, index);
+
+  const line = before.split("\n").length;
+  const lastNewlineIndex = before.lastIndexOf("\n");
+
+  const column = index - lastNewlineIndex;
+
+  return {
+    line,
+    column,
+  };
+}
 function extractImportSpecifiers(jsx) {
-  const specifiers = new Set();
+  const imports = new Map();
   const importRegex =
     /(?:import\s+(?:[\s\S]*?\s+from\s+)?|import\s*\()\s*["']([^"']+)["']/g;
   let match;
+
   while ((match = importRegex.exec(jsx)) !== null) {
-    specifiers.add(match[1]);
+    const specifier = match[1];
+
+    const specifierOffset = match.index + match[0].indexOf(match[1]);
+    const location = getSourceLocation(jsx, specifierOffset);
+    imports.set(specifier, { specifier, location });
   }
-  return [...specifiers];
+
+  return [...imports.values()];
 }
 function isBarePackageSpecifier(specifier) {
   return !(
@@ -147,8 +192,11 @@ function isBarePackageSpecifier(specifier) {
 }
 
 function extractPackageImports(jsx) {
-  return extractImportSpecifiers(jsx).filter(isBarePackageSpecifier);
+  return extractImportSpecifiers(jsx).filter(({ specifier }) =>
+    isBarePackageSpecifier(specifier),
+  );
 }
+
 function resolveDependency(specifier) {
   const exact = SUPPORTED_REACT_DEPENDENCIES.exact[specifier];
   if (exact) {
@@ -167,89 +215,431 @@ function resolveDependency(specifier) {
 }
 function buildImportMap(jsx) {
   const imports = { ...RUNTIME_DEPENDENCIES };
-
+  const agnosticErrorList = [];
   const packageImports = extractPackageImports(jsx);
+  //console.log("packageImports==============>");
+  //console.dir(packageImports, { depth: null });
 
-  for (const specifier of packageImports) {
+  for (const { specifier, location } of packageImports) {
     const url = resolveDependency(specifier);
 
     if (!url) {
-      throw new Error(`Unsupported dependency: "${specifier}".`);
+      agnosticErrorList.push({
+        source: "dependency",
+        targetTech: "REACT",
+        severity: "error",
+        type: "unsupported",
+        message: `Unsupported ComponentLab preview dependency "${specifier}"`,
+        stack: null,
+        location: {
+          file: "transformed component.jsx",
+          line: location.line,
+          column: location.column,
+        },
+        metadata: {
+          specifier,
+        },
+      });
+    } else {
+      imports[specifier] = url;
     }
-    imports[specifier] = url;
+  }
+  if (agnosticErrorList.length > 0) {
+    throw new DependencyError(agnosticErrorList);
   }
   return { imports: imports };
 }
+//Custom error
+class EsBuildError extends Error {
+  constructor(diagnostics) {
+    super("Preview initialization failed.");
+    this.name = "EsBuildError";
+    this.diagnostics = diagnostics;
+  }
+} //Custom error
+class DependencyError extends Error {
+  constructor(diagnostics) {
+    super("Unsupported dependency.");
+    this.name = "DependencyError";
+    this.diagnostics = diagnostics;
+  }
+}
+//Custom error
+class ReactCompileError extends Error {
+  constructor(diagnostics) {
+    super("React component compilation failed.");
+    this.name = "ReactCompileError";
+    this.diagnostics = diagnostics;
+  }
+}
 export async function compileReact(jsx) {
   await initializeEsbuild();
+  const agnosticErrorList = [];
   try {
     const result = await esbuild.transform(jsx, {
       loader: "jsx",
       target: "es2020",
       format: "esm",
-      //   globalName: "Component",
     });
-    console.log("COMPILED JS:");
-    console.log(result.code);
+
+    //console.log("ESBUILD RESULT========>");
+    //console.dir(result, { depth: null });
+
+    result.warnings.map((error) => {
+      //append all warning to list
+      agnosticErrorList.push({
+        source: "compiler",
+        targetTech: "REACT",
+        severity: "warning",
+        type: "compile",
+        message: error.text,
+        stack: null,
+        location: {
+          file: "transformed component.jsx",
+          line: error.location.line,
+          column: error.location.column,
+        },
+        metadata: {},
+      });
+    });
+
     return result.code;
-  } catch (error) {
-    console.error("ESBUILD ERROR:", error);
+  } catch (errors) {
+    errors.errors.map((error) => {
+      //append all errors to list
+      agnosticErrorList.push({
+        source: "compiler",
+        targetTech: "REACT",
+        severity: "error",
+        type: "compile",
+        message: error.text,
+        stack: null,
+        location: {
+          file: "transformed component.jsx",
+          line: error.location.line,
+          column: error.location.column,
+        },
+        metadata: {},
+      });
+    });
+
+    throw new ReactCompileError(agnosticErrorList);
+    // throw error;
   }
 }
 
 export async function buildReactPreviewDocument(component) {
   const compiledJsx = await compileReact(component.jsx);
   const importMap = buildImportMap(component.jsx);
-  console.log("ImportMap==============>>>>>>", importMap);
+  const document = /*html*/ ` <!DOCTYPE html>
+    <html>
+      <head>
+        <meta charset="UTF-8" />
+        <style>
+          ${component.css}
+        </style>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script type="importmap">
+          ${JSON.stringify(importMap)}
+        </script>
+      </head>
+      <body>
+        <div id="root"></div>
+        <script type="module">
+          // ERROR REPORTING HELPER
+          function reportPreviewDiagnostic({
+            source ="preview",
+            severity,
+            type,
+            message,
+            stack = null,
+            location = null,
+            metadata = {},
+          }) {
+            window.parent.postMessage(
+              {
+                type: "preview-diagnostics",
+                diagnostics: [
+                  {
+                    source,
+                    targetTech: "REACT",
+                    severity,
+                    type,
+                    message,
+                    stack,
+                    location,
+                    metadata,
+                  },
+                ],
+              },
+              "*",
+            );
+          }
 
-  const document = `
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="UTF-8" />
-    <style>
-      ${component.css}
-    </style>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script type="importmap">
-      ${JSON.stringify(importMap)}
-    </script>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module">
-        import { createElement } from "react";
-        import { createRoot } from "react-dom/client";
-       
-        const componentCode = ${JSON.stringify(compiledJsx)};
-        const blob = new Blob(
-            [componentCode],
-            {type: "text/javascript"}
-        );
+          
+         
+          ${serializeConsoleValue}
+          function reportConsoleMessage(method, severity, args) {
+  const serializedArguments = args.map(
+  (arg) => serializeConsoleValue(arg)
 
-        const componentUrl = URL.createObjectURL(blob);
+  );
 
-        try
-        {
-            const componentModule = await import(componentUrl);
-            const Component = componentModule.default;
+  reportPreviewDiagnostic({
+    source: "console",
+    severity,
+    type: method,
+    message: serializedArguments
+      .map((arg) => arg.preview)
+      .join(" "),
+    stack: null,
+    location: {
+      file: "Component.jsx",
+      line: null,
+      column: null,
+    },
+    metadata: {
+      arguments: serializedArguments,
+    },
+  });
+}
+          
+          //Preserve original implementation
+          const originalConsoleLog = console.log;
+          const originalConsoleInfo = console.info;
+          const originalConsoleWarn = console.warn;
+          const originalConsoleError = console.error;
 
-            if(!Component)
-            {
-            throw new Error("React component must have default export.");
+          //WRAP ORIGINAL LOG WITH NEW IMPLEMENTATION
+          console.log = (...args) => {
+            originalConsoleLog(...args);
+
+            reportConsoleMessage(
+              "log",
+              "info",
+              args,
+            );
+          };
+          //WRAP ORIGINAL INFO WITH NEW IMPLEMENTATION
+          console.info = (...args) => {
+            originalConsoleInfo(...args);
+            
+            reportConsoleMessage(
+              "info",
+              "info",
+              args,
+            );
+          };
+          //WRAP ORIGINAL WARN WITH NEW IMPLEMENTATION
+          console.warn = (...args) => {
+            originalConsoleWarn(...args);
+            
+            reportConsoleMessage(
+              "warn",
+              "warning",
+              args,
+            );
+          };
+          //WRAP ORIGINAL ERROE WITH NEW IMPLEMENTATION RENDER
+          //console.error = (...args) => {
+          //  originalConsoleError(...args);
+//
+          //  reportConsoleMessage(
+          //    "error",
+          //    "error",
+          //    args,
+          //  );
+          //};
+
+          // Declare before the console overrides
+          const boundaryHandledErrors = new WeakSet();
+
+
+          console.error = (...args) => {
+            originalConsoleError(...args); // always log to real console immediately
+          
+            queueMicrotask(() => {
+              // componentDidCatch runs synchronously during React's commit phase,
+              // before any microtask. By the time this runs, the WeakSet is populated.
+              if (args[0] instanceof Error && boundaryHandledErrors.has(args[0])) {
+                return; // render error — already reported with richer context from componentDidCatch
+              }
+              reportConsoleMessage("error", "error", args);
+            });
+          };
+
+          function extractStackLocation(stack) {
+            if (!stack) {
+              return {
+                file: "transformed Component.jsx",
+                line: null,
+                column: null,
+              };
             }
 
-            const root = createRoot(
-                document.getElementById("root")
-            );
+            const frame = stack
+              .split("\\n")
+              .find((line) => line.includes("(blob:"));
+
+            if (!frame) {
+              return {
+                file: "transformed Component.jsx",
+                line: null,
+                column: null,
+              };
+            }
+
+            const match = frame.match(/:(\\d+):(\\d+)\\)$/);
+
+            if (!match) {
+              return {
+                file: "transformed Component.jsx",
+                line: null,
+                column: null,
+              };
+            }
+
+            return {
+              file: "transformed Component.jsx",
+              line: Number(match[1]),
+              column: Number(match[2]),
+            };
+          }
+          //HANDLE UNHANELED RUNTIME ERRORS
+          window.addEventListener("error", (event) => {
+            reportPreviewDiagnostic({
+              source: "preview",
+              severity: "error",
+              type: "runtime",
+              message: event.message || "Unhandled runtime error.",
+              stack: event.error?.stack ?? null,
+              location: extractStackLocation(event.error?.stack),
+            });
+          });
+
+          //HANDLE UNHANELED PROMISE REJECTION ERRORS
+          window.addEventListener("unhandledrejection", (event) => {
+          const reason = event.reason;
+          //console.log("Promise rejection event=======>", event);
+          reportPreviewDiagnostic(
+            {
+            source: "preview",
+            severity: "error",
+            type: "promise",
+            message:
+              reason instanceof Error
+                ? reason.message
+                : String(reason),
+            stack:
+              reason instanceof Error
+                ? reason.stack ?? null
+                : null,
+            location:
+              reason instanceof Error
+                ? extractStackLocation(reason.stack)
+                : {
+                    file: "transformed Component.jsx",
+                    line: null,
+                    column: null,
+                  },
+            metadata: {
+              reason: reason instanceof Error
+                ? null
+                : reason,
+            },
+          });
+          });
+
+          import { Component, createElement } from "react";
+          import { createRoot } from "react-dom/client";
+
+          //REACT RENDER ERROR BOUNDARY
+          class PreviewErrorBoundry extends Component {
+            constructor(props) {
+              super(props);
+
+              this.state = {
+                hasError: false,
+              };
+            }
+
+            static getDerivedStateFromError() {
+              return {
+                hasError: true,
+              };
+            }
+
+            componentDidCatch(error, errorInfo) {
+               boundaryHandledErrors.add(error); // mark before anything else
+              //console.log("componentDidCatch ERROR=======>", error);
+              //console.log("componentDidCatch ERROR_INFO=======>", errorInfo);
+              try{
+              reportPreviewDiagnostic({
+                source: "preview",
+                severity: "error",
+                type: "render",
+                message: error?.message || "Unhandled runtime error.",
+                stack: error?.stack ?? null,
+                location: extractStackLocation(errorInfo.componentStack),
+                metadata: {
+                  componentStack: errorInfo.componentStack ?? null,
+                },
+              });
+            }catch(e){}
+          }
+
+            render() {
+              if (this.state.hasError) {
+                return null;
+              }
+
+              return this.props.children;
+            }
+          }
+
+          const componentCode = ${JSON.stringify(compiledJsx)};
+          const blob = new Blob([componentCode], { type: "text/javascript" });
+
+          const componentUrl = URL.createObjectURL(blob);
+
+          try {
+            const componentModule = await import(componentUrl);
+            const Component = componentModule.default;
+            if (!Component) {
+              throw new Error("React component must have default export.");
+            }
+
+            const root = createRoot(document.getElementById("root"));
             root.render(
-                createElement(Component)
+              createElement(
+                PreviewErrorBoundry,
+                null,
+                createElement(Component),
+              ),
             );
-        } finally{
+          } 
+          catch(error){
+          //HANDLE BOOTSTRAP ERROR
+          //console.log("BOOTSTRAP ERROR ==================>", error);
+          reportPreviewDiagnostic({
+            source: "preview",
+            severity: "error",
+            type: "bootstrap",
+            message: error?.message ?? "Failed to initialize React preview.",
+            stack: error?.stack ?? null,
+            location: {
+              file: null,
+              line: null,
+              column: null,
+            },
+            metadata: {},
+            });
+          }
+           finally {
             URL.revokeObjectURL(componentUrl);
-        }
-    </script>
-  </body>
-</html>`;
+          }
+        </script>
+      </body>
+    </html>`;
   return document;
 }

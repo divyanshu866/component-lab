@@ -1,5 +1,4 @@
 "use client";
-
 import { useEffect, useState } from "react";
 import { useEditorContext } from "@/context/EditorContext";
 import { Maximize2, Minimize2 } from "lucide-react";
@@ -18,7 +17,7 @@ const ReactIFrame = ({ isMobile }) => {
 
   return (
     <div
-      className={`${targetTech != "REACT" && "hidden"} absolute top-0 right-0 ${
+      className={`${targetTech != "REACT" && "hidden"} absolute top-0 right-0 bg-white ${
         showPreview
           ? isMobile
             ? "w-full h-full absolute mt-10 bg-white"
@@ -39,7 +38,8 @@ const ReactIFrame = ({ isMobile }) => {
       <iframe
         key={previewKey}
         title="React Preview"
-        sandbox="allow-scripts"
+        sandbox="allow-scripts allow-same-origin" //Reduced security access to localstorage & parent dom
+        // sandbox="allow-scripts"                Enhanced Security
         srcDoc={reactPreviewDocument}
         style={{
           width: "100%",

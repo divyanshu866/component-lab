@@ -1,6 +1,7 @@
-import { NextResponse } from "next/server";
 import { generate } from "@/ai/providers/generate";
 import { createStreamingResponse } from "@/ai/stream_parser";
+import { buildNeutralEditContext } from "./buildEditContents";
+import { buildNeutralGenerateContext } from "./buildGenerateContents";
 import { HTML_SYSTEM_PROMPT, HTML_EDIT_SYSTEM_PROMPT } from "./prompts/html";
 import { REACT_SYSTEM_PROMPT, REACT_EDIT_SYSTEM_PROMPT } from "./prompts/react";
 const mockResponse = false; // Set to true to use mock response for testing
@@ -18,29 +19,13 @@ const EDIT_SYSTEM_PROMPT = {
 
 //API GENERATE NEW COMPONENT
 export async function POST(req) {
-  const { componentType, componentStyle, prompt, targetTech, model } =
-    await req.json();
+  const { messages, targetTech, model } = await req.json();
+  console.log("From frontEnd Messages object==================>>>>>");
+  console.dir(messages, { depth: null });
 
-  const enrichedPrompt = `Create a production-ready UI component using the following requirements.
-  
-  Component Type:${componentType}
-
-  Component Style:${componentStyle}
-
-  User Request:${prompt}`;
-
-  //Build contents object with first user prompt
-  const contents = [
-    {
-      role: "user",
-      parts: [
-        {
-          text: enrichedPrompt,
-        },
-      ],
-    },
-  ];
-
+  const contents = buildNeutralGenerateContext(messages);
+  console.log("POST/GENERATE neutral CONTENTS==============>>>>>");
+  console.dir(contents, { depth: null });
   if (mockResponse) {
     const stream = mockStream(
       targetTech === "REACT" ? mockReactText : mockText,
@@ -50,8 +35,8 @@ export async function POST(req) {
 
     return createStreamingResponse(stream);
   } else {
-    console.log("RUNNING GEN NEW COMP=====>>>>>>>>>>>>>>>>>>>>>>>");
     const stream = await generate(SYSTEM_PROMPTS[targetTech], contents, model);
+
     return createStreamingResponse(stream);
   }
 }
@@ -60,26 +45,35 @@ export async function POST(req) {
 export async function PATCH(req) {
   const { name, messages, html, css, js, jsx, targetTech, model } =
     await req.json();
+  console.log("From frontEnd Messages object==================>>>>>");
   console.dir(messages, { depth: null });
-  console.log("NOW CONTENTS==================>>>>>");
-  let contents;
 
+  let contents;
+  const request = {
+    mode: "edit",
+    targetTech,
+    component: {
+      name,
+      html,
+      css,
+      js,
+      jsx,
+    },
+    messages: messages,
+  };
   //Build contents
   switch (targetTech) {
     case "HTML":
-      contents = buildContents(
-        { name: name, html: html, css: css, js: js },
-        messages,
-      );
+      contents = buildNeutralEditContext(request);
+      // contents = buildBundleEditGeminiContents(request);
       break;
     case "REACT":
-      contents = buildReactContents(
-        { name: name, jsx: jsx, css: css },
-        messages,
-      );
+      contents = buildNeutralEditContext(request);
+      // contents = buildReactEditGeminiContents(request);
       break;
   }
   // console.log("GEN AI PATCH REACT CONTENTS======>", contents);
+  console.log("PATCH/EDIT neutral CONTENTS==============>>>>>");
   console.dir(contents, { depth: null });
   if (mockResponse) {
     const stream = mockStream(
@@ -89,8 +83,6 @@ export async function PATCH(req) {
     ); // deliberately awkward chunk size
     return createStreamingResponse(stream);
   } else {
-    console.log("RUNNING GEN EDIT=====>>>>>>>>>>>>>>>>>>>>>>>");
-    // console.dir(contents, { depth: null });
     const stream = await generate(
       EDIT_SYSTEM_PROMPT[targetTech],
       contents,
@@ -99,149 +91,7 @@ export async function PATCH(req) {
     return createStreamingResponse(stream);
   }
 }
-export function buildContents(component, messages) {
-  const contents = [];
-  //remove last assistant placeholder
-  const conversationMessages =
-    messages.at(-1)?.role === "ASSISTANT" ? messages.slice(0, -1) : messages;
 
-  if (conversationMessages.length > 1) {
-    for (let i = 0; i < conversationMessages.length; i++) {
-      const message = conversationMessages[i];
-
-      if (message.role === "USER") {
-        contents.push({
-          role: "user",
-          parts: [{ text: message.message }],
-        });
-      } else {
-        const isLatestCompletedAssistant =
-          i === conversationMessages.length - 2;
-
-        contents.push({
-          role: "model",
-          parts: [
-            {
-              text:
-                message.message +
-                (isLatestCompletedAssistant
-                  ? `
-
-Current component:
-
-###NAME_START###
-${component.name}
-###NAME_END###
-###HTML_START###
-${component.html}
-###HTML_END###
-###CSS_START###
-${component.css}
-###CSS_END###
-###JS_START###
-${component.js}
-###JS_END###`
-                  : ""),
-            },
-          ],
-        });
-      }
-    }
-  } else {
-    contents.push({
-      role: "user",
-      parts: [
-        {
-          text: `###MESSAGE_START###${messages[0].message}###MESSAGE_END###
-              Component Current State:
-              ###NAME_START###
-              ${component.name}
-              ###NAME_END###
-              ###HTML_START###
-              ${component.html}
-              ###HTML_END###
-              ###CSS_START###
-              ${component.css}
-              ###CSS_END###
-              ###JS_START###
-              ${component.js}
-              ###JS_END###
-              `,
-        },
-      ],
-    });
-  }
-
-  return contents;
-}
-export function buildReactContents(component, messages) {
-  const contents = [];
-  //remove last assistant placeholder
-  const conversationMessages =
-    messages.at(-1)?.role === "ASSISTANT" ? messages.slice(0, -1) : messages;
-  if (conversationMessages.length > 1) {
-    for (let i = 0; i < conversationMessages.length; i++) {
-      const message = conversationMessages[i];
-
-      if (message.role === "USER") {
-        contents.push({
-          role: "user",
-          parts: [{ text: message.message }],
-        });
-      } else {
-        const isLatestCompletedAssistant =
-          i === conversationMessages.length - 2;
-
-        contents.push({
-          role: "model",
-          parts: [
-            {
-              text:
-                message.message +
-                (isLatestCompletedAssistant
-                  ? `
-
-Current component:
-
-###NAME_START###
-${component.name}
-###NAME_END###
-###JSX_START###
-${component.jsx}
-###JSX_END###
-###CSS_START###
-${component.css}
-###CSS_END###`
-                  : ""),
-            },
-          ],
-        });
-      }
-    }
-  } else {
-    contents.push({
-      role: "user",
-      parts: [
-        {
-          text: `###MESSAGE_START###${messages[0].message}###MESSAGE_END###
-              Component Current State:
-              ###NAME_START###
-              ${component.name}
-              ###NAME_END###
-              ###JSX_START###
-              ${component.jsx}
-              ###JSX_END###
-              ###CSS_START###
-              ${component.css}
-              ###CSS_END###
-              `,
-        },
-      ],
-    });
-  }
-
-  return contents;
-}
 async function* mockStream(text, chunkSize = 1, delay = 50) {
   for (let i = 0; i < text.length; i += chunkSize) {
     await sleep(delay);

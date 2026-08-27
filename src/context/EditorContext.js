@@ -2,9 +2,12 @@
 import { createContext, useState, useContext, useEffect } from "react";
 import { buildReactPreviewDocument } from "@/components/Preview/reactRuntime";
 import { buildHtmlPreviewDocument } from "@/components/Preview/htmlRuntime";
+import { DEFAULT_JSX } from "@/components/Preview/defaults";
+import { useConsole } from "./ConsoleContext";
 const EditorContext = createContext();
 
 export function EditorProvider({ children }) {
+  const { appendConsoleLog, setConsoleLogs } = useConsole();
   const [selectedType, setSelectedType] = useState();
   const [selectedStyle, setSelectedStyle] = useState();
   const [activeEditor, setActiveEditor] = useState("AI");
@@ -20,7 +23,7 @@ export function EditorProvider({ children }) {
     html: "",
     css: "",
     js: "",
-    jsx: "",
+    jsx: DEFAULT_JSX,
   });
   const [activeComponentIndex, setActiveComponentIndex] = useState(null);
 
@@ -38,16 +41,8 @@ export function EditorProvider({ children }) {
 
   const [isSaving, setIsSaving] = useState(false);
   const [htmlPreviewDocument, setHtmlPreviewDocument] = useState("");
-  const reactDefaultPreview = `function App() {
-      return <h1>Hello ComponentLab</h1>;
-    }
 
-    export default App;`;
   const [reactPreviewDocument, setReactPreviewDocument] = useState("");
-
-  useEffect(() => {
-    updatePreview();
-  }, []);
 
   const saveComponent = async (component) => {
     // (messages, name, html, css, js);
@@ -119,7 +114,7 @@ export function EditorProvider({ children }) {
       html: "",
       css: "",
       js: "",
-      jsx: "",
+      jsx: DEFAULT_JSX,
       targetTech: targetTech,
     },
   ) => {
@@ -129,8 +124,16 @@ export function EditorProvider({ children }) {
     }
 
     if (component.targetTech === "REACT") {
-      const document = await buildReactPreviewDocument(component);
-      setReactPreviewDocument(document);
+      try {
+        const document = await buildReactPreviewDocument(component);
+        setReactPreviewDocument(document);
+      } catch (errors) {
+        console.log("AGNOSTIC ERROR LIST========>");
+        console.dir(errors.diagnostics, { depth: null });
+
+        //append errors
+        appendConsoleLog(errors.diagnostics);
+      }
     }
   };
 

@@ -1,6 +1,5 @@
 import Navbar from "@/components/Landing/Navbar";
 import { auth } from "@/lib/auth";
-import { redirect } from "next/navigation";
 import ExamplesHero from "../../components/Examples/ExamplesHero";
 import Grid from "../../components/Examples/Grid";
 export default async function Examples() {

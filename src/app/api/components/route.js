@@ -25,19 +25,6 @@ export async function POST(request) {
     model,
   } = await request.json();
 
-  console.log("=== COMPONENT CREATE DEBUG ===");
-  console.log("messages:", messages);
-  console.log("name:", name);
-  console.log("targetTech:", targetTech);
-  console.log("model:", model);
-  console.log("usageMetadata:", usageMetadata);
-  console.log("usageMetadata type:", typeof usageMetadata);
-  const userPrompt = messages[messages.length - 2]?.message;
-  const assistantPrompt = messages[messages.length - 1]?.message;
-
-  console.log("USER PROMPT:", userPrompt);
-  console.log("ASSISTANT PROMPT:", assistantPrompt);
-  console.log("This is the Prompt from the frontend>>>>>: ", messages);
   let component;
   // 3. Create component tied to the authenticated user
   try {
@@ -92,11 +79,10 @@ export async function POST(request) {
                             targetTech === "HTML"
                               ? TargetTech.HTML
                               : TargetTech.REACT,
-                          inputTokens: usageMetadata.promptTokenCount ?? 0,
-                          outputTokens: usageMetadata.candidatesTokenCount ?? 0,
-                          thinkingTokens:
-                            usageMetadata?.thoughtsTokenCount ?? 0,
-                          totalTokens: usageMetadata?.totalTokenCount ?? 0,
+                          inputTokens: usageMetadata.inputTokens ?? 0,
+                          outputTokens: usageMetadata.outputTokens ?? 0,
+                          thinkingTokens: usageMetadata?.reasoningTokens ?? 0,
+                          totalTokens: usageMetadata?.totalTokens ?? 0,
                         },
                       }
                     : undefined,
@@ -126,11 +112,6 @@ export async function POST(request) {
       },
     );
   } catch (error) {
-    console.error("=== COMPONENT CREATE FAILED ===");
-    console.error("code:", error.code);
-    console.error("message:", error.message);
-    console.error("meta:", JSON.stringify(error.meta, null, 2));
-    console.error("stack:", error.stack);
     return NextResponse.json(
       {
         error: error.message,
