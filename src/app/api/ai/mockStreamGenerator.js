@@ -221,7 +221,7 @@ export const mockText = `###NAME_START### Brutalist Cards ###NAME_END###
   border-color: var(--brutalist-accent-color);
 }###CSS_END###
 ###JS_START###//No javascript required###JS_END###`;
-const mockReactText = `
+export const mockReactText = `
 ###NAME_START###
 Framer Motion Rotation Component
 ###NAME_END###

@@ -1,13 +1,13 @@
 import { generate } from "@/ai/providers/generate";
 import { createStreamingResponse } from "@/ai/stream_parser";
-import { mockStream, mockText } from "./mockStreamGenerator";
+import { mockStream, mockReactText, mockText } from "./mockStreamGenerator";
 import { buildNeutralEditContext } from "./buildEditContents";
 import { buildNeutralGenerateContext } from "./buildGenerateContents";
 import { resolveMode } from "./modeClassifier";
 
-const mockResponse = false; // Set to true to use mock response for testing
-const chunkSize = 1000; // Set the chunk size for the mock stream
-const delay = 10; // Set the delay between chunks in milliseconds
+const mockResponse = true; // Set to true to use mock response for testing
+const chunkSize = 2; // Set the chunk size for the mock stream
+const delay = 1; // Set the delay between chunks in milliseconds
 
 import {
   WEB_BUNDLE_PROMPT,
@@ -61,8 +61,8 @@ export async function POST(req) {
       chunkSize,
       delay,
     );
-
-    return createStreamingResponse(stream);
+    const headers = { "X-Resolved-Generation-Mode": "REWORK" };
+    return createStreamingResponse(stream, headers);
   } else {
     console.log("GENERATION MODE========>:", generationMode);
     const resolvedMode = await resolveMode(generationMode, contents);
@@ -126,7 +126,9 @@ export async function PATCH(req) {
       chunkSize,
       delay,
     );
-    return createStreamingResponse(stream);
+    const headers = { "X-Resolved-Generation-Mode": "REWORK" };
+
+    return createStreamingResponse(stream, headers);
   } else {
     console.log("GENERATION MODE========>:", generationMode);
     const resolvedMode = await resolveMode(generationMode, contents);

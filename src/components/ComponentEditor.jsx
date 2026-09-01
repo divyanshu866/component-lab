@@ -90,7 +90,6 @@ export default function ComponentEditor({ code, onChange, language }) {
           scrollBeyondLastLine: false,
           autoClosingBrackets: true,
           formatOnPaste: true,
-          formatOnType: true,
         }}
       />
       {!code && (

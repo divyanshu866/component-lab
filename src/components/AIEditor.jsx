@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { useEditorContext } from "@/context/EditorContext";
 import { SlidersHorizontal } from "lucide-react";
 import {
@@ -473,7 +473,7 @@ const AIEditor = ({ user, isMobile }) => {
       description: "Monochrome dashed outlines",
     },
   ]);
-
+  const promptAreaRef = useRef(null);
   const generateComponent = async () => {
     if (!changeDesc.trim()) {
       console.log("EMPTY");
@@ -1003,6 +1003,7 @@ const AIEditor = ({ user, isMobile }) => {
             >
               <textarea
                 className="flex items-center justify-center p-2 m-0 text-lg w-full bg-neutral-900 rounded-lg outline-0 resize-none"
+                ref={promptAreaRef}
                 name=""
                 id=""
                 value={changeDesc}
@@ -1029,6 +1030,8 @@ const AIEditor = ({ user, isMobile }) => {
                   if (e.key === "Enter" && !e.shiftKey) {
                     e.preventDefault();
                     activeComponent.id === "" ? generateComponent() : rework();
+                    e.target.style.height = "";
+                    setIsExpanded(false);
                   }
                 }}
               ></textarea>
@@ -1060,9 +1063,13 @@ const AIEditor = ({ user, isMobile }) => {
                 )}
 
                 <button
-                  onClick={
-                    activeComponent.id === "" ? generateComponent : rework
-                  }
+                  onClick={() => {
+                    activeComponent.id === "" ? generateComponent() : rework();
+                    if (promptAreaRef.current) {
+                      promptAreaRef.current.style.height = "";
+                    }
+                    setIsExpanded(false);
+                  }}
                   disabled={isGenerating || !changeDesc.trim()}
                   className={`${isExpanded ? "ml-auto" : ""} flex p-3 items-center justify-center rounded-full bg-violet-100 text-black transition hover:bg-neutral-200 cursor-pointer disabled:cursor-not-allowed disabled:opacity-40`}
                 >
