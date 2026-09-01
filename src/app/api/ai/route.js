@@ -5,7 +5,7 @@ import { buildNeutralEditContext } from "./buildEditContents";
 import { buildNeutralGenerateContext } from "./buildGenerateContents";
 import { resolveMode } from "./modeClassifier";
 
-const mockResponse = true; // Set to true to use mock response for testing
+const mockResponse = false; // Set to true to use mock response for testing
 const chunkSize = 2; // Set the chunk size for the mock stream
 const delay = 1; // Set the delay between chunks in milliseconds
 
