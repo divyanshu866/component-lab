@@ -1,13 +1,7 @@
 import * as esbuild from "esbuild-wasm";
 import { SERIALIZE_CONSOLE_VALUE_SOURCE } from "@/components/Preview/consoleSerializer";
-const DEFAULT_JSX = `import React from "react";
-export default function ComponentLabComponent() {
-  return (
-    <div className="min-h-screen bg-white p-8">
-      
-    </div>
-  );
-}`;
+import { DEFAULT_JSX } from "@/components/Preview/defaults";
+
 const SUPPORTED_REACT_DEPENDENCIES = {
   exact: {
     // React

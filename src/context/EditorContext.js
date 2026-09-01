@@ -2,7 +2,7 @@
 import { createContext, useState, useContext, useEffect } from "react";
 import { buildReactPreviewDocument } from "@/components/Preview/reactRuntime";
 import { buildwebBundleDocument } from "@/components/Preview/webBundleRuntime";
-import { DEFAULT_JSX } from "@/components/Preview/defaults";
+import { DEFAULT_JSX, EMPTY_JSX } from "@/components/Preview/defaults";
 import { useConsole } from "./ConsoleContext";
 const EditorContext = createContext();
 
@@ -23,7 +23,7 @@ export function EditorProvider({ children }) {
     html: "",
     css: "",
     js: "",
-    jsx: DEFAULT_JSX,
+    jsx: EMPTY_JSX,
   });
   const [activeComponentIndex, setActiveComponentIndex] = useState(null);
 

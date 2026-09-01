@@ -17,7 +17,7 @@ const ReactIFrame = ({ isMobile }) => {
 
   return (
     <div
-      className={`${targetTech != "REACT" && "hidden"} absolute top-0 right-0 bg-white ${
+      className={`${targetTech != "REACT" && "hidden"} absolute top-0 right-0 ${
         showPreview
           ? isMobile
             ? "w-full h-full absolute mt-10 bg-white"

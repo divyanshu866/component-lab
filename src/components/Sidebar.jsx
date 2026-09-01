@@ -1,6 +1,6 @@
 "use client";
 import { Plus, Sparkles, Trash, MoreHorizontal } from "lucide-react";
-import { DEFAULT_JSX } from "@/components/Preview/defaults";
+import { EMPTY_JSX } from "@/components/Preview/defaults";
 import { useEffect, useState } from "react";
 import { useEditorContext } from "@/context/EditorContext";
 import { useConsole } from "@/context/ConsoleContext";
@@ -116,7 +116,7 @@ export default function Sidebar({ isMobile }) {
     html = "",
     css = "",
     js = "",
-    jsx = DEFAULT_JSX,
+    jsx = EMPTY_JSX,
   ) => {
     if (isGenerating) {
       return;
