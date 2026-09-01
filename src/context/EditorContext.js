@@ -114,7 +114,7 @@ export function EditorProvider({ children }) {
       html: "",
       css: "",
       js: "",
-      jsx: DEFAULT_JSX,
+      jsx: "",
       targetTech: targetTech,
     },
   ) => {

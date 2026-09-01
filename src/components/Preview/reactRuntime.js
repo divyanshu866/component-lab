@@ -1,5 +1,13 @@
 import * as esbuild from "esbuild-wasm";
 import { SERIALIZE_CONSOLE_VALUE_SOURCE } from "@/components/Preview/consoleSerializer";
+const DEFAULT_JSX = `import React from "react";
+export default function ComponentLabComponent() {
+  return (
+    <div className="min-h-screen bg-white p-8">
+      
+    </div>
+  );
+}`;
 const SUPPORTED_REACT_DEPENDENCIES = {
   exact: {
     // React
@@ -329,7 +337,13 @@ export async function compileReact(jsx) {
 }
 
 export async function buildReactPreviewDocument(component) {
-  const compiledJsx = await compileReact(component.jsx);
+  let compiledJsx;
+  if (component.jsx == "") {
+    compiledJsx = await compileReact(DEFAULT_JSX);
+  } else {
+    compiledJsx = await compileReact(component.jsx);
+  }
+
   const importMap = buildImportMap(component.jsx);
   const document = /*html*/ ` <!DOCTYPE html>
     <html>
@@ -524,10 +538,14 @@ export async function buildReactPreviewDocument(component) {
               
                 return;
               }
-            const type =
-              event.error instanceof SyntaxError
-                ? "syntax"
-                : "runtime";
+            let type ="";
+            if(event.error?.name == 'SyntaxError'){
+              type = "syntax";
+            }else if(event.error?.name == 'SecurityError'){
+              type = "security";
+            }else {
+              type = "runtime";
+            }
             reportPreviewDiagnostic({
               source: "preview",
               severity: "error",

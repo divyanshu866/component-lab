@@ -81,7 +81,7 @@ Recent milestones
 - [x] Multi-model AI generation and editing
 - [x] React preview diagnostics and integrated developer console
 - [x] Web Bundle diagnostics
-- [ ] AI interaction modes — Ask, Rework, and Auto
+- [x] AI interaction modes — Ask and Auto
 - [ ] Framework export
 - [ ] Version history & rollback
 - [ ] Mobile-responsive workspace

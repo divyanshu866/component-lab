@@ -98,6 +98,10 @@ export async function buildwebBundleDocument(component) {
           window.addEventListener(
             "error",
             (event) => {
+              //console.log("ERROR NAME=======>");
+              //console.log(event?.type);              // "error"
+              //console.log(event.error?.name);       // "SecurityError"
+              //console.log(event.error?.constructor?.name); // "DOMException"
               const isResourceError =
                 event.target &&
                 event.target !== window &&
@@ -126,10 +130,14 @@ export async function buildwebBundleDocument(component) {
               
                 return;
               }
-             const type =
-              event.error instanceof SyntaxError
-                ? "syntax"
-                : "runtime";
+            let type ="";
+            if(event.error?.name == 'SyntaxError'){
+              type = "syntax";
+            }else if(event.error?.name == 'SecurityError'){
+              type = "security";
+            }else {
+              type = "runtime";
+            }
               reportPreviewDiagnostic({
                 source: "preview",
                 severity: "error",

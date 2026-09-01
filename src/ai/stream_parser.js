@@ -16,7 +16,7 @@ const endMarkers = {
   "###CSS_END###": "css",
   "###JS_END###": "js",
 };
-export async function createStreamingResponse(stream) {
+export async function createStreamingResponse(stream, headers = {}) {
   // Create a ReadableStream for SSE
   const encoder = new TextEncoder();
   let usageMetadata = null;
@@ -187,6 +187,7 @@ export async function createStreamingResponse(stream) {
 
   return new Response(readable, {
     headers: {
+      ...headers,
       "Content-Type": "text/event-stream",
       "Cache-Control": "no-cache",
       Connection: "keep-alive",

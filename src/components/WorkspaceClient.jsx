@@ -7,7 +7,6 @@ import React, { useState } from "react";
 import WebBundleIFrame from "@/components/Preview/WebBundleIFrame";
 import ReactIFrame from "./Preview/ReactIFrame";
 const WorkspaceClient = ({ user }) => {
-  const { targetTech } = useEditorContext();
   const isMobile = false;
 
   return (

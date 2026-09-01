@@ -82,7 +82,7 @@ const EditorTabs = ({
       {activeComponentIndex != null && (
         <div className="ml-auto mr-3 h-full pr-1">
           <p className="h-full text-neutral-500 flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium border-t border-b rounded-xl border-gray-50 dark:border-lightBorder relative  transition-all duration-100 cursor-not-allowed">
-            {targetTech} COMPONENT
+            {targetTech == "HTML" ? "WEB BUNDLE" : "REACT"}
           </p>
         </div>
       )}
