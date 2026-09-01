@@ -17,8 +17,8 @@ function TargetTechTabs() {
       {/* Segmented pill — same DNA as the input below */}
       <div className="relative inline-flex gap-1 rounded-xl p-1 bg-white/5 border border-white/10 backdrop-blur-md">
         {[
-          { id: "HTML", label: "Web Bundle", src: "/globe2_red.svg" },
           { id: "REACT", label: "React JSX", src: "/jsx.svg" },
+          { id: "HTML", label: "Web Bundle", src: "/globe2_red.svg" },
         ].map((item) => {
           const active = targetTech === item.id;
           return (

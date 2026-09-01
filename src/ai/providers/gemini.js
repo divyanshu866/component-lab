@@ -4,8 +4,8 @@ const genAI = new GoogleGenAI(process.env.GEMINI_API_KEY);
 
 export async function* generateWithGemini(systemPrompt, context, model) {
   const contents = toGeminiContext(context);
-  console.log("GEMINI CONTEXT=========>");
-  console.dir(contents, { depth: null });
+  // console.log("GEMINI CONTEXT=========>");
+  // console.dir(contents, { depth: null });
   const stream = await genAI.models.generateContentStream({
     model: model,
     contents,

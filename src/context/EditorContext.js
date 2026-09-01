@@ -11,7 +11,7 @@ export function EditorProvider({ children }) {
   const [selectedType, setSelectedType] = useState();
   const [selectedStyle, setSelectedStyle] = useState();
   const [activeEditor, setActiveEditor] = useState("AI");
-  const [targetTech, setTargetTech] = useState("HTML");
+  const [targetTech, setTargetTech] = useState("REACT");
 
   const [components, setComponents] = useState([]);
   const [reworkUI, setReworkUI] = useState(false);

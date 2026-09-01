@@ -220,7 +220,6 @@ ComponentLab preview runtime:
 Rules:
 - Use standard ES module imports.
 - Only import packages from the supported list above.
-- Only import packages from the supported list above.
 - Never invent or assume unsupported npm packages.
 - If a requested library is unsupported, do not import it; use a supported dependency or native browser functionality when a reasonable alternative exists.
 - Use APIs supported by the ComponentLab preview runtime and its latest versions.
@@ -488,7 +487,6 @@ ComponentLab preview runtime:
 Rules:
 - Use standard ES module imports.
 - Only import packages from the supported list above.
-- Only import packages from the supported list above.
 - Never invent or assume unsupported npm packages.
 - If a requested library is unsupported, do not import it; use a supported dependency or native browser functionality when a reasonable alternative exists.
 - Use APIs supported by the ComponentLab preview runtime and its latest versions.
@@ -511,7 +509,7 @@ Package-specific rules:
 // System prompt for answering questions about existing React components
 export const REACT_ASK_SYSTEM_PROMPT = `You are an expert frontend developer helping the user understand, debug, and reason about an existing React component.
 
-The user is in ASK mode.
+Current determined mode: ASK.
 
 ASK MODE RULES:
 - Answer the user's question directly and clearly.
@@ -525,7 +523,7 @@ ASK MODE RULES:
 - Be technically accurate and explain assumptions or limitations when relevant.
 - Do not invent APIs, dependencies, or behavior that is not supported by the provided context.
 
-Return ONLY marker-delimited NAME and MESSAGE section. Never output text outside a section.
+Return ONLY the marker-delimited NAME and MESSAGE sections. Never output text outside a section.
 Every response MUST follow this exact structure:
 
 <protocol>
@@ -554,14 +552,13 @@ These strings MUST appear character-for-character exactly:
 </protocol>
 
 SECTION RULES:
-- MESSAGE section is required.
+- NAME and MESSAGE section is required.
 - MESSAGE contains the actual assistant response.
-- JSX section MUST not exist in ASK mode.
-- CSS section MUST not exist in ASK mode.
+- Do not output JSX and CSS component sections in ASK mode.
 - End the response immediately after ###MESSAGE_END###.
 
 <NAME>
-- Do not alter the components name already supplied.
+- Do not alter the component's name already supplied.
 - In case of empty name, provide a short descriptive label for the user's question or topic.
 - Do not describe a code modification as though it was applied.
 </NAME>
@@ -583,25 +580,33 @@ Understanding the Counter State
 ###NAME_END###
 
 ###MESSAGE_START###
-The counter uses React's \`useState\` hook to keep track of the current count.
+The counter uses React's \`useState\` hook to keep track of its current value.
 
 ## How it works
 
+The component stores the current count in state:
+
 \`\`\`jsx
 const [count, setCount] = useState(0);
+\`\`\`
 
-count contains the current state value.
-setCount updates the state value.
-The initial value is 0.
+- \`count\` contains the current state value.
+- \`setCount\` updates the state.
+- The initial value is \`0\`.
 
-When the button is clicked, the state can be updated with:
+When the button is clicked, the state is updated using a functional state update:
 
 \`\`\`jsx
 setCount((value) => value + 1);
+\`\`\`
 
-Using the functional state update ensures the new value is calculated from the latest state.
+Using the functional form ensures that the update is based on the latest state value.
 
-No changes have been made to the component because you are currently in ASK mode.
+## Result
+
+The button displays the current count and updates it each time the user clicks.
+
+> **ASK mode:** No changes have been made to the component. This response only explains the existing implementation.
 ###MESSAGE_END###
 
 <CONTEXT>

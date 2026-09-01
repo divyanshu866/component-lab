@@ -64,14 +64,14 @@ export async function POST(req) {
 
     return createStreamingResponse(stream);
   } else {
-    console.log(
-      "SELECTED SYATEM PROMPT========>:",
-      SYSTEM_PROMPTS[targetTech][generationMode],
-    );
-
     console.log("GENERATION MODE========>:", generationMode);
     const resolvedMode = await resolveMode(generationMode, contents);
     console.log("RESOLVED GENERATION MODE========>:", resolvedMode);
+
+    // console.log(
+    //   "SELECTED SYSTEM PROMPT========>:",
+    //   SYSTEM_PROMPTS[targetTech][resolveMode],
+    // );
 
     const stream = await generate(
       SYSTEM_PROMPTS[targetTech][resolvedMode],

@@ -15,8 +15,8 @@ export async function classifyGenerationMode(contents) {
   }
 
   try {
-    const result = JSON.parse(response);
-    console.log("INTENT RESPONSE==========>", result);
+    const result = parseGenerationModeResponse(response);
+    console.log("RESOLVER RESPONSE=========>", result);
 
     if (result.resolvedMode !== "ASK" && result.resolvedMode !== "REWORK") {
       return "ASK";
@@ -31,15 +31,33 @@ export async function classifyGenerationMode(contents) {
 export async function resolveMode(generationMode, contents) {
   let resolvedMode = "";
   switch (generationMode) {
-    case "ASK":
-      resolvedMode = "ASK";
-      break;
     case "AUTO":
       resolvedMode = await classifyGenerationMode(contents);
       break;
+    case "ASK":
+      resolvedMode = "ASK";
+      break;
+
     default:
       resolvedMode = "ASK";
   }
 
   return resolvedMode;
+}
+function parseGenerationModeResponse(response) {
+  const trimmed = response.trim().replace(/^\uFEFF/, "");
+
+  // Plain JSON
+  if (!trimmed.startsWith("```")) {
+    return JSON.parse(trimmed);
+  }
+
+  // Only accept ```json fences
+  const fencedMatch = trimmed.match(/^```json\s*([\s\S]*?)\s*```$/i);
+
+  if (!fencedMatch) {
+    throw new Error(`Classifier returned a non-JSON code fence: ${trimmed}`);
+  }
+
+  return JSON.parse(fencedMatch[1]);
 }

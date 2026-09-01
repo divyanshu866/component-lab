@@ -999,7 +999,7 @@ const AIEditor = ({ user, isMobile }) => {
             {/* Full rounded single-line textarea / chat bar */}
 
             <div
-              className={`${isExpanded ? "flex-col" : "flex-row"} ${generationMode === "ASK" ? "bg-green-950" : "bg-neutral-900"}  border border-lightBorder p-1 flex items-center justify-center rounded-xl`}
+              className={`${isExpanded ? "flex-col" : "flex-row"} ${generationMode === "ASK" ? "border-green-500/30" : "border-lightBorder"} bg-neutral-900 border p-1 flex items-center justify-center rounded-xl`}
             >
               <textarea
                 className="flex items-center justify-center p-2 m-0 text-lg w-full bg-neutral-900 rounded-lg outline-0 resize-none"
@@ -1041,10 +1041,10 @@ const AIEditor = ({ user, isMobile }) => {
                   onChange={(e) => {
                     setGenerationMode(e.target.value);
                   }}
-                  className="outline-0"
+                  className="outline-0 text-sm text-neutral-500 cursor-pointer"
                 >
-                  <option value="ASK">Ask</option>
                   <option value="AUTO">Auto</option>
+                  <option value="ASK">Ask</option>
                 </select>
                 {!reworkUI && (
                   <button

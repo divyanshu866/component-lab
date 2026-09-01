@@ -11,8 +11,8 @@ export async function* generateWithOpenAI(
 ) {
   const contents = toOpenAIContext(context);
   let summary = "";
-  console.log("OPEN_AI CONTEXT=========>");
-  console.dir(contents, { depth: null });
+  // console.log("OPEN_AI CONTEXT=========>");
+  // console.dir(contents, { depth: null });
   const stream = await client.responses.create({
     model,
     instructions: systemPrompt,
@@ -55,8 +55,8 @@ export async function* generateWithOpenAI(
         };
       }
     }
-    console.log("OPEN_AI unlogged event RESPONSE=========>");
-    console.dir(event, { depth: null });
-    console.log("Reasoning Summary=======>", summary);
+    // console.log("OPEN_AI unlogged event RESPONSE=========>");
+    // console.dir(event, { depth: null });
+    // console.log("Reasoning Summary=======>", summary);
   }
 }
