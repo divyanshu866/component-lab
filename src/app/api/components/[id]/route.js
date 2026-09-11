@@ -2,7 +2,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
-import { TargetTech } from "@prisma/client";
+import { TargetTech } from "@/generated/prisma/client";
 export async function DELETE(req, context) {
   const { id } = await context.params; // <-- await params
   const session = await auth();

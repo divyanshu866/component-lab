@@ -11,6 +11,7 @@ export async function* generateWithGemini(systemPrompt, context, model) {
     contents,
     config: {
       systemInstruction: systemPrompt,
+      tools: [{ googleSearch: {} }],
       thinkingConfig: {
         thinkingLevel: "low",
       },

@@ -1,7 +1,3 @@
-"use client";
-
-import { useState } from "react";
-
 import PricingHero from "@/components/upgrade/PricingHero";
 import BillingToggle from "@/components/upgrade/BillingToggle";
 import UpgradeCard from "@/components/upgrade/UpgradeCard";
@@ -10,74 +6,15 @@ import FeatureComparison from "@/components/upgrade/FeatureComparison";
 import FAQ from "@/components/upgrade/FAQ";
 import CTASection from "@/components/upgrade/CTASection";
 
-import { Rocket, Crown } from "lucide-react";
 import Navbar from "@/components/Landing/Navbar";
 
-export default function UpgradePage() {
-  const [billingCycle, setBillingCycle] = useState("monthly");
+import { auth } from "@/lib/auth";
+export default async function UpgradePage() {
+  const session = await auth();
 
-  const plans = [
-    {
-      id: "free",
-
-      name: "Free",
-
-      description:
-        "Perfect for trying out the platform and building your first components.",
-
-      icon: Rocket,
-
-      badge: null,
-
-      price: {
-        monthly: 0,
-        yearly: 0,
-      },
-
-      cta: "Get Started for Free",
-
-      ctaVariant: "secondary",
-
-      features: [
-        "Generate up to 10 components / month",
-        "Access to all base UI components",
-        "Community templates",
-        "Basic exports (JSX, TSX, HTML, CSS)",
-        "Standard support",
-      ],
-    },
-
-    {
-      id: "premium",
-
-      name: "Pro",
-
-      description:
-        "For developers who build more, move faster, and want more power.",
-
-      icon: Crown,
-
-      badge: "Most Popular",
-
-      price: {
-        monthly: 15,
-        yearly: 12,
-      },
-
-      cta: "Get Pro",
-
-      ctaVariant: "primary",
-
-      features: [
-        "Unlimited component generations",
-        "Access to premium UI components",
-        "Advanced code exports (React, Vue, HTML)",
-        "AI-powered improvements & refactors",
-        "Private projects",
-        "Priority support",
-      ],
-    },
-  ];
+  ("use client");
+  if (!session) redirect("/sign-in");
+  console.log("SESSION===>", session);
 
   return (
     <main className="relative min-h-screen overflow-hidden bg-transparent text-white">
@@ -99,13 +36,13 @@ export default function UpgradePage() {
           <div className="mx-auto max-w-7xl">
             <PricingHero />
 
-            <div className="mt-14">
+            {/* <div className="mt-14">
               <BillingToggle
                 plans={plans}
                 billingCycle={billingCycle}
                 setBillingCycle={setBillingCycle}
               />
-            </div>
+            </div> */}
           </div>
         </section>
 
@@ -114,13 +51,7 @@ export default function UpgradePage() {
         <section className="px-6 pt-14">
           <div className="mx-auto max-w-5xl">
             <div className="grid lg:grid-cols-2 gap-6">
-              {plans.map((plan) => (
-                <UpgradeCard
-                  key={plan.id}
-                  plan={plan}
-                  billingCycle={billingCycle}
-                />
-              ))}
+              <UpgradeCard userId={session.user.id} />
             </div>
           </div>
         </section>
@@ -153,7 +84,7 @@ export default function UpgradePage() {
 
         <section className="px-6 py-28">
           <div className="mx-auto max-w-5xl">
-            <CTASection />
+            <CTASection userId={session.user.id} />
           </div>
         </section>
       </div>

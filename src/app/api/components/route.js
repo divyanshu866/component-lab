@@ -2,7 +2,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth"; // ← your NextAuth v5 helper
 import { prisma } from "@/lib/prisma";
-import { PromptRole, TargetTech } from "@prisma/client";
+import { PromptRole, TargetTech } from "@/generated/prisma/client";
 import { create } from "domain";
 export async function POST(request) {
   // 1. Check session

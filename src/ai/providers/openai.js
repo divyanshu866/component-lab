@@ -17,8 +17,9 @@ export async function* generateWithOpenAI(
     model,
     instructions: systemPrompt,
     input: contents,
+    tools: [{ type: "web_search" }],
     reasoning: {
-      effort: "high",
+      effort: "low",
     },
     stream: true,
   });
@@ -57,6 +58,6 @@ export async function* generateWithOpenAI(
     }
     // console.log("OPEN_AI unlogged event RESPONSE=========>");
     // console.dir(event, { depth: null });
-    // console.log("Reasoning Summary=======>", summary);
+    console.log("Reasoning Summary=======>", summary);
   }
 }

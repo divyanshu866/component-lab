@@ -14,7 +14,6 @@ const SUPPORTED_REACT_DEPENDENCIES = {
     "framer-motion": "https://esm.sh/framer-motion",
     motion: "https://esm.sh/motion",
     "canvas-confetti": "https://esm.sh/canvas-confetti",
-    three: "https://esm.sh/three",
 
     // Charts / data visualization
     recharts: "https://esm.sh/recharts",
@@ -100,6 +99,9 @@ const SUPPORTED_REACT_DEPENDENCIES = {
     // Carousels
     "swiper/": "https://esm.sh/swiper/",
     "@daypicker/": "https://esm.sh/@daypicker/",
+
+    //Animation
+    three: "https://esm.sh/three/",
   },
 };
 const RUNTIME_DEPENDENCIES = {
@@ -344,6 +346,30 @@ export async function buildReactPreviewDocument(component) {
       <head>
         <meta charset="UTF-8" />
         <style>
+
+          html,
+          body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            min-height: 100%;
+            box-sizing: border-box;
+          }
+        
+          *,
+          *::before,
+          *::after {
+            box-sizing: inherit;
+          }
+        
+          body {
+            min-height: 100vh;
+          }
+        
+          #root {
+            width: 100%;
+            min-height: 100vh;
+          }
           ${component.css}
         </style>
         <script src="https://cdn.tailwindcss.com"></script>

@@ -2,7 +2,6 @@
 import { useEffect, useState } from "react";
 import { useEditorContext } from "@/context/EditorContext";
 import { Maximize2, Minimize2 } from "lucide-react";
-import { TargetTech } from "@prisma/client";
 
 const ReactIFrame = ({ isMobile }) => {
   const {

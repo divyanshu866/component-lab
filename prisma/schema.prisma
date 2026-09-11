@@ -4,14 +4,23 @@
 // Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
+// generator client {
+//   provider = "prisma-client-js"
+// }
+
+// datasource db {
+//   provider = "postgresql"
+//   url      = env("DATABASE_URL")
+// }
 generator client {
-  provider = "prisma-client-js"
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
 }
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
+
 model User {
   id            String          @id @default(cuid())
   name          String?
@@ -22,6 +31,9 @@ model User {
   sessions      Session[]
 
   components Component[]
+
+  subscriptions Subscription[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -129,4 +141,42 @@ model AIRequest {
   totalTokens    Int?
 
   createdAt      DateTime @default(now())
+}
+
+
+// Added Paddle Webhook Event model to track events from Paddle
+model PaddleWebhookEvent {
+  eventId     String   @id
+  eventType   String
+  occurredAt  DateTime
+  processedAt DateTime @default(now())
+}
+
+// Added Subscription model to track user subscriptions
+model Subscription {
+  id                     String   @id @default(cuid())
+
+  userId                 String
+  provider               String   @default("PADDLE")
+
+  providerCustomerId     String
+  providerSubscriptionId String
+  providerProductId      String
+  providerPriceId        String
+
+  status                 String
+
+  currentPeriodStart     DateTime?
+  currentPeriodEnd       DateTime?
+
+  cancelAtPeriodEnd      Boolean  @default(false)
+
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerSubscriptionId])
+  @@index([userId, status])
+  @@index([provider, providerCustomerId])
 }
