@@ -2,7 +2,7 @@
 import { ArrowRight, Sparkles } from "lucide-react";
 import { useRouter } from "next/navigation";
 
-export default function CTASection({ userId }) {
+export default function CTASection() {
   const router = useRouter();
   return (
     <section className="relative overflow-hidden rounded-4xl border border-white/10 bg-transparent px-8 py-20 md:px-16">

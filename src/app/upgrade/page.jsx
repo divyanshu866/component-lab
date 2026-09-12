@@ -5,15 +5,17 @@ import GuaranteeCard from "@/components/upgrade/GuaranteeCard";
 import FeatureComparison from "@/components/upgrade/FeatureComparison";
 import FAQ from "@/components/upgrade/FAQ";
 import CTASection from "@/components/upgrade/CTASection";
+import { PaddleProvider } from "@/components/PaddleProvider";
 
 import Navbar from "@/components/Landing/Navbar";
 
 import { auth } from "@/lib/auth";
 export default async function UpgradePage() {
   const session = await auth();
-
   ("use client");
-  if (!session) redirect("/sign-in");
+  // if (!session) redirect("/sign-in");
+  const userId = session?.user?.id || null;
+
   console.log("SESSION===>", session);
 
   return (
@@ -51,7 +53,9 @@ export default async function UpgradePage() {
         <section className="px-6 pt-14">
           <div className="mx-auto max-w-5xl">
             <div className="grid lg:grid-cols-2 gap-6">
-              <UpgradeCard userId={session.user.id} />
+              <PaddleProvider>
+                <UpgradeCard userId={userId} />
+              </PaddleProvider>
             </div>
           </div>
         </section>
@@ -84,7 +88,7 @@ export default async function UpgradePage() {
 
         <section className="px-6 py-28">
           <div className="mx-auto max-w-5xl">
-            <CTASection userId={session.user.id} />
+            <CTASection />
           </div>
         </section>
       </div>

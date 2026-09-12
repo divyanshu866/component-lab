@@ -4,7 +4,6 @@ import { ArrowRight, Check } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { UpgradeButton } from "./UpgradeButton";
 import { Rocket, Crown } from "lucide-react";
-
 const UpgradeCard = ({ userId }) => {
   const [billingCycle, setBillingCycle] = useState("monthly");
 
@@ -148,14 +147,15 @@ const UpgradeCard = ({ userId }) => {
 
             {/* CTA */}
             <div className="mt-10">
-              {plan.id === "premium" ? (
+              {plan.id === "premium" && userId != null ? (
                 /* UpgradeButton component here */
+
                 <UpgradeButton userId={userId} />
               ) : (
                 <div className="w-full">
                   <button
                     onClick={() => router.push("/workspace")}
-                    className="group relative flex h-14 w-full items-center justify-center overflow-hidden rounded-2xl font-semibold text-lg transition-all duration-300 bg-gradient-to-r from-violet-200 to-fuchsia-200 text-gray-800 hover:brightness-105"
+                    className="group relative flex h-14 w-full items-center justify-center overflow-hidden rounded-2xl font-semibold text-lg transition-all duration-300 bg-linear-to-r from-violet-200 to-fuchsia-200 text-gray-800 hover:brightness-105 cursor-pointer"
                   >
                     <div className="absolute inset-0 opacity-0 transition-opacity duration-300 bg-white/20 group-hover:opacity-100" />
                     <span className="relative flex items-center gap-2">

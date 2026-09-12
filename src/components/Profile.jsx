@@ -1,8 +1,11 @@
 "use client";
-import { LogOut } from "lucide-react";
+import { Crown, LogOut } from "lucide-react";
 import React, { useState } from "react";
 import { signOut } from "next-auth/react";
+import { useRouter } from "next/navigation";
+
 const Profile = ({ user }) => {
+  const router = useRouter();
   const [showProfileModal, setShowProfileModal] = useState(false);
   return (
     <div className="h-full aspect-square mr-1 z-105">
@@ -51,20 +54,29 @@ const Profile = ({ user }) => {
                 </div>
               </div>
 
-              {/* <div className="space-y-2 mb-6">
-                <button className="w-full flex items-center space-x-3 p-3 hover:bg-white/10 rounded-lg transition-colors text-left">
+              <div className="space-y-2 mb-6">
+                {/* <button className="w-full flex items-center space-x-3 p-3 hover:bg-white/10 rounded-lg transition-colors text-left">
                   <Settings className="w-5 h-5 text-gray-400" />
                   <span className="text-gray-300">Account Settings</span>
                 </button>
                 <button className="w-full flex items-center space-x-3 p-3 hover:bg-white/10 rounded-lg transition-colors text-left">
                   <Heart className="w-5 h-5 text-gray-400" />
                   <span className="text-gray-300">Liked Components</span>
+                </button> */}
+                <button
+                  onClick={() => router.push("/upgrade")}
+                  className="w-full flex items-center justify-between p-3 rounded-lg transition-colors text-left text-fuchsia-300 hover:bg-fuchsia-500/10 cursor-pointer group"
+                >
+                  <span className="flex items-center gap-3">
+                    <Crown className="w-5 h-5 text-fuchsia-400" />
+                    <span className="font-medium">Upgrade to Pro</span>
+                  </span>
+
+                  <span className="text-xs text-fuchsia-300 opacity-70 group-hover:opacity-100">
+                    PRO
+                  </span>
                 </button>
-                <button className="w-full flex items-center space-x-3 p-3 hover:bg-white/10 rounded-lg transition-colors text-left">
-                  <Download className="w-5 h-5 text-gray-400" />
-                  <span className="text-gray-300">Export Library</span>
-                </button>
-              </div> */}
+              </div>
 
               <div className="border-t border-white/10 pt-4">
                 <button
