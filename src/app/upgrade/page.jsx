@@ -5,7 +5,6 @@ import GuaranteeCard from "@/components/upgrade/GuaranteeCard";
 import FeatureComparison from "@/components/upgrade/FeatureComparison";
 import FAQ from "@/components/upgrade/FAQ";
 import CTASection from "@/components/upgrade/CTASection";
-import { PaddleProvider } from "@/components/PaddleProvider";
 
 import Navbar from "@/components/Landing/Navbar";
 
@@ -53,9 +52,7 @@ export default async function UpgradePage() {
         <section className="px-6 pt-14">
           <div className="mx-auto max-w-5xl">
             <div className="grid lg:grid-cols-2 gap-6">
-              <PaddleProvider>
-                <UpgradeCard userId={userId} />
-              </PaddleProvider>
+              <UpgradeCard userId={userId} />
             </div>
           </div>
         </section>

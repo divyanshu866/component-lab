@@ -85,7 +85,6 @@ Recent milestones
 - [ ] Framework export
 - [ ] Version history & rollback
 - [ ] Mobile-responsive workspace
-- [ ] AI-powered design improvements
 - [ ] Component collections
 - [ ] Vue component generation
 - [ ] Custom themes
@@ -102,14 +101,17 @@ DATABASE_URL='postgres://'
 
 AUTH_GITHUB_ID=''
 AUTH_GITHUB_SECRET=''
-
 AUTH_SECRET=""
 
 GEMINI_API_KEY=""
-
 OPENAI_API_KEY=""
 
 AUTH_TRUST_HOST=true
+
+PADDLE_API_KEY=""
+NEXT_PUBLIC_PADDLE_CLIENT_TOKEN=""
+NEXT_PUBLIC_PADDLE_ENV="sandbox"
+NEXT_PUBLIC_PADDLE_PREMIUM_MONTHLY_PRICE_ID=""
 ```
 
 ### 2. Install dependencies
