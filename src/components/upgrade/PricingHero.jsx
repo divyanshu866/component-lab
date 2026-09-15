@@ -29,7 +29,7 @@ const PricingHero = () => {
       {/* Subtitle */}
 
       <p className="mx-auto mt-8 max-w-3xl text-lg leading-8 text-gray-400 md:text-xl">
-        Start for free. Upgrade to Pro when you're ready to unlock more.
+        Start for free. Upgrade to Pro when you&apos;re ready to unlock more.
       </p>
     </div>
   );

@@ -49,7 +49,7 @@ export default function FAQ() {
         </p>
 
         <h2 className="mt-4 text-4xl font-bold text-white md:text-5xl">
-          Questions? We've got answers.
+          Questions? We&apos;ve got answers.
         </h2>
 
         <p className="mx-auto mt-5 max-w-2xl text-lg text-gray-400">

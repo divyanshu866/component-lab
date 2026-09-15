@@ -22,16 +22,13 @@ function useTypewriter(text, speed = 36, startDelay = 300) {
   const [done, setDone] = useState(false);
 
   useEffect(() => {
-    setDisplayed("");
-    setDone(false);
-
     let i = 0;
-
     let interval;
 
     const timeout = setTimeout(() => {
       interval = setInterval(() => {
-        i++;
+        i += 1;
+
         setDisplayed(text.slice(0, i));
 
         if (i >= text.length) {
@@ -364,15 +361,21 @@ function DemoCard() {
 
   useEffect(() => {
     if (!done) {
-      setPhase("typing");
       return;
     }
-    const t1 = setTimeout(() => setPhase("rendering"), 300);
-    const t2 = setTimeout(() => setPhase("preview"), 1100);
+
+    const t1 = setTimeout(() => {
+      setPhase("rendering");
+    }, 300);
+
+    const t2 = setTimeout(() => {
+      setPhase("preview");
+    }, 1100);
+
     const t3 = setTimeout(() => {
-      setPhase("typing");
       setIdx((i) => (i + 1) % DEMOS.length);
     }, 4600);
+
     return () => {
       clearTimeout(t1);
       clearTimeout(t2);
@@ -798,7 +801,7 @@ export default function Home() {
               Everything you need.
               <br />
               <span className="text-zinc-400 font-semibold">
-                Nothing you don't.
+                Nothing you don&apos;t.
               </span>
             </h2>
           </div>
