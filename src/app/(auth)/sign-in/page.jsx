@@ -6,218 +6,290 @@ import {
   ArrowLeft,
   ArrowUpRight,
   Check,
-  Github,
-  ShieldCheck,
+  Code2,
+  Layers3,
   Sparkles,
 } from "lucide-react";
 import { redirect } from "next/navigation";
 
 export const metadata = {
   title: "Sign In – ComponentLab",
+  description: "Sign in to your ComponentLab workspace.",
 };
 
 export default async function SignInPage() {
   const session = await getSession();
 
-  if (session) redirect("/workspace");
+  if (session) {
+    redirect("/workspace");
+  }
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-[#09090b] text-white">
-      <div className="relative z-10 mx-auto flex min-h-screen w-full max-w-7xl flex-col px-5 py-5 sm:px-8 lg:px-10">
-        <header className="flex items-center justify-between">
+    <main className="relative flex min-h-screen overflow-hidden bg-[#09090b] font-[family-name:var(--font-geist-sans)] text-white antialiased">
+      {/* ------------------------------------------------------------------ */}
+      {/* Global background                                                    */}
+      {/* ------------------------------------------------------------------ */}
+
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0">
+        {/* Main violet atmosphere */}
+        <div className="absolute left-1/2 top-[-18rem] h-[38rem] w-[38rem] -translate-x-1/2 rounded-full bg-violet-600/[0.10] blur-3xl" />
+
+        {/* Secondary glow */}
+        <div className="absolute bottom-[-14rem] right-[-8rem] h-[30rem] w-[30rem] rounded-full bg-fuchsia-500/[0.06] blur-3xl" />
+
+        {/* Very subtle grid */}
+        <div
+          className="absolute inset-0 opacity-[0.025]"
+          style={{
+            backgroundImage:
+              "linear-gradient(rgba(255,255,255,.12) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.12) 1px, transparent 1px)",
+            backgroundSize: "48px 48px",
+          }}
+        />
+      </div>
+
+      {/* ------------------------------------------------------------------ */}
+      {/* Header                                                               */}
+      {/* ------------------------------------------------------------------ */}
+
+      <header className="absolute inset-x-0 top-0 z-20 px-4 py-4 sm:px-6 sm:py-5">
+        <div className="mx-auto flex max-w-7xl items-center justify-between">
+          {/* Brand */}
           <Link
             href="/"
-            className="group inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.035] px-3 py-2 text-xs font-medium text-white/55 transition hover:border-white/20 hover:bg-white/[0.07] hover:text-white focus:outline-none focus:ring-2 focus:ring-violet-400/70"
+            aria-label="ComponentLab home"
+            className="group inline-flex items-center gap-2.5"
           >
-            <ArrowLeft className="h-3.5 w-3.5 transition-transform group-hover:-translate-x-0.5" />
-            Back to home
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-white/[0.08] bg-white/[0.04] transition group-hover:border-white/[0.15] group-hover:bg-white/[0.07]">
+              <img
+                src="/newlogo.svg"
+                alt=""
+                className="h-7 w-7 object-contain"
+              />
+            </div>
+
+            <img
+              src="/name.svg"
+              alt="ComponentLab"
+              className="h-5 w-auto sm:h-6"
+            />
           </Link>
 
-          <div className="hidden items-center gap-2 text-xs text-white/35 sm:flex">
-            <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 shadow-[0_0_12px_rgba(52,211,153,0.8)]" />
-            Secure authentication
-          </div>
-        </header>
+          {/* Back to home */}
+          <Link
+            href="/"
+            className="group inline-flex items-center gap-2 rounded-xl border border-white/[0.07] bg-white/[0.025] px-3.5 py-2.5 text-xs font-medium text-zinc-400 transition hover:border-white/[0.12] hover:bg-white/[0.05] hover:text-white"
+          >
+            <ArrowLeft className="h-3.5 w-3.5 transition-transform group-hover:-translate-x-0.5" />
+            <span className="hidden sm:inline">Back to home</span>
+            <span className="sm:hidden">Back</span>
+          </Link>
+        </div>
+      </header>
 
-        <main className="flex flex-1 items-center justify-center py-12 lg:py-16">
-          <section className="grid w-full max-w-6xl overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.045] shadow-2xl shadow-black/50 backdrop-blur-2xl lg:grid-cols-[1.15fr_0.85fr]">
-            <div className="relative hidden min-h-[650px] overflow-hidden border-r border-white/10 p-10 lg:flex lg:flex-col lg:justify-between gap-6 xl:p-14">
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_10%,rgba(124,58,237,0.2),transparent_34%),radial-gradient(circle_at_85%_85%,rgba(6,182,212,0.12),transparent_30%)]" />
+      {/* ------------------------------------------------------------------ */}
+      {/* Main auth area                                                       */}
+      {/* ------------------------------------------------------------------ */}
 
-              <div className="relative">
-                <Link
-                  href="/"
-                  aria-label="Go to ComponentLab home"
-                  className="group inline-flex items-center gap-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-violet-400/70"
-                >
-                  <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-white/15 bg-white/10 shadow-lg shadow-violet-950/30 transition group-hover:border-white/25 group-hover:bg-white/[0.14]">
-                    <img
-                      src="/newlogo.svg"
-                      alt=""
-                      className="h-8 w-8 object-contain"
-                    />
-                  </div>
-                  <img
-                    src="/name.svg"
-                    alt="ComponentLab"
-                    className="h-6 w-auto max-w-[170px] object-contain"
-                  />
-                </Link>
+      <div className="relative z-10 flex w-full items-center justify-center px-5 pb-10 pt-28 sm:px-8">
+        <div className="grid w-full max-w-5xl items-center gap-16 lg:grid-cols-[1fr_460px] lg:gap-20">
+          {/* ---------------------------------------------------------------- */}
+          {/* Left: concise product context                                    */}
+          {/* ---------------------------------------------------------------- */}
+
+          <section className="hidden lg:block">
+            <div className="max-w-xl">
+              <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-violet-400/15 bg-violet-400/[0.06] px-3.5 py-2 text-xs font-medium text-violet-200">
+                <Sparkles className="h-3.5 w-3.5" />
+                AI-powered component development
               </div>
 
-              <div className="relative max-w-xl">
-                <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-violet-400/20 bg-violet-400/10 px-3 py-1.5 text-xs font-medium text-violet-200">
-                  <Sparkles className="h-3.5 w-3.5" />
-                  Your workspace, ready to build
+              <h1 className="text-5xl font-semibold leading-[1.03] tracking-[-0.055em] text-white xl:text-6xl">
+                Your components.
+                <br />
+                <span className="bg-gradient-to-r from-fuchsia-400 via-violet-400 to-indigo-400 bg-clip-text text-transparent">
+                  Your workspace.
+                </span>
+              </h1>
+
+              <p className="mt-6 max-w-lg text-base leading-7 text-zinc-500">
+                Generate interfaces with AI, inspect the implementation, preview
+                changes instantly, and keep control of the code.
+              </p>
+            </div>
+
+            {/* Minimal product visual */}
+            <div className="mt-12 max-w-xl overflow-hidden rounded-3xl border border-white/[0.08] bg-[#0d0d12] shadow-[0_30px_100px_rgba(0,0,0,0.45)]">
+              {/* Window bar */}
+              <div className="flex h-11 items-center justify-between border-b border-white/[0.06] bg-[#0a0a0d] px-4">
+                <div className="flex items-center gap-2">
+                  <span className="h-2.5 w-2.5 rounded-full bg-red-400/60" />
+                  <span className="h-2.5 w-2.5 rounded-full bg-yellow-400/60" />
+                  <span className="h-2.5 w-2.5 rounded-full bg-green-400/60" />
                 </div>
 
-                <h1 className="max-w-lg text-4xl font-semibold leading-[1.05] tracking-[-0.055em] text-white xl:text-6xl">
-                  Turn ideas into interfaces.
-                </h1>
+                <span className="text-[10px] text-zinc-700">
+                  ComponentLab workspace
+                </span>
+              </div>
 
-                <p className="mt-6 max-w-md text-base leading-7 text-white/50">
-                  Create, refine, and ship production-ready components from one
-                  focused workspace.
-                </p>
+              {/* Product preview */}
+              <div className="grid grid-cols-[0.85fr_1.15fr]">
+                <div className="border-r border-white/[0.06] p-5">
+                  <div className="mb-5 flex items-center gap-2">
+                    <Code2 className="h-3.5 w-3.5 text-violet-300" />
+                    <span className="text-[10px] font-medium uppercase tracking-[0.16em] text-zinc-600">
+                      Generated code
+                    </span>
+                  </div>
 
-                <div
-                  aria-hidden="true"
-                  className="mt-10 overflow-hidden rounded-2xl border border-white/10 bg-[#101116]/80 shadow-2xl shadow-black/30"
-                >
-                  <div className="flex items-center justify-between border-b border-white/10 px-4 py-3">
-                    <div className="flex items-center gap-2">
-                      <div className="h-2 w-2 rounded-full bg-violet-400" />
-                      <span className="text-[11px] font-medium text-white/55">
-                        ComponentLab workspace
-                      </span>
+                  <div className="space-y-2 font-mono text-[10px] leading-5">
+                    <div className="text-violet-300">export default</div>
+                    <div className="pl-2 text-zinc-500">
+                      function Component()
                     </div>
-                    <span className="text-[10px] uppercase tracking-[0.18em] text-white/25">
+                    <div className="pl-4 text-fuchsia-300">&lt;section</div>
+                    <div className="pl-6 text-emerald-300">className=</div>
+                    <div className="pl-8 text-yellow-200">
+                      {"rounded-xl ..."}
+                    </div>
+                    <div className="pl-4 text-fuchsia-300">&gt;</div>
+                    <div className="pl-6 text-zinc-700">...</div>
+                    <div className="pl-4 text-fuchsia-300">
+                      &lt;/section&gt;
+                    </div>
+                  </div>
+                </div>
+
+                <div className="p-5">
+                  <div className="mb-5 flex items-center gap-2">
+                    <Layers3 className="h-3.5 w-3.5 text-violet-300" />
+                    <span className="text-[10px] font-medium uppercase tracking-[0.16em] text-zinc-600">
                       Live preview
                     </span>
                   </div>
 
-                  <div className="grid grid-cols-[0.8fr_1.2fr] gap-4 p-4">
-                    <div className="space-y-2">
-                      {["Prompt", "Preview", "Export"].map((item, index) => (
-                        <div
-                          key={item}
-                          className={`flex items-center gap-2 rounded-lg px-3 py-2 text-[11px] ${
-                            index === 0
-                              ? "bg-violet-400/10 text-violet-200"
-                              : "text-white/35"
-                          }`}
-                        >
-                          <span
-                            className={`h-1.5 w-1.5 rounded-full ${
-                              index === 0 ? "bg-violet-300" : "bg-white/20"
-                            }`}
-                          />
-                          {item}
-                        </div>
-                      ))}
-                    </div>
+                  <div className="flex min-h-[185px] items-center justify-center rounded-2xl border border-white/[0.06] bg-[#0a0a0d] p-5">
+                    <div className="w-full max-w-[190px] rounded-2xl border border-white/[0.09] bg-white/[0.035] p-4">
+                      <div className="h-2 w-14 rounded bg-white/10" />
+                      <div className="mt-3 h-6 w-28 rounded bg-white/[0.07]" />
 
-                    <div className="rounded-xl border border-white/10 bg-white/[0.035] p-3">
-                      <div className="mb-4 h-2 w-2/3 rounded-full bg-white/10" />
-                      <div className="space-y-2">
-                        <div className="h-2 w-full rounded-full bg-white/[0.07]" />
-                        <div className="h-2 w-4/5 rounded-full bg-white/[0.07]" />
-                        <div className="h-2 w-3/5 rounded-full bg-white/[0.07]" />
+                      <div className="mt-5 space-y-2">
+                        <div className="h-2 w-full rounded bg-white/[0.06]" />
+                        <div className="h-2 w-[82%] rounded bg-white/[0.06]" />
+                        <div className="h-2 w-[60%] rounded bg-white/[0.06]" />
                       </div>
-                      <div className="mt-5 h-8 w-24 rounded-lg bg-gradient-to-r from-violet-500/80 to-fuchsia-500/70" />
+
+                      <div className="mt-5 h-8 rounded-lg bg-gradient-to-r from-violet-500/80 to-fuchsia-500/70" />
                     </div>
                   </div>
                 </div>
-              </div>
-
-              <div className="relative flex items-center gap-3 text-xs text-white/35">
-                <ShieldCheck className="h-4 w-4 text-emerald-400/80" />
-                Authentication secured by GitHub
               </div>
             </div>
 
-            <div className="flex min-h-[650px] flex-col justify-center p-6 sm:p-10 lg:p-14">
-              <div className="mb-10 lg:hidden">
-                <Link
-                  href="/"
-                  aria-label="Go to ComponentLab home"
-                  className="mb-8 inline-flex items-center gap-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-violet-400/70"
-                >
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/15 bg-white/10">
-                    <img
-                      src="/newlogo.svg"
-                      alt=""
-                      className="h-7 w-7 object-contain"
-                    />
-                  </div>
-                  <img
-                    src="/name.svg"
-                    alt="ComponentLab"
-                    className="h-5 w-auto max-w-[155px] object-contain"
-                  />
-                </Link>
+            {/* Trust indicators */}
+            <div className="mt-7 flex flex-wrap gap-x-5 gap-y-3 text-xs text-zinc-600">
+              <span className="inline-flex items-center gap-2">
+                <Check className="h-3.5 w-3.5 text-emerald-400" />
+                Live preview
+              </span>
 
-                <p className="text-xs font-medium uppercase tracking-[0.22em] text-violet-300/75">
-                  Build without friction
-                </p>
-              </div>
+              <span className="inline-flex items-center gap-2">
+                <Check className="h-3.5 w-3.5 text-emerald-400" />
+                Editable source
+              </span>
 
-              <div className="mx-auto w-full max-w-md">
-                <div className="mb-8">
-                  <div className="mb-5 flex h-11 w-11 items-center justify-center rounded-2xl border border-violet-400/20 bg-violet-400/10">
-                    <Github className="h-5 w-5 text-violet-200" />
-                  </div>
-
-                  <h2 className="text-3xl font-semibold tracking-[-0.045em] text-white sm:text-4xl">
-                    Welcome back.
-                  </h2>
-
-                  <p className="mt-3 max-w-sm text-sm leading-6 text-white/45">
-                    Sign in with GitHub to continue to your ComponentLab
-                    workspace.
-                  </p>
-                </div>
-
-                <div className="flex flex-col gap-4 rounded-2xl border border-violet-400/20 bg-violet-400/4 p-1.5 shadow-lg shadow-black/20">
-                  <SignInGoogle />
-                  <SignInGithub />
-                </div>
-
-                <div className="mt-6 space-y-3 rounded-2xl border border-white/10 bg-white/[0.035] p-4">
-                  <div className="flex items-center gap-3">
-                    <Check className="h-4 w-4 shrink-0 text-emerald-400" />
-                    <span className="text-xs text-white/55">
-                      Access your saved components and projects
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <Check className="h-4 w-4 shrink-0 text-emerald-400" />
-                    <span className="text-xs text-white/55">
-                      Keep building from where you left off
-                    </span>
-                  </div>
-                </div>
-
-                <p className="mt-6 text-center text-xs leading-5 text-white/30">
-                  Continue securely with your GitHub account.
-                </p>
-
-                <Link
-                  href="/"
-                  className="group mt-8 inline-flex items-center gap-2 rounded-md text-sm text-white/40 transition hover:text-white focus:outline-none focus:ring-2 focus:ring-violet-400/70"
-                >
-                  <span>Return to ComponentLab</span>
-                  <ArrowUpRight className="h-4 w-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-                </Link>
-              </div>
+              <span className="inline-flex items-center gap-2">
+                <Check className="h-3.5 w-3.5 text-emerald-400" />
+                AI iteration
+              </span>
             </div>
           </section>
-        </main>
 
-        <footer className="flex items-center justify-center pb-2 text-center text-[11px] text-white/25">
-          Built with AI. Shipped by you.
-        </footer>
+          {/* ---------------------------------------------------------------- */}
+          {/* Right: sign-in card                                               */}
+          {/* ---------------------------------------------------------------- */}
+
+          <section className="w-full">
+            <div className="rounded-[2rem] border border-white/[0.09] bg-[#0d0d12]/95 p-6 shadow-[0_35px_100px_rgba(0,0,0,0.45)] backdrop-blur-xl sm:p-8">
+              {/* Mobile brand/context */}
+              <div className="mb-8 lg:hidden">
+                <div className="mb-5 flex h-11 w-11 items-center justify-center rounded-2xl border border-violet-400/15 bg-violet-400/[0.07]">
+                  <Sparkles className="h-5 w-5 text-violet-300" />
+                </div>
+
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-violet-300/70">
+                  ComponentLab
+                </p>
+              </div>
+
+              {/* Heading */}
+              <div className="mb-8">
+                <h2 className="text-3xl font-semibold tracking-[-0.045em] text-white sm:text-4xl">
+                  Welcome back.
+                </h2>
+
+                <p className="mt-3 text-sm leading-6 text-zinc-500">
+                  Sign in to continue to your ComponentLab workspace.
+                </p>
+              </div>
+
+              {/* OAuth buttons */}
+              <div className="space-y-3">
+                <SignInGoogle />
+                <SignInGithub />
+              </div>
+
+              {/* Divider */}
+              <div className="my-7 flex items-center gap-4">
+                <div className="h-px flex-1 bg-white/[0.07]" />
+
+                <span className="text-[10px] font-medium uppercase tracking-[0.18em] text-zinc-700">
+                  Secure OAuth
+                </span>
+
+                <div className="h-px flex-1 bg-white/[0.07]" />
+              </div>
+
+              {/* Auth reassurance */}
+              <div className="rounded-2xl border border-white/[0.07] bg-white/[0.025] p-4">
+                <div className="flex items-start gap-3">
+                  <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-emerald-400/15 bg-emerald-400/[0.07]">
+                    <Check className="h-3.5 w-3.5 text-emerald-400" />
+                  </div>
+
+                  <div>
+                    <p className="text-xs font-medium text-zinc-300">
+                      Your code stays yours
+                    </p>
+
+                    <p className="mt-1 text-xs leading-5 text-zinc-600">
+                      Sign in securely with Google or GitHub to access your
+                      saved components and workspace.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Footer link */}
+              <div className="mt-7 text-center">
+                <Link
+                  href="/"
+                  className="group inline-flex items-center gap-2 text-xs text-zinc-600 transition hover:text-zinc-300"
+                >
+                  Return to ComponentLab
+                  <ArrowUpRight className="h-3.5 w-3.5 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+                </Link>
+              </div>
+            </div>
+
+            <p className="mt-5 text-center text-[11px] leading-5 text-zinc-700">
+              By continuing, you authenticate with the selected identity
+              provider and agree to use ComponentLab responsibly.
+            </p>
+          </section>
+        </div>
       </div>
-    </div>
+    </main>
   );
 }
