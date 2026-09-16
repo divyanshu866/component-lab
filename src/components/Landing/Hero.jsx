@@ -79,154 +79,260 @@ const DEMOS = [
 ];
 
 function Preview({ type }) {
-  if (type === "dashboard") {
-    return (
-      <div className="w-full max-w-[390px] rounded-2xl border border-zinc-200/80 bg-white p-4 shadow-[0_20px_50px_rgba(0,0,0,0.12)]">
-        <div className="flex items-center justify-between">
-          <div>
-            <div className="text-[13px] font-semibold text-zinc-900">
-              Overview
-            </div>
-            <div className="mt-1 text-[9px] text-zinc-400">
-              Performance this month
-            </div>
-          </div>
-
-          <div className="rounded-lg border border-zinc-200 px-2 py-1 text-[9px] text-zinc-500">
-            Last 30 days
-          </div>
-        </div>
-
-        <div className="mt-4 grid grid-cols-3 gap-2">
-          {[
-            ["Revenue", "$48.2k"],
-            ["Users", "12.4k"],
-            ["Growth", "+18.2%"],
-          ].map(([label, value]) => (
-            <div
-              key={label}
-              className="rounded-xl border border-zinc-200 bg-zinc-50 p-3"
-            >
-              <div className="text-[8px] text-zinc-400">{label}</div>
-              <div className="mt-1 text-sm font-semibold text-zinc-900">
-                {value}
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <div className="mt-3 rounded-xl border border-zinc-200 p-3">
-          <div className="mb-3 flex items-center justify-between">
-            <span className="text-[9px] font-medium text-zinc-600">
-              Revenue
-            </span>
-            <span className="text-[8px] text-emerald-500">+12.4%</span>
-          </div>
-
-          <div className="flex h-20 items-end gap-1.5">
-            {[34, 48, 42, 64, 52, 72, 61, 80, 68, 92, 75, 98].map(
-              (height, index) => (
-                <div
-                  key={index}
-                  className="flex-1 rounded-t bg-violet-400/80"
-                  style={{ height: `${height}%` }}
-                />
-              ),
-            )}
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (type === "navigation") {
-    return (
-      <div className="w-full max-w-[390px] rounded-2xl border border-zinc-200/80 bg-white p-4 shadow-[0_20px_50px_rgba(0,0,0,0.12)]">
-        <div className="flex items-center justify-between rounded-xl border border-zinc-200 px-4 py-3">
-          <div className="flex items-center gap-2">
-            <div className="flex h-6 w-6 items-center justify-center rounded-lg bg-zinc-900">
-              <div className="h-2.5 w-2.5 rounded-sm bg-white" />
-            </div>
-
-            <span className="text-[11px] font-semibold text-zinc-900">
-              Studio
-            </span>
-          </div>
-
-          <div className="hidden items-center gap-5 sm:flex">
-            <span className="text-[9px] font-medium text-zinc-900">
-              Products
-            </span>
-            <span className="text-[9px] text-zinc-400">Pricing</span>
-            <span className="text-[9px] text-zinc-400">About</span>
-
-            <div className="rounded-lg bg-zinc-900 px-3 py-1.5 text-[8px] font-semibold text-white">
-              Get started
-            </div>
-          </div>
-
-          <div className="flex h-7 w-7 items-center justify-center rounded-lg border border-zinc-200 sm:hidden">
-            <div className="space-y-1">
-              <div className="h-px w-3 bg-zinc-500" />
-              <div className="h-px w-3 bg-zinc-500" />
-              <div className="h-px w-3 bg-zinc-500" />
-            </div>
-          </div>
-        </div>
-
-        <div className="mt-5 rounded-xl bg-zinc-50 p-6">
-          <div className="h-2 w-20 rounded bg-zinc-200" />
-          <div className="mt-3 h-5 w-36 rounded bg-zinc-200" />
-          <div className="mt-2 h-2 w-52 rounded bg-zinc-100" />
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="w-full max-w-[390px] rounded-2xl border border-zinc-200/80 bg-white p-5 shadow-[0_20px_50px_rgba(0,0,0,0.12)]">
-      <div className="flex items-start justify-between">
-        <div>
-          <div className="text-[8px] font-medium uppercase tracking-[0.16em] text-violet-500">
-            Pro
-          </div>
-
-          <div className="mt-2 text-xl font-semibold tracking-tight text-zinc-900">
-            $29
-            <span className="ml-1 text-[9px] font-normal text-zinc-400">
-              /month
-            </span>
-          </div>
-
-          <div className="mt-1 text-[9px] text-zinc-400">
-            Everything you need to grow.
-          </div>
-        </div>
-
-        <div className="rounded-full bg-violet-50 px-2 py-1 text-[8px] font-medium text-violet-500">
-          Popular
-        </div>
-      </div>
-
-      <div className="mt-5 space-y-2">
-        {["Unlimited projects", "Advanced analytics", "Priority support"].map(
-          (item) => (
-            <div
-              key={item}
-              className="flex items-center gap-2 text-[9px] text-zinc-500"
-            >
-              <div className="flex h-3.5 w-3.5 items-center justify-center rounded-full bg-emerald-50">
-                <Check className="h-2 w-2 text-emerald-500" />
+    <div className="relative h-[292px] w-full overflow-hidden">
+      {/* Pricing */}
+      <div
+        className={`absolute inset-0 flex items-center justify-center p-5 transition-all duration-500 ${
+          type === "pricing"
+            ? "scale-100 opacity-100"
+            : "pointer-events-none scale-[0.985] opacity-0"
+        }`}
+      >
+        <div className="w-full max-w-[310px] rounded-[18px] border border-zinc-200 bg-white p-4 shadow-[0_20px_50px_rgba(0,0,0,0.12)]">
+          <div className="mb-4 flex items-start justify-between">
+            <div>
+              <div className="text-[8px] font-semibold uppercase tracking-[0.16em] text-violet-500">
+                Pricing
               </div>
 
-              {item}
+              <div className="mt-1 text-[13px] font-semibold tracking-tight text-zinc-900">
+                Choose your plan
+              </div>
+
+              <div className="mt-1 text-[8px] text-zinc-400">
+                Simple pricing for growing teams.
+              </div>
             </div>
-          ),
-        )}
+
+            <div className="rounded-full bg-emerald-50 px-2 py-1 text-[7px] font-medium text-emerald-600">
+              Save 20%
+            </div>
+          </div>
+
+          <div className="grid grid-cols-3 gap-2">
+            {[
+              {
+                name: "Starter",
+                price: "$9",
+                description: "For individuals",
+              },
+              {
+                name: "Pro",
+                price: "$29",
+                description: "For growing teams",
+                featured: true,
+              },
+              {
+                name: "Team",
+                price: "$79",
+                description: "For larger teams",
+              },
+            ].map((plan) => (
+              <div
+                key={plan.name}
+                className={`rounded-xl border p-3 ${
+                  plan.featured
+                    ? "border-violet-300 bg-violet-50/70 shadow-[0_8px_25px_rgba(124,58,237,0.10)]"
+                    : "border-zinc-200 bg-white"
+                }`}
+              >
+                <div className="flex items-center justify-between">
+                  <span className="text-[7px] font-medium text-zinc-500">
+                    {plan.name}
+                  </span>
+
+                  {plan.featured && (
+                    <span className="rounded-full bg-violet-100 px-1.5 py-0.5 text-[6px] font-medium text-violet-600">
+                      Popular
+                    </span>
+                  )}
+                </div>
+
+                <div className="mt-2 text-[17px] font-semibold tracking-tight text-zinc-900">
+                  {plan.price}
+                </div>
+
+                <div className="mt-0.5 text-[6px] text-zinc-400">/ month</div>
+
+                <div className="mt-2 text-[7px] leading-3 text-zinc-400">
+                  {plan.description}
+                </div>
+
+                <div
+                  className={`mt-3 rounded-lg py-1.5 text-center text-[7px] font-semibold ${
+                    plan.featured
+                      ? "bg-violet-600 text-white"
+                      : "bg-zinc-100 text-zinc-600"
+                  }`}
+                >
+                  Get started
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
 
-      <div className="mt-5 rounded-xl bg-zinc-900 py-2.5 text-center text-[9px] font-semibold text-white">
-        Get started
+      {/* Dashboard */}
+      <div
+        className={`absolute inset-0 flex items-center justify-center p-5 transition-all duration-500 ${
+          type === "dashboard"
+            ? "scale-100 opacity-100"
+            : "pointer-events-none scale-[0.985] opacity-0"
+        }`}
+      >
+        <div className="w-full max-w-[320px] rounded-[18px] border border-zinc-200 bg-white p-4 shadow-[0_20px_50px_rgba(0,0,0,0.12)]">
+          <div className="flex items-center justify-between">
+            <div>
+              <div className="text-[8px] font-semibold uppercase tracking-[0.16em] text-violet-500">
+                Analytics
+              </div>
+
+              <div className="mt-1 text-[13px] font-semibold tracking-tight text-zinc-900">
+                Overview
+              </div>
+            </div>
+
+            <div className="rounded-lg border border-zinc-200 px-2 py-1 text-[7px] text-zinc-400">
+              Last 30 days
+            </div>
+          </div>
+
+          <div className="mt-4 grid grid-cols-3 gap-2">
+            {[
+              ["Revenue", "$48.2k", "+12.4%"],
+              ["Users", "12.4k", "+8.7%"],
+              ["Conversion", "6.8%", "+2.1%"],
+            ].map(([label, value, growth]) => (
+              <div
+                key={label}
+                className="rounded-xl border border-zinc-200 bg-zinc-50 p-2.5"
+              >
+                <div className="text-[7px] text-zinc-400">{label}</div>
+
+                <div className="mt-1 text-[12px] font-semibold text-zinc-900">
+                  {value}
+                </div>
+
+                <div className="mt-1 text-[6px] font-medium text-emerald-500">
+                  {growth}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-3 rounded-xl border border-zinc-200 p-3">
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="text-[8px] font-medium text-zinc-600">
+                  Revenue
+                </div>
+
+                <div className="mt-0.5 text-[7px] text-zinc-400">
+                  Monthly performance
+                </div>
+              </div>
+
+              <div className="text-[7px] font-medium text-emerald-500">
+                +12.4%
+              </div>
+            </div>
+
+            <div className="mt-4 flex h-16 items-end gap-1">
+              {[28, 42, 36, 57, 49, 63, 55, 71, 67, 82, 74, 91].map(
+                (height, index) => (
+                  <div
+                    key={index}
+                    className="flex-1 rounded-t bg-gradient-to-t from-violet-500/80 to-fuchsia-400/80"
+                    style={{ height: `${height}%` }}
+                  />
+                ),
+              )}
+            </div>
+          </div>
+
+          <div className="mt-3 flex items-center justify-between rounded-xl bg-zinc-50 px-3 py-2">
+            <div className="flex items-center gap-2">
+              <div className="h-5 w-5 rounded-full bg-violet-100" />
+              <div>
+                <div className="h-1.5 w-16 rounded bg-zinc-200" />
+                <div className="mt-1 h-1.5 w-10 rounded bg-zinc-100" />
+              </div>
+            </div>
+
+            <div className="text-[7px] font-medium text-zinc-400">2m ago</div>
+          </div>
+        </div>
+      </div>
+
+      {/* Navigation */}
+      <div
+        className={`absolute inset-0 flex items-center justify-center p-5 transition-all duration-500 ${
+          type === "navigation"
+            ? "scale-100 opacity-100"
+            : "pointer-events-none scale-[0.985] opacity-0"
+        }`}
+      >
+        <div className="w-full max-w-[320px] overflow-hidden rounded-[18px] border border-zinc-200 bg-white shadow-[0_20px_50px_rgba(0,0,0,0.12)]">
+          <div className="border-b border-zinc-200 px-4 py-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="flex h-6 w-6 items-center justify-center rounded-lg bg-zinc-950">
+                  <div className="h-2.5 w-2.5 rounded-sm bg-white" />
+                </div>
+
+                <span className="text-[10px] font-semibold text-zinc-900">
+                  Acme
+                </span>
+              </div>
+
+              <div className="flex items-center gap-4">
+                <span className="text-[7px] font-medium text-zinc-900">
+                  Product
+                </span>
+
+                <span className="text-[7px] text-zinc-400">Solutions</span>
+
+                <span className="text-[7px] text-zinc-400">Pricing</span>
+
+                <div className="rounded-md bg-zinc-900 px-2 py-1.5 text-[6px] font-semibold text-white">
+                  Start free
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="relative overflow-hidden bg-gradient-to-br from-violet-50 via-white to-fuchsia-50 px-6 py-10 text-center">
+            <div className="absolute left-1/2 top-[-35px] h-32 w-32 -translate-x-1/2 rounded-full bg-violet-300/20 blur-3xl" />
+
+            <div className="relative">
+              <div className="mx-auto inline-flex rounded-full border border-violet-200 bg-white/80 px-2 py-1 text-[6px] font-medium text-violet-600 shadow-sm">
+                New · Built for modern teams
+              </div>
+
+              <div className="mx-auto mt-3 max-w-[220px] text-[20px] font-semibold leading-6 tracking-[-0.04em] text-zinc-900">
+                Build better products,
+                <span className="text-violet-500"> faster.</span>
+              </div>
+
+              <div className="mx-auto mt-2 max-w-[195px] text-[7px] leading-3.5 text-zinc-400">
+                A simple workflow for teams that want to move from idea to
+                production quickly.
+              </div>
+
+              <div className="mt-4 flex justify-center gap-2">
+                <div className="rounded-lg bg-zinc-900 px-3 py-2 text-[7px] font-semibold text-white">
+                  Get started
+                </div>
+
+                <div className="rounded-lg border border-zinc-200 bg-white px-3 py-2 text-[7px] font-medium text-zinc-600">
+                  Learn more
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

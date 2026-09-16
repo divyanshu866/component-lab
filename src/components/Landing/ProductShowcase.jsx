@@ -1,4 +1,14 @@
-import { ArrowRight, Copy, Play, Sparkles } from "lucide-react";
+import {
+  ArrowRight,
+  BarChart3,
+  Check,
+  Copy,
+  MoreHorizontal,
+  Play,
+  Sparkles,
+  TrendingUp,
+  Users,
+} from "lucide-react";
 import GlowOrb from "./GlowOrb";
 import Link from "next/link";
 
@@ -58,7 +68,7 @@ export default function ProductShowcase() {
                 </div>
               </div>
 
-              <div className="grid min-h-[360px] sm:min-h-[390px] lg:grid-cols-[145px_minmax(0,1fr)_245px]">
+              <div className="grid min-h-[360px] sm:min-h-[400px] lg:grid-cols-[145px_minmax(0,1fr)_255px]">
                 {/* Sidebar */}
                 <aside className="hidden border-r border-white/[0.07] bg-[#09090b] lg:block">
                   <div className="border-b border-white/[0.07] p-2.5">
@@ -66,6 +76,7 @@ export default function ProductShowcase() {
                       <div className="flex h-5 w-5 items-center justify-center rounded-md bg-white/[0.05] text-zinc-400">
                         +
                       </div>
+
                       <span className="text-[9px] text-zinc-300">
                         New Component
                       </span>
@@ -78,27 +89,36 @@ export default function ProductShowcase() {
                     </div>
 
                     <div className="space-y-1">
-                      <div className="flex items-center gap-2 rounded-md bg-white/[0.08] px-2 py-1.5 text-[9px] text-zinc-300">
-                        <span className="h-1.5 w-1.5 rounded-full bg-cyan-400" />
-                        Button Test
-                      </div>
-
-                      <div className="flex items-center gap-2 px-2 py-1.5 text-[9px] text-zinc-600">
-                        <span className="h-1.5 w-1.5 rounded-full bg-cyan-400/50" />
-                        Bento Grid
-                      </div>
-
-                      <div className="flex items-center gap-2 px-2 py-1.5 text-[9px] text-zinc-600">
-                        <span className="h-1.5 w-1.5 rounded-full bg-cyan-400/50" />
-                        Pricing Card
-                      </div>
+                      {[
+                        ["Analytics", true],
+                        ["Pricing Card", false],
+                        ["Navigation", false],
+                        ["Feature Grid", false],
+                      ].map(([name, active]) => (
+                        <div
+                          key={name}
+                          className={`flex items-center gap-2 rounded-md px-2 py-1.5 text-[9px] ${
+                            active
+                              ? "bg-white/[0.08] text-zinc-300"
+                              : "text-zinc-600"
+                          }`}
+                        >
+                          <span
+                            className={`h-1.5 w-1.5 rounded-full ${
+                              active ? "bg-cyan-400" : "bg-cyan-400/40"
+                            }`}
+                          />
+                          {name}
+                        </div>
+                      ))}
                     </div>
                   </div>
                 </aside>
 
                 {/* Editor / AI */}
                 <div className="min-w-0 bg-[#08080a]">
-                  <div className="flex h-9 items-center border-b border-white/[0.07] px-3">
+                  {/* Tabs */}
+                  <div className="flex h-9 items-center justify-between border-b border-white/[0.07] px-3">
                     <div className="flex items-center gap-1">
                       <span className="border-b border-violet-400 px-2.5 py-2.5 text-[9px] text-violet-300">
                         JSX
@@ -113,23 +133,29 @@ export default function ProductShowcase() {
                         AI
                       </span>
                     </div>
+
+                    <div className="hidden rounded-md border border-white/[0.06] px-2 py-1 text-[8px] text-zinc-700 sm:block">
+                      REACT
+                    </div>
                   </div>
 
+                  {/* Model */}
                   <div className="border-b border-white/[0.07] px-3 py-2.5">
-                    <div className="text-[8px] text-zinc-600">
+                    <div className="flex items-center gap-1.5 text-[8px] text-zinc-600">
+                      <Sparkles className="h-2.5 w-2.5 text-violet-400" />
                       Gemini 3.5 Flash-Lite
                     </div>
                   </div>
 
-                  <div className="space-y-4 p-3 sm:p-4">
-                    {/* User message */}
+                  <div className="space-y-3 p-3 sm:p-4">
+                    {/* Prompt */}
                     <div className="flex justify-end">
-                      <div className="max-w-[85%] rounded-xl rounded-br-sm bg-violet-600 px-3 py-2 text-[9px] leading-4 text-white">
-                        Create a simple button test component
+                      <div className="max-w-[88%] rounded-xl rounded-br-sm bg-violet-600 px-3 py-2 text-[9px] leading-4 text-white">
+                        Create a modern analytics dashboard
                       </div>
                     </div>
 
-                    {/* AI response */}
+                    {/* Response */}
                     <div className="rounded-xl rounded-tl-sm border border-white/[0.07] bg-white/[0.025] p-3">
                       <div className="flex items-center gap-1.5 text-[8px] text-zinc-500">
                         <Sparkles className="h-2.5 w-2.5 text-violet-400" />
@@ -137,16 +163,16 @@ export default function ProductShowcase() {
                       </div>
 
                       <p className="mt-2 text-[9px] leading-4 text-zinc-400">
-                        Created an interactive button test component with click
-                        tracking and a success state.
+                        Built a responsive dashboard with metrics, activity, and
+                        revenue visualization.
                       </p>
                     </div>
 
-                    {/* Compact code */}
+                    {/* Code */}
                     <div className="overflow-hidden rounded-xl border border-white/[0.07] bg-[#0b0b0e]">
                       <div className="flex items-center justify-between border-b border-white/[0.06] px-3 py-2">
                         <span className="text-[8px] text-zinc-600">
-                          ButtonTest.jsx
+                          Analytics.jsx
                         </span>
 
                         <Copy className="h-2.5 w-2.5 text-zinc-700" />
@@ -158,24 +184,32 @@ export default function ProductShowcase() {
                             export default
                           </span>{" "}
                           <span className="text-zinc-400">
-                            function ButtonTest()
+                            function Dashboard()
                           </span>
                         </div>
 
                         <div className="pl-3 text-zinc-600">return (</div>
 
-                        <div className="pl-6 text-fuchsia-300">&lt;button</div>
+                        <div className="pl-6 text-fuchsia-300">&lt;main</div>
 
                         <div className="pl-9">
                           <span className="text-emerald-300">className</span>
                           <span className="text-zinc-700">=</span>
                           <span className="text-yellow-200">
-                            "rounded-xl bg-violet..."
+                            "grid gap-4 md:grid-cols-3"
                           </span>
                         </div>
 
+                        <div className="pl-9 text-zinc-500">
+                          &lt;MetricCard /&gt;
+                        </div>
+
+                        <div className="pl-9 text-zinc-500">
+                          &lt;RevenueChart /&gt;
+                        </div>
+
                         <div className="pl-6 text-fuchsia-300">
-                          &gt;Test Button&lt;/button&gt;
+                          &lt;/main&gt;
                         </div>
 
                         <div className="pl-3 text-zinc-600">)</div>
@@ -197,28 +231,129 @@ export default function ProductShowcase() {
                     </span>
                   </div>
 
-                  <div className="flex h-[270px] items-center justify-center bg-[#f3f5f7] p-5">
-                    <div className="w-full max-w-[195px] rounded-xl border border-zinc-200 bg-white p-4 shadow-[0_15px_35px_rgba(0,0,0,0.10)]">
-                      <div className="mx-auto flex h-9 w-9 items-center justify-center rounded-full bg-violet-50">
-                        <span className="text-sm text-violet-500">✓</span>
+                  {/* Fixed preview stage */}
+                  <div className="flex h-[280px] items-center justify-center bg-[#f3f5f7] p-4 sm:h-[310px]">
+                    <div className="w-full max-w-[225px] overflow-hidden rounded-[15px] border border-zinc-200 bg-white shadow-[0_18px_45px_rgba(0,0,0,0.12)]">
+                      {/* Dashboard header */}
+                      <div className="border-b border-zinc-100 px-3 py-3">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <div className="text-[7px] font-medium uppercase tracking-[0.14em] text-violet-500">
+                              Overview
+                            </div>
+
+                            <div className="mt-1 text-[12px] font-semibold tracking-tight text-zinc-900">
+                              Analytics
+                            </div>
+                          </div>
+
+                          <div className="flex h-6 w-6 items-center justify-center rounded-lg bg-zinc-900">
+                            <BarChart3 className="h-3 w-3 text-white" />
+                          </div>
+                        </div>
                       </div>
 
-                      <div className="mt-3 text-center">
-                        <div className="text-[12px] font-semibold text-zinc-900">
-                          Button Test
+                      {/* Stats */}
+                      <div className="grid grid-cols-2 gap-2 p-3">
+                        <div className="rounded-xl border border-zinc-200 bg-zinc-50 p-2.5">
+                          <div className="flex items-center justify-between">
+                            <span className="text-[7px] text-zinc-400">
+                              Revenue
+                            </span>
+                            <TrendingUp className="h-2.5 w-2.5 text-emerald-500" />
+                          </div>
+
+                          <div className="mt-1 text-[13px] font-semibold text-zinc-900">
+                            $48.2k
+                          </div>
+
+                          <div className="mt-0.5 text-[6px] font-medium text-emerald-500">
+                            +12.4%
+                          </div>
                         </div>
 
-                        <div className="mx-auto mt-2 max-w-[145px] text-[8px] leading-3.5 text-zinc-400">
-                          Click the button to verify interactions.
+                        <div className="rounded-xl border border-zinc-200 bg-zinc-50 p-2.5">
+                          <div className="flex items-center justify-between">
+                            <span className="text-[7px] text-zinc-400">
+                              Users
+                            </span>
+                            <Users className="h-2.5 w-2.5 text-violet-500" />
+                          </div>
+
+                          <div className="mt-1 text-[13px] font-semibold text-zinc-900">
+                            12.4k
+                          </div>
+
+                          <div className="mt-0.5 text-[6px] font-medium text-emerald-500">
+                            +8.7%
+                          </div>
                         </div>
                       </div>
 
-                      <div className="mt-4 rounded-lg bg-violet-600 py-2 text-center text-[8px] font-semibold text-white">
-                        Test Button
+                      {/* Chart */}
+                      <div className="mx-3 rounded-xl border border-zinc-200 p-2.5">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <div className="text-[7px] font-medium text-zinc-600">
+                              Revenue
+                            </div>
+
+                            <div className="mt-0.5 text-[6px] text-zinc-400">
+                              Last 30 days
+                            </div>
+                          </div>
+
+                          <div className="text-[6px] font-medium text-emerald-500">
+                            +12.4%
+                          </div>
+                        </div>
+
+                        <div className="mt-3 flex h-14 items-end gap-1">
+                          {[30, 42, 35, 55, 47, 62, 52, 68, 61, 76, 69, 88].map(
+                            (height, index) => (
+                              <div
+                                key={index}
+                                className="flex-1 rounded-t bg-gradient-to-t from-violet-500/80 to-fuchsia-400/80"
+                                style={{ height: `${height}%` }}
+                              />
+                            ),
+                          )}
+                        </div>
                       </div>
 
-                      <div className="mt-3 rounded-lg bg-zinc-50 px-2 py-2 text-center text-[8px] text-zinc-400">
-                        No clicks yet.
+                      {/* Recent activity */}
+                      <div className="mx-3 my-3 overflow-hidden rounded-xl border border-zinc-200">
+                        <div className="flex items-center justify-between border-b border-zinc-100 px-2.5 py-2">
+                          <span className="text-[7px] font-medium text-zinc-600">
+                            Recent activity
+                          </span>
+
+                          <MoreHorizontal className="h-2.5 w-2.5 text-zinc-400" />
+                        </div>
+
+                        {[
+                          ["New customer", "2m ago"],
+                          ["Payment received", "8m ago"],
+                        ].map(([label, time]) => (
+                          <div
+                            key={label}
+                            className="flex items-center gap-2 px-2.5 py-2"
+                          >
+                            <div className="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-50">
+                              <Check className="h-2.5 w-2.5 text-emerald-500" />
+                            </div>
+
+                            <div className="min-w-0 flex-1">
+                              <div className="text-[7px] font-medium text-zinc-600">
+                                {label}
+                              </div>
+
+                              <div className="mt-0.5 text-[6px] text-zinc-400">
+                                {time}
+                              </div>
+                            </div>
+                          </div>
+                        ))}
                       </div>
                     </div>
                   </div>
@@ -227,7 +362,7 @@ export default function ProductShowcase() {
 
               {/* Footer */}
               <div className="flex items-center justify-between border-t border-white/[0.07] px-3 py-2 text-[8px] text-zinc-700 sm:px-4">
-                <span>Button Test</span>
+                <span>Analytics</span>
 
                 <div className="flex items-center gap-3">
                   <span>React</span>
