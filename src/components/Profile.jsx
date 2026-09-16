@@ -67,7 +67,7 @@ const Profile = ({ user }) => {
   const email = user?.email || "";
 
   return (
-    <div ref={containerRef} className="relative z-[105]">
+    <div ref={containerRef} className="relative z-105 mr-2 rounded-full border">
       <button
         type="button"
         aria-label="Open account menu"
