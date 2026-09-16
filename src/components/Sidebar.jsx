@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { useEditorContext } from "@/context/EditorContext";
 import { useConsole } from "@/context/ConsoleContext";
 import { AI_MODELS } from "@/ai/models";
+import Image from "next/image";
 export default function Sidebar({ isMobile }) {
   // const pathname = usePathname();
   console.log(isMobile);
@@ -149,7 +150,7 @@ export default function Sidebar({ isMobile }) {
     <aside
       className={`${
         isMobile ? "absolute" : "relative"
-      } z-50 flex h-full flex-col overflow-hidden border-r rounded-2xl border-darkBorder bg-transparent transition-all duration-150 ${
+      } flex h-full flex-col overflow-hidden border-r rounded-2xl border-darkBorder bg-transparent transition-all duration-150 ${
         sidebarCollapsed ? (isMobile ? "w-0" : "w-12") : "w-70"
       }`}
     >
@@ -239,13 +240,21 @@ export default function Sidebar({ isMobile }) {
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center text-nowrap gap-3">
                     {c.targetTech === "REACT" && (
-                      <img className="size-3.5" src="/jsx.svg" alt="React" />
+                      <Image
+                        className="size-3.5"
+                        src="/jsx.svg"
+                        width={14}
+                        height={14}
+                        alt="React"
+                      />
                     )}
 
                     {c.targetTech === "HTML" && (
-                      <img
+                      <Image
                         className="size-3.5"
                         src="/globe2_red.svg"
+                        width={14}
+                        height={14}
                         alt="Web Bundle"
                       />
                     )}
@@ -289,28 +298,6 @@ export default function Sidebar({ isMobile }) {
           ))}
         </div>
       </div>
-
-      {/* Footer */}
-
-      {!sidebarCollapsed && (
-        <div className="border-t border-lightBorder p-3 mt-auto">
-          <div className="rounded-2xl border border-lightBorder bg-gradient-to-br from-white/5 to-white/[0.02] p-4">
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-pink-700 to-purple-700">
-                <Sparkles size={18} className="text-white" />
-              </div>
-
-              <div>
-                <p className="text-sm font-medium text-white">
-                  Gemini 3.5 Flash-Lite
-                </p>
-
-                <p className="text-xs text-neutral-400">Ready to generate</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </aside>
   );
 }

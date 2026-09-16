@@ -1,103 +1,195 @@
 "use client";
-import { Crown, LogOut } from "lucide-react";
-import React, { useState } from "react";
-import { authClient } from "@/lib/auth-client";
+
+import Image from "next/image";
+import { useEffect, useRef, useState } from "react";
+import { Crown, LogOut, Settings2 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { authClient } from "@/lib/auth-client";
 
 const Profile = ({ user }) => {
   const router = useRouter();
-  const [showProfileModal, setShowProfileModal] = useState(false);
+  const containerRef = useRef(null);
+
+  const [open, setOpen] = useState(false);
+  const [signingOut, setSigningOut] = useState(false);
+
+  /*
+   * Close the menu when clicking outside.
+   */
+  useEffect(() => {
+    const handlePointerDown = (event) => {
+      if (!containerRef.current?.contains(event.target)) {
+        setOpen(false);
+      }
+    };
+
+    document.addEventListener("pointerdown", handlePointerDown);
+
+    return () => {
+      document.removeEventListener("pointerdown", handlePointerDown);
+    };
+  }, []);
+
+  /*
+   * Close the menu with Escape.
+   */
+  useEffect(() => {
+    if (!open) return;
+
+    const handleKeyDown = (event) => {
+      if (event.key === "Escape") {
+        setOpen(false);
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [open]);
+
   const handleSignOut = async () => {
-    await authClient.signOut();
-    router.push("/sign-in");
+    if (signingOut) return;
+
+    setSigningOut(true);
+
+    try {
+      await authClient.signOut();
+      router.push("/sign-in");
+      router.refresh();
+    } finally {
+      setSigningOut(false);
+    }
   };
+
+  const displayName = user?.name || "ComponentLab user";
+  const email = user?.email || "";
+
   return (
-    <div className="h-full aspect-square mr-1 z-105">
+    <div ref={containerRef} className="relative z-[105]">
       <button
-        onClick={() => setShowProfileModal(true)}
-        className="border dark:border-white rounded-full cursor-pointer"
+        type="button"
+        aria-label="Open account menu"
+        aria-haspopup="menu"
+        aria-expanded={open}
+        onClick={() => setOpen((current) => !current)}
+        className={[
+          "relative flex h-9 w-9 items-center justify-center rounded-full",
+          "border bg-white/[0.04] transition-all duration-200",
+          "cursor-pointer outline-none",
+          "focus-visible:ring-2 focus-visible:ring-violet-400/50",
+          open
+            ? "border-violet-400/40 ring-4 ring-violet-400/[0.08]"
+            : "border-white/[0.09] hover:border-white/[0.18]",
+        ].join(" ")}
       >
-        <img
-          src={user.image}
-          alt=""
-          className="rounded-full contain-content h-full w-full bg-linear-to-br from-pink-500 to-purple-500 bg-clip-border border-3 border-transparent"
+        <Image
+          src={user?.image || "/default-avatar.png"}
+          width={36}
+          height={36}
+          alt={displayName}
+          className="h-full w-full rounded-full object-cover"
+        />
+
+        {/* Signed-in indicator */}
+        <span
+          aria-hidden="true"
+          className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full border-2 border-[#0b0b0f] bg-emerald-400"
         />
       </button>
-      {showProfileModal && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
-          <div className="bg-white/10 backdrop-blur-xl rounded-2xl border border-white/20 w-full max-w-md mx-4 shadow-2xl">
-            <div className="p-6">
-              <div className="flex items-center space-x-4 mb-6">
-                <div className="w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-500 p-1 rounded-full flex items-center justify-center">
-                  <img
-                    src={user.image}
-                    className="h-full aspect-square rounded-full"
-                    alt=""
-                  />
-                </div>
-                <div>
-                  <h3 className="text-xl font-semibold text-white">
-                    {user.name}
-                  </h3>
-                  <p className="text-gray-400">{user.email}</p>
-                </div>
-              </div>
 
-              <div className="space-y-3 mb-6">
-                {/* <div className="flex items-center justify-between p-3 bg-white/5 rounded-lg border border-white/10">
-                  <span className="text-gray-300">Components Created</span>
-                  <span className="text-white font-semibold">127</span>
-                </div> */}
-                {/* <div className="flex items-center justify-between p-3 bg-white/5 rounded-lg border border-white/10">
-                  <span className="text-gray-300">Libraries</span>
-                  <span className="text-white font-semibold">8</span>
-                </div> */}
-                <div className="flex items-center justify-between p-3 bg-white/5 rounded-lg border border-white/10">
-                  <span className="text-gray-300">Plan</span>
-                  <span className="text-purple-400 font-semibold">Free</span>
-                </div>
-              </div>
+      {/* ------------------------------------------------------------------ */}
+      {/* Account popover                                                     */}
+      {/* ------------------------------------------------------------------ */}
 
-              <div className="space-y-2 mb-6">
-                {/* <button className="w-full flex items-center space-x-3 p-3 hover:bg-white/10 rounded-lg transition-colors text-left">
-                  <Settings className="w-5 h-5 text-gray-400" />
-                  <span className="text-gray-300">Account Settings</span>
-                </button>
-                <button className="w-full flex items-center space-x-3 p-3 hover:bg-white/10 rounded-lg transition-colors text-left">
-                  <Heart className="w-5 h-5 text-gray-400" />
-                  <span className="text-gray-300">Liked Components</span>
-                </button> */}
-                <button
-                  onClick={() => router.push("/upgrade")}
-                  className="w-full flex items-center justify-between p-3 rounded-lg transition-colors text-left text-fuchsia-300 hover:bg-fuchsia-500/10 cursor-pointer group"
-                >
-                  <span className="flex items-center gap-3">
-                    <Crown className="w-5 h-5 text-fuchsia-400" />
-                    <span className="font-medium">Upgrade to Pro</span>
-                  </span>
+      {open && (
+        <div
+          role="menu"
+          className="absolute right-0 top-[calc(100%+10px)] w-[292px] overflow-hidden rounded-2xl border border-white/[0.09] bg-[#101014]/95 shadow-[0_24px_80px_rgba(0,0,0,0.5)] backdrop-blur-xl"
+        >
+          {/* Account identity */}
+          <div className="p-4">
+            <div className="flex items-center gap-3">
+              <Image
+                src={user?.image || "/default-avatar.png"}
+                width={44}
+                height={44}
+                alt=""
+                className="h-11 w-11 shrink-0 rounded-full object-cover ring-1 ring-white/[0.08]"
+              />
 
-                  <span className="text-xs text-fuchsia-300 opacity-70 group-hover:opacity-100">
-                    PRO
-                  </span>
-                </button>
-              </div>
+              <div className="min-w-0">
+                <p className="truncate text-sm font-semibold text-white">
+                  {displayName}
+                </p>
 
-              <div className="border-t border-white/10 pt-4">
-                <button
-                  onClick={handleSignOut}
-                  className="w-full flex items-center space-x-3 p-3 hover:bg-red-500/10 rounded-lg transition-colors text-left text-red-400 cursor-pointer"
-                >
-                  <LogOut className="w-5 h-5" />
-                  <span>Sign Out</span>
-                </button>
+                <p className="mt-1 truncate text-xs text-zinc-500">{email}</p>
               </div>
             </div>
+          </div>
 
+          {/* Plan */}
+          <div className="border-y border-white/[0.06] px-4 py-3.5">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-zinc-600">
+                  Plan
+                </p>
+
+                <p className="mt-1 text-sm font-medium text-zinc-200">Free</p>
+              </div>
+
+              <span className="rounded-full border border-white/[0.07] bg-white/[0.035] px-2.5 py-1 text-[10px] font-medium text-zinc-500">
+                Current
+              </span>
+            </div>
+          </div>
+
+          {/* Actions */}
+          <div className="p-2">
+            {/* Upgrade */}
             <button
-              onClick={() => setShowProfileModal(false)}
-              className="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors cursor-pointer"
+              type="button"
+              role="menuitem"
+              onClick={() => {
+                setOpen(false);
+                router.push("/upgrade");
+              }}
+              className="group flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left transition hover:bg-violet-400/[0.06] cursor-pointer"
             >
-              ×
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-violet-400/15 bg-violet-400/[0.06]">
+                <Crown className="h-4 w-4 text-violet-300" />
+              </div>
+
+              <div className="min-w-0 flex-1">
+                <p className="text-sm font-medium text-zinc-200">
+                  Upgrade to Pro
+                </p>
+
+                <p className="mt-0.5 text-xs text-zinc-600">
+                  Increase your AI capacity
+                </p>
+              </div>
+            </button>
+          </div>
+
+          {/* Sign out */}
+          <div className="border-t border-white/[0.06] p-2">
+            <button
+              type="button"
+              role="menuitem"
+              onClick={handleSignOut}
+              disabled={signingOut}
+              className="group flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left transition hover:bg-red-400/[0.05] disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer"
+            >
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-red-400/10 bg-red-400/[0.035]">
+                <LogOut className="h-4 w-4 text-red-400/80 transition-colors group-hover:text-red-300" />
+              </div>
+
+              <span className="text-sm font-medium text-red-400/80 transition-colors group-hover:text-red-300">
+                {signingOut ? "Signing out…" : "Sign out"}
+              </span>
             </button>
           </div>
         </div>

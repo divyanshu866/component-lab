@@ -1,17 +1,8 @@
 "use client";
-import React, { useState, useRef } from "react";
+import { useState, useRef } from "react";
 import { useEditorContext } from "@/context/EditorContext";
 import { SlidersHorizontal } from "lucide-react";
-import {
-  ArrowUp,
-  ChevronUp,
-  Command,
-  MoveUp,
-  Play,
-  PlayCircle,
-  Sparkles,
-  Zap,
-} from "lucide-react";
+import { ArrowUp } from "lucide-react";
 import { useConsole } from "@/context/ConsoleContext";
 import { AI_MODELS } from "@/ai/models";
 import ChatList from "./ChatList";
@@ -922,7 +913,7 @@ const AIEditor = ({ user, isMobile }) => {
     >
       {/* Model Selection */}
       <div
-        className={`${reworkUI ? "bg-linear-to-b from-black to-black/50 backdrop-blur-sm" : "bg-transparent"} absolute flex w-full h-12 justify-start items-center top-0 left-0 z-50`}
+        className={`${reworkUI ? "bg-linear-to-b from-black to-black/50 backdrop-blur-sm" : "bg-transparent"} absolute flex w-full h-12 justify-start items-center top-0 left-0 z-10`}
       >
         <select
           value={selectedModel}
