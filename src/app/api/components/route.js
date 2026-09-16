@@ -1,13 +1,13 @@
 // app/api/components/route.ts
 import { NextResponse } from "next/server";
-import { auth } from "@/lib/auth"; // ← your NextAuth v5 helper
+import { getSession } from "@/lib/get-session";
 import { prisma } from "@/lib/prisma";
 import { PromptRole, TargetTech } from "@/generated/prisma/client";
-import { create } from "domain";
+
 export async function POST(request) {
   // 1. Check session
 
-  const session = await auth(); // ← reads cookies from `request` internally
+  const session = await getSession(); // ← reads cookies from `request` internally
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
@@ -126,7 +126,7 @@ export async function POST(request) {
 
 // app/api/components/route.ts
 export async function GET() {
-  const session = await auth();
+  const session = await getSession();
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }

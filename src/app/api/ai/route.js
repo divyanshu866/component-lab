@@ -4,7 +4,7 @@ import { mockStream, mockReactText, mockText } from "./mockStreamGenerator";
 import { buildNeutralEditContext } from "./buildEditContents";
 import { buildNeutralGenerateContext } from "./buildGenerateContents";
 import { resolveMode } from "./modeClassifier";
-
+import { getSession } from "@/lib/get-session";
 const mockResponse = false; // Set to true to use mock response for testing
 const chunkSize = 2; // Set the chunk size for the mock stream
 const delay = 1; // Set the delay between chunks in milliseconds
@@ -44,6 +44,12 @@ const EDIT_SYSTEM_PROMPT = {
 
 //API GENERATE NEW COMPONENT
 export async function POST(req) {
+  const session = await getSession();
+
+  if (!session) {
+    return Response.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   const { messages, targetTech, generationMode, model } = await req.json();
 
   //Build neutral Contents
@@ -86,6 +92,12 @@ export async function POST(req) {
 
 //API MODIFY EXISTING COMPONENT
 export async function PATCH(req) {
+  const session = await getSession();
+
+  if (!session) {
+    return Response.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   const {
     name,
     messages,

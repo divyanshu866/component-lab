@@ -1,21 +1,32 @@
-import NextAuth from "next-auth";
-import GitHub from "next-auth/providers/github";
-import { PrismaAdapter } from "@auth/prisma-adapter";
-import { prisma } from "@/lib/prisma";
+import { betterAuth } from "better-auth";
+import { prismaAdapter } from "better-auth/adapters/prisma";
+import { prisma } from "@/lib/prisma"; // your prisma client instance
+import { nextCookies } from "better-auth/next-js";
 
-export const { auth, handlers, signIn } = NextAuth({
-  adapter: PrismaAdapter(prisma),
-  providers: [GitHub],
+export const auth = betterAuth({
+  database: prismaAdapter(prisma, {
+    provider: "postgresql", // or "mysql", "sqlite", ...etc
+  }),
+
+  // Cache session cookies for 5 minutes to reduce database lookups
   session: {
-    strategy: "database", // optional, but recommended if you’re gating freemium features
+    cookieCache: {
+      enabled: true, // Enable cookie caching
+      maxAge: 60 * 5, // Cache duration in seconds (5 minutes)
+    },
   },
+  //Enables setting cookies in the response headers for Next.js API routes
+  plugins: [nextCookies()],
 
-  callbacks: {
-    async session({ session, user }) {
-      // expose the user.id (and whatever else you need) to the client
-      session.user.id = user.id;
-      session.user.email = user.email!;
-      return session;
+  // Social providers configuration
+  socialProviders: {
+    google: {
+      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+    },
+    github: {
+      clientId: process.env.GITHUB_CLIENT_ID!,
+      clientSecret: process.env.GITHUB_CLIENT_SECRET!,
     },
   },
 });

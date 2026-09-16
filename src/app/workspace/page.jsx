@@ -3,9 +3,10 @@ import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 
 import WorkspaceClient from "@/components/WorkspaceClient";
+import { getSession } from "@/lib/get-session";
 
 export default async function workspace() {
-  const session = await auth();
+  const session = await getSession();
 
   ("use client");
   if (!session) redirect("/sign-in");

@@ -1,12 +1,16 @@
 "use client";
 import { Crown, LogOut } from "lucide-react";
 import React, { useState } from "react";
-import { signOut } from "next-auth/react";
+import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 
 const Profile = ({ user }) => {
   const router = useRouter();
   const [showProfileModal, setShowProfileModal] = useState(false);
+  const handleSignOut = async () => {
+    await authClient.signOut();
+    router.push("/sign-in");
+  };
   return (
     <div className="h-full aspect-square mr-1 z-105">
       <button
@@ -80,7 +84,7 @@ const Profile = ({ user }) => {
 
               <div className="border-t border-white/10 pt-4">
                 <button
-                  onClick={signOut}
+                  onClick={handleSignOut}
                   className="w-full flex items-center space-x-3 p-3 hover:bg-red-500/10 rounded-lg transition-colors text-left text-red-400 cursor-pointer"
                 >
                   <LogOut className="w-5 h-5" />

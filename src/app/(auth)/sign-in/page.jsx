@@ -1,6 +1,7 @@
 import Link from "next/link";
-import SignInGithub from "@/components/github-sign-in";
-import { auth } from "@/lib/auth";
+import SignInGithub from "@/components/OAuth/github-sign-in";
+import SignInGoogle from "@/components/OAuth/google-sign-in";
+import { getSession } from "@/lib/get-session";
 import {
   ArrowLeft,
   ArrowUpRight,
@@ -16,7 +17,7 @@ export const metadata = {
 };
 
 export default async function SignInPage() {
-  const session = await auth();
+  const session = await getSession();
 
   if (session) redirect("/workspace");
 
@@ -177,7 +178,8 @@ export default async function SignInPage() {
                   </p>
                 </div>
 
-                <div className="rounded-2xl border border-violet-400/20 bg-violet-400/[0.04] p-1.5 shadow-lg shadow-black/20">
+                <div className="flex flex-col gap-4 rounded-2xl border border-violet-400/20 bg-violet-400/4 p-1.5 shadow-lg shadow-black/20">
+                  <SignInGoogle />
                   <SignInGithub />
                 </div>
 

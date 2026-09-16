@@ -8,9 +8,11 @@ import CTASection from "@/components/upgrade/CTASection";
 
 import Navbar from "@/components/Landing/Navbar";
 
-import { auth } from "@/lib/auth";
+import { getSession } from "@/lib/get-session";
+
 export default async function UpgradePage() {
-  const session = await auth();
+  const session = await getSession();
+
   ("use client");
   // if (!session) redirect("/sign-in");
   const userId = session?.user?.id || null;
