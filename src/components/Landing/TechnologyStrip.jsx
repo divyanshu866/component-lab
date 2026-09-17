@@ -17,7 +17,7 @@ const technologies = [
 export default function TechnologyStrip() {
   return (
     // EXTRACT THIS COMPONENT → components/Landing/TechnologyStrip.jsx
-    <section className="border-y border-white/8 bg-white/1.5">
+    <section className="border-y border-white/8 bg-white/1.5 -mt-20 mb-5">
       <div className="mx-auto flex max-w-7xl flex-col gap-5 px-5 py-8 sm:flex-row sm:items-center sm:px-8 lg:px-10">
         {/* Section label */}
         <div className="shrink-0">

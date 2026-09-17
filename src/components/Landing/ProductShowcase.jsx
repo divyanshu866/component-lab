@@ -196,7 +196,7 @@ export default function ProductShowcase() {
                           <span className="text-emerald-300">className</span>
                           <span className="text-zinc-700">=</span>
                           <span className="text-yellow-200">
-                            "grid gap-4 md:grid-cols-3"
+                            {"grid gap-4 md:grid-cols-3"}
                           </span>
                         </div>
 
