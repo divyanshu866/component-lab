@@ -3,6 +3,7 @@ import { RefreshCcw, Save, SquareTerminal } from "lucide-react";
 import { useConsole } from "@/context/ConsoleContext";
 import { useEditorContext } from "@/context/EditorContext";
 import Profile from "@/components/Profile";
+import Image from "next/image";
 export default function Navbar({ user }) {
   const { showConsole, setShowConsole, setConsoleLogs } = useConsole();
   const {
@@ -52,7 +53,7 @@ export default function Navbar({ user }) {
   }
 
   return (
-    <nav className="h-14 bg-brand pr-1 py-2 border-b border-gray-200 dark:border-darkBorder z-50">
+    <nav className="h-14 bg-brand pr-1 py-2 border-b border-gray-200 dark:border-lightBorder z-50">
       <div className="w-full h-full flex items-center justify-between">
         <div className="flex items-center w-max justify-start gap-0 text-white font-medium">
           {/* <button
@@ -76,22 +77,30 @@ export default function Navbar({ user }) {
             }}
           >
             {/* Logo */}
-            <img
+            <Image
               src="/newlogo.svg"
+              width={40}
+              height={40}
               alt="Logo"
-              className="absolute inset-1 w-10 h-10 opacity-100 transition-opacity duration-150 group-hover:opacity-0"
+              className="absolute inset-1 opacity-100 transition-opacity duration-150 group-hover:opacity-0"
             />
 
             {/* Sidebar toggle */}
-            <img
+            <Image
               src="/sidebar.svg"
               alt="sidebar toggle"
               className="absolute inset-2.5 opacity-0 transition-opacity duration-150 group-hover:opacity-40"
-              width={"28px"}
-              height={"28px"}
+              width={28}
+              height={28}
             />
           </button>
-          <img src="/name.svg" alt="Logo" className="h-8 mb-1" />
+          <Image
+            src="/name.svg"
+            height={32}
+            width={150}
+            alt="Logo"
+            className="mb-1"
+          />
 
           <input
             type="text"
@@ -103,33 +112,53 @@ export default function Navbar({ user }) {
             }
             value={activeComponent.name}
             placeholder="Component Name"
-            className={`bg-gray-200 dark:bg-transparent outline-0 ml-11 py-2 px-3 w-[300PX] text-sm ${
+            className={`bg-gray-200 dark:bg-darkBorder text-center outline-0 ml-16 py-2 px-3 w-[300PX] text-sm ${
               !activeComponent?.name
-                ? "border-red-600/50"
+                ? "border-red-600/30"
                 : "border-gray-300 dark:border-lightBorder"
-            } border rounded-xl`}
+            } border rounded-lg`}
           />
         </div>
 
         <div className="flex items-center justify-between py-1 h-full gap-5">
-          <button
-            onClick={onSave}
-            className={`flex items-center px-2 h-full dark:text-neutral-100 dark:bg-linear-to-r dark:from-orange-600/80 dark:via-orange-400/80 dark:to-orange-400/80 border rounded-md dark:hover:to-orange-500/80 dark:border-orange-400 cursor-pointer`}
-          >
-            <Save className="w-4 h-4" />
-          </button>
-          <button
-            onClick={() => setShowConsole((prev) => !prev)}
-            className={`flex items-center px-2 h-full dark:text-neutral-100 dark:bg-linear-to-r dark:from-pink-500/80 dark:via-pink-400/80 dark:to-pink-400/80 border rounded-md dark:hover:to-pink-600/80 dark:border-pink-400 cursor-pointer`}
-          >
-            <SquareTerminal className="w-4 h-4" />
-          </button>
-          <button
-            onClick={reRender}
-            className="flex items-center justify-center px-4 mr-2 h-full border border-green-600 text-white rounded-md bg-linear-to-r from-green-800 to-green-700 hover:from-green-900  hover:to-green-800 transition-all cursor-pointer"
-          >
-            <RefreshCcw className="w-4 h-4" />
-          </button>
+          <div className="flex h-full items-center gap-2 mr-2">
+            {/* Save */}
+            <button
+              type="button"
+              onClick={onSave}
+              title="Save component"
+              aria-label="Save component"
+              className="group flex h-9 w-9 items-center justify-center rounded-lg border border-orange-400/35 bg-orange-400/12 text-orange-300 transition-all duration-150 hover:border-orange-300/60 hover:bg-orange-400/20 hover:text-orange-200 hover:shadow-[0_0_18px_rgba(251,146,60,0.14)] active:scale-95 cursor-pointer"
+            >
+              <Save className="h-4 w-4 transition-transform duration-150 group-hover:scale-110" />
+            </button>
+
+            {/* Console */}
+            <button
+              type="button"
+              onClick={() => setShowConsole((prev) => !prev)}
+              title="Toggle console"
+              aria-label="Toggle console"
+              className={`group flex h-9 w-9 items-center justify-center rounded-lg border transition-all duration-150 active:scale-95 cursor-pointer ${
+                showConsole
+                  ? "border-pink-300/65 bg-pink-400/18 text-pink-200 shadow-[0_0_20px_rgba(244,114,182,0.16)]"
+                  : "border-pink-400/35 bg-pink-400/12 text-pink-300 hover:border-pink-300/60 hover:bg-pink-400/20 hover:text-pink-200 hover:shadow-[0_0_18px_rgba(244,114,182,0.14)]"
+              }`}
+            >
+              <SquareTerminal className="h-4 w-4 transition-transform duration-150 group-hover:scale-110" />
+            </button>
+
+            {/* Re-render */}
+            <button
+              type="button"
+              onClick={reRender}
+              title="Refresh preview"
+              aria-label="Refresh preview"
+              className="group flex h-9 w-9 items-center justify-center rounded-lg border border-emerald-400/40 bg-emerald-400/13 text-emerald-300 transition-all duration-150 hover:border-emerald-300/65 hover:bg-emerald-400/21 hover:text-emerald-200 hover:shadow-[0_0_18px_rgba(52,211,153,0.14)] active:scale-95 cursor-pointer"
+            >
+              <RefreshCcw className="h-4 w-4 transition-transform duration-300 group-hover:rotate-90" />
+            </button>
+          </div>
           <Profile user={user} />
         </div>
       </div>

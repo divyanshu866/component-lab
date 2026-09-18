@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { useEditorContext } from "@/context/EditorContext";
 import { Maximize2, Minimize2 } from "lucide-react";
+import PreviewHeader from "./PreviewHeader";
 
 const ReactIFrame = ({ isMobile }) => {
   const {
@@ -26,14 +27,12 @@ const ReactIFrame = ({ isMobile }) => {
           : "w-0 opacity-0"
       } ${
         isMobile ? "" : ""
-      }  flex h-full justify-center items-center border-l rounded-2xl overflow-hidden border-gray-200 dark:border-darkBorder relative transition-all duration-200`}
+      }  flex flex-col h-full justify-center items-center border-l overflow-hidden border-gray-200 dark:border-darkBorder relative transition-all duration-200`}
     >
-      <button
-        onClick={() => setIsMaximised(!isMaximised)}
-        className="absolute top-2 right-2 z-10 bg-gray-200 dark:bg-darkSecondary text-gray-800 dark:text-gray-200 px-2 py-1 rounded hover:bg-gray-300 dark:hover:bg-darkBorder transition-all duration-150"
-      >
-        {isMaximised ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
-      </button>
+      <PreviewHeader
+        isMaximised={isMaximised}
+        setIsMaximised={setIsMaximised}
+      />
       <iframe
         key={previewKey}
         title="React Preview"

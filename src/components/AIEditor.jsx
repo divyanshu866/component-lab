@@ -1,7 +1,7 @@
 "use client";
 import { useState, useRef } from "react";
 import { useEditorContext } from "@/context/EditorContext";
-import { SlidersHorizontal } from "lucide-react";
+import { SlidersHorizontal, Sparkle, Sparkles } from "lucide-react";
 import { ArrowUp } from "lucide-react";
 import { useConsole } from "@/context/ConsoleContext";
 import { AI_MODELS } from "@/ai/models";
@@ -913,12 +913,13 @@ const AIEditor = ({ user, isMobile }) => {
     >
       {/* Model Selection */}
       <div
-        className={`${reworkUI ? "bg-linear-to-b from-black to-black/50 backdrop-blur-sm" : "bg-transparent"} absolute flex w-full h-12 justify-start items-center top-0 left-0 z-10`}
+        className={`${reworkUI ? "backdrop-blur-sm" : ""} ${reworkUI && "border-b"} absolute flex flex-nowrap bg-transparent w-full h-12 justify-start items-center text-xs px-2 pl-4 border-darkBorder gap-1 top-0 left-0 z-10`}
       >
+        <Sparkles width={16} height={16} className="text-violet-400" />
         <select
           value={selectedModel}
           onChange={(e) => setSelectedModel(e.target.value)}
-          className="w-full max-w-max text-left text-neutral-200 bg-transparent border-none outline-0 border-gray-300 dark:border-lightBorder rounded-lg py-0 my-0 mx-3 text-sm cursor-pointer"
+          className="w-full max-w-max text-left text-neutral-400 bg-transparent border-none outline-0 border-gray-300 dark:border-lightBorder cursor-pointer"
         >
           {AI_MODELS.map((model) => (
             <option key={model.value} value={model.value}>
@@ -987,13 +988,13 @@ const AIEditor = ({ user, isMobile }) => {
           </div>
 
           <div className="w-full h-full px-4">
-            {/* Full rounded single-line textarea / chat bar */}
+            {/* chat bar */}
 
             <div
-              className={`${isExpanded ? "flex-col" : "flex-row"} ${generationMode === "ASK" ? "border-green-500/30" : "border-lightBorder"} bg-neutral-900 border p-1 flex items-center justify-center rounded-xl`}
+              className={`${isExpanded ? "flex-col" : "flex-row"} ${generationMode === "ASK" ? "border-green-500/30" : reworkUI ? "border-lightBorder" : "border-white/15"} ${reworkUI ? "bg-[#151516]" : "bg-white/10"} border min-h-12 py-0 flex items-center justify-center rounded-xl`}
             >
               <textarea
-                className="flex items-center justify-center p-2 m-0 text-lg w-full bg-neutral-900 rounded-lg outline-0 resize-none"
+                className="flex items-center justify-center p-2 m-0 w-full rounded-lg outline-0 resize-none"
                 ref={promptAreaRef}
                 name=""
                 id=""

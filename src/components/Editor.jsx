@@ -1,5 +1,6 @@
 "use client";
 import ComponentEditor from "@/components/ComponentEditor";
+import AIEditorTabs from "@/components/AIEditorTabs";
 import EditorTabs from "@/components/EditorTabs";
 import AIEditor from "@/components/AIEditor";
 import { useEffect, useState } from "react";
@@ -131,94 +132,93 @@ const Editor = ({ user, isMobile }) => {
   return (
     <div
       className={`${
-        isMobile ? "w-full h-full absolute" : "w-0"
+        isMobile ? "w-full h-full absolute" : ""
       } ${isMaximised ? "hidden" : ""} flex flex-col flex-1 border-r-0 dark:border-lightBorder bg-transparent`}
     >
-      <div className="w-full h-full p-1 pb-0 pt-0 overflow-hidden">
-        <div className="flex h-full w-full flex-col overflow-hidden border-r border-darkBorder">
-          {/* EditorTabs Prefered Spot */}
-          <EditorTabs
-            activeEditor={activeEditor}
-            setActiveEditor={setActiveEditor}
-            targetTech={targetTech}
-            setTargetTech={setTargetTech}
-            activeComponentIndex={activeComponentIndex}
-          />
-          {/* AI Editor */}
-          <AIEditor
-            user={user}
-            isMobile={isMobile}
-            activeEditor={activeEditor}
-          />
-          {/* Editors */}
-          {targetTech === "REACT" && (
-            <div
-              className={`${
-                activeEditor == "JSX" ? "" : "hidden"
-              } flex flex-col flex-1 h-full py-4 overflow-hidden relative`}
-            >
-              <div className="flex-1 h-0">
-                <ComponentEditor
-                  code={activeComponent.jsx}
-                  onChange={(val) =>
-                    setActiveComponent((prev) => ({ ...prev, jsx: val }))
-                  }
-                  language="jsx"
-                />
-              </div>
-            </div>
-          )}
-          {targetTech === "HTML" && (
-            <div
-              className={`${
-                activeEditor == "HTML" ? "" : "hidden"
-              } flex flex-col flex-1 h-full py-4 overflow-hidden relative`}
-            >
-              <div className="flex-1 h-0">
-                <ComponentEditor
-                  code={activeComponent.html}
-                  onChange={(val) =>
-                    setActiveComponent((prev) => ({ ...prev, html: val }))
-                  }
-                  language="html"
-                />
-              </div>
-            </div>
-          )}
-
+      <div className="flex h-full w-full flex-col overflow-hidden border-r border-darkBorder">
+        <AIEditorTabs
+          activeEditor={activeEditor}
+          setActiveEditor={setActiveEditor}
+          targetTech={targetTech}
+          setTargetTech={setTargetTech}
+          activeComponentIndex={activeComponentIndex}
+        />
+        {/* <EditorTabs
+          activeEditor={activeEditor}
+          setActiveEditor={setActiveEditor}
+          targetTech={targetTech}
+          setTargetTech={setTargetTech}
+          activeComponentIndex={activeComponentIndex}
+        /> */}
+        {/* AI Editor */}
+        <AIEditor user={user} isMobile={isMobile} activeEditor={activeEditor} />
+        {/* Editors */}
+        {targetTech === "REACT" && (
           <div
             className={`${
-              activeEditor == "CSS" ? "" : "hidden"
-            } flex flex-col flex-1 py-4 overflow-hidden h-full`}
+              activeEditor == "JSX" ? "" : "hidden"
+            } flex flex-col flex-1 h-full py-4 overflow-hidden relative`}
           >
             <div className="flex-1 h-0">
               <ComponentEditor
-                code={activeComponent.css}
+                code={activeComponent.jsx}
                 onChange={(val) =>
-                  setActiveComponent((prev) => ({ ...prev, css: val }))
+                  setActiveComponent((prev) => ({ ...prev, jsx: val }))
                 }
-                language="css"
+                language="jsx"
               />
             </div>
           </div>
-          {targetTech === "HTML" && (
-            <div
-              className={`${
-                activeEditor == "JS" ? "" : "hidden"
-              } flex flex-col h-full flex-1 py-4 overflow-hidden`}
-            >
-              <div className="flex-1 h-0">
-                <ComponentEditor
-                  code={activeComponent.js}
-                  onChange={(val) =>
-                    setActiveComponent((prev) => ({ ...prev, js: val }))
-                  }
-                  language="javascript"
-                />
-              </div>
+        )}
+        {targetTech === "HTML" && (
+          <div
+            className={`${
+              activeEditor == "HTML" ? "" : "hidden"
+            } flex flex-col flex-1 h-full py-4 overflow-hidden relative`}
+          >
+            <div className="flex-1 h-0">
+              <ComponentEditor
+                code={activeComponent.html}
+                onChange={(val) =>
+                  setActiveComponent((prev) => ({ ...prev, html: val }))
+                }
+                language="html"
+              />
             </div>
-          )}
+          </div>
+        )}
+        <div
+          className={`${
+            activeEditor == "CSS" ? "" : "hidden"
+          } flex flex-col flex-1 py-4 overflow-hidden h-full`}
+        >
+          <div className="flex-1 h-0">
+            <ComponentEditor
+              code={activeComponent.css}
+              onChange={(val) =>
+                setActiveComponent((prev) => ({ ...prev, css: val }))
+              }
+              language="css"
+            />
+          </div>
         </div>
+        {targetTech === "HTML" && (
+          <div
+            className={`${
+              activeEditor == "JS" ? "" : "hidden"
+            } flex flex-col h-full flex-1 py-4 overflow-hidden`}
+          >
+            <div className="flex-1 h-0">
+              <ComponentEditor
+                code={activeComponent.js}
+                onChange={(val) =>
+                  setActiveComponent((prev) => ({ ...prev, js: val }))
+                }
+                language="javascript"
+              />
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -73,7 +73,7 @@ export default function ComponentEditor({ code, onChange, language }) {
   }, [code, isGenerating]);
 
   return (
-    <div className="relative flex items-center justify-center h-full">
+    <div className="relative flex items-center justify-center h-full bg-[#070708]">
       <Editor
         height="100%"
         defaultLanguage={editorLanguage} // "jsx", "html", "css", or "javascript"

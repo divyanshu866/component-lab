@@ -150,19 +150,15 @@ export default function Sidebar({ isMobile }) {
     <aside
       className={`${
         isMobile ? "absolute" : "relative"
-      } flex h-full flex-col overflow-hidden border-r rounded-2xl border-darkBorder bg-transparent transition-all duration-150 ${
-        sidebarCollapsed ? (isMobile ? "w-0" : "w-12") : "w-70"
+      } flex h-full flex-col overflow-hidden border-r rounded-xl border-darkBorder bg-backgroundLight transition-all duration-150 ${
+        sidebarCollapsed ? (isMobile ? "w-0" : "w-12") : "w-65"
       }`}
     >
-      {/* Glow */}
-      {/* <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="absolute -left-20 top-10 h-56 w-56 rounded-full bg-purple-600/10 blur-3xl" />
-        <div className="absolute bottom-0 right-0 h-48 w-48 rounded-full bg-pink-500/10 blur-3xl" />
-      </div> */}
+      {/* New Component Button */}
 
-      {/* New Component */}
-
-      <div className={`${sidebarCollapsed === true ? "p-0" : "p-2"} relative`}>
+      <div
+        className={`${sidebarCollapsed === true ? "p-0" : "p-4"} relative border-b border-darkBorder`}
+      >
         <button
           disabled={isGenerating}
           onClick={() => {
@@ -175,7 +171,7 @@ export default function Sidebar({ isMobile }) {
           className={`group relative flex w-full items-center justify-center gap-3 overflow-hidden border text-sm font-medium text-white transition-all duration-150 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer ${
             sidebarCollapsed
               ? "p-0 m-0 pt-3.5 h-full w-auto border border-transparent bg-transparent"
-              : "px-5 py-3 rounded-2xl border-lightBorder bg-white/3  hover:border-purple-500/30 hover:bg-white/6 hover:shadow-[0_0_30px_rgba(168,85,247,0.12)]"
+              : "px-5 py-3 rounded-xl border-lightBorder bg-white/3  hover:border-purple-500/30 hover:bg-white/6 hover:shadow-[0_0_30px_rgba(168,85,247,0.12)]"
           }`}
         >
           {/* Icon */}
@@ -217,10 +213,10 @@ export default function Sidebar({ isMobile }) {
 
       {/* Components */}
       <div
-        className={`${sidebarCollapsed === true ? "hidden" : "w-full"} relative overflow-y-auto text-nowrap mt-3 px-2 pb-4`}
+        className={`${sidebarCollapsed === true ? "hidden" : "w-full"} relative overflow-y-auto text-nowrap mt-3 px-4 pb-4`}
       >
         <div className={`mb-4 overflow-hidden`}>
-          <p className="px-3 text-xs text-nowrap font-semibold uppercase tracking-wider text-neutral-500">
+          <p className="px-3 text-xs text-nowrap font-semibold uppercase tracking-wider text-neutral-600">
             Recent Components
           </p>
         </div>
@@ -230,9 +226,9 @@ export default function Sidebar({ isMobile }) {
             <div
               key={c.id ?? i}
               onClick={() => updateActiveComponent(i)}
-              className={`group relative cursor-pointer overflow-visible rounded-2xl py-1.5 border ${
+              className={`text-sm group relative cursor-pointer overflow-visible rounded-lg py-1.5 border ${
                 i === activeComponentIndex
-                  ? "border-neutral-700 bg-linear-to-r from-[#232526] via-neutral-[#414345] to-neutral-500/50"
+                  ? "border-neutral-800 bg-neutral-900"
                   : "border-transparent bg-transparent hover:border-lightBorder hover:bg-white/5"
               }`}
             >
@@ -241,25 +237,23 @@ export default function Sidebar({ isMobile }) {
                   <div className="flex items-center text-nowrap gap-3">
                     {c.targetTech === "REACT" && (
                       <Image
-                        className="size-3.5"
                         src="/jsx.svg"
-                        width={14}
-                        height={14}
+                        width={12}
+                        height={12}
                         alt="React"
                       />
                     )}
 
                     {c.targetTech === "HTML" && (
                       <Image
-                        className="size-3.5"
                         src="/globe2_red.svg"
-                        width={14}
-                        height={14}
+                        width={12}
+                        height={12}
                         alt="Web Bundle"
                       />
                     )}
 
-                    <h3 className="truncate text-sm font-medium text-white">
+                    <h3 className="truncate font-medium text-white">
                       {c.name}
                     </h3>
                   </div>
@@ -287,7 +281,7 @@ export default function Sidebar({ isMobile }) {
                       e.stopPropagation();
                       deleteComponent(c.id, i);
                     }}
-                    className="flex w-full items-center gap-3 px-4 py-2 text-sm text-red-400 transition hover:bg-red-500/10"
+                    className="flex w-full items-center gap-3 px-4 py-2 text-red-400 transition hover:bg-red-500/10"
                   >
                     <Trash size={16} />
                     Delete Component

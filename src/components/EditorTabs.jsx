@@ -1,4 +1,6 @@
-import { Sparkles } from "lucide-react";
+import { Code2, Sparkles } from "lucide-react";
+import Image from "next/image";
+import { useState } from "react";
 
 const EditorTabs = ({
   activeComponentIndex,
@@ -7,85 +9,33 @@ const EditorTabs = ({
   targetTech,
   setTargetTech,
 }) => {
+  const [activeEditorSpace, setActiveEditorSpace] = useState("AI");
   return (
-    <div className="flex w-full dark:bg-transparent border-0 border-gray-200 dark:border-lightBorder mt-2 px-2">
-      <div className="inline-flex gap-0.5 border border-lightBorder rounded-xl p-0 bg-white/0 backdrop-blur-md">
-        {targetTech === "REACT" && (
-          <>
-            <button
-              onClick={() => setActiveEditor("JSX")}
-              className={`${
-                activeEditor === "JSX"
-                  ? "border-cyan-700"
-                  : "border-transparent"
-              } flex items-center justify-center border-x gap-2 h-full px-5 py-3 rounded-l-xl text-sm relative transition-all duration-100 cursor-pointer`}
-            >
-              <img src="/jsx.svg" alt="" className="w-4 h-4" />
-              JSX
-            </button>
-          </>
-        )}
-        {targetTech === "HTML" && (
-          <>
-            <button
-              onClick={() => setActiveEditor("HTML")}
-              className={`${
-                activeEditor === "HTML"
-                  ? "border-red-700"
-                  : "border-transparent"
-              } flex items-center justify-center border-x gap-2 h-full px-5 py-3 rounded-l-xl text-sm relative transition-all duration-100 cursor-pointer`}
-            >
-              <img src="/html.svg" alt="" className="w-4 h-4" />
-              HTML
-            </button>
-          </>
-        )}
+    <div className="flex w-full dark:bg-transparent border-b border-gray-200 dark:border-lightBorder p-2">
+      <div className="flex ml-3 mr-auto h-full gap-2">
         <button
-          onClick={() => setActiveEditor("CSS")}
+          onClick={() => setActiveEditorSpace("CODE")}
           className={`${
-            activeEditor === "CSS" ? "border-blue-700" : "border-transparent"
-          } flex items-center justify-center ${targetTech === "REACT" && " rounded-r-xl"} border-x gap-2 px-5 py-3 text-sm relative  transition-all duration-100 cursor-pointer`}
+            activeEditorSpace === "CODE"
+              ? "border-violet-500 text-neutral-100"
+              : "border-transparent text-neutral-400"
+          }  border-b flex items-center justify-center gap-2 px-5 py-3 text-sm relative  transition-all duration-100 cursor-pointer`}
         >
-          <img src="/css.svg" alt="" className="w-4 h-4" />
-          CSS
+          <Code2 width={16} height={16} className="text-violet-400" />
+          Code Editor
         </button>
-        {targetTech === "HTML" && (
-          <>
-            <button
-              onClick={() => setActiveEditor("JS")}
-              className={`${
-                activeEditor === "JS"
-                  ? "border-yellow-700"
-                  : "border-transparent"
-              } flex items-center justify-center border-x gap-2 px-5 py-3 text-sm rounded-r-xl relative  transition-all duration-100 cursor-pointer`}
-            >
-              <img src="/javascript.svg" alt="" className="w-4 h-4" />
-              JavaScript
-            </button>
-          </>
-        )}
-      </div>
-      <div className="ml-3 mr-auto h-full pr-1">
         <button
-          onClick={() => setActiveEditor("AI")}
+          onClick={() => setActiveEditorSpace("AI")}
           className={`${
-            activeEditor === "AI"
+            activeEditorSpace === "AI"
               ? " border-yellow-500/50"
               : " border-lightBorder"
-          } h-full text-yellow-300 flex items-center justify-center gap-2 px-6 py-2 text-sm font-medium border-y rounded-full dark:bg-transparent relative  transition-all duration-100 cursor-pointer`}
+          } h-full text-yellow-300 flex items-center justify-center gap-2 px-6 py-2 text-sm font-medium border rounded-full dark:bg-transparent relative  transition-all duration-100 cursor-pointer`}
         >
           <Sparkles className="w-4 h-4 text-yellow-300" />
           AI
         </button>
       </div>
-
-      {activeComponentIndex != null && (
-        <div className="ml-auto mr-3 h-full pr-1">
-          <p className="h-full text-neutral-500 flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium border-t border-b rounded-xl border-gray-50 dark:border-lightBorder relative  transition-all duration-100 cursor-not-allowed">
-            {targetTech == "HTML" ? "WEB BUNDLE" : "REACT"}
-          </p>
-        </div>
-      )}
     </div>
   );
 };
