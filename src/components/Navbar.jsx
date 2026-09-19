@@ -101,23 +101,24 @@ export default function Navbar({ user }) {
             alt="Logo"
             className="mb-1"
           />
-
-          <input
-            type="text"
-            onChange={(e) =>
-              setActiveComponent((prev) => ({
-                ...prev,
-                name: e.target.value,
-              }))
-            }
-            value={activeComponent.name}
-            placeholder="Component Name"
-            className={`bg-gray-200 dark:bg-darkBorder text-center outline-0 ml-16 py-2 px-3 w-[300PX] text-sm ${
-              !activeComponent?.name
-                ? "border-red-600/30"
-                : "border-gray-300 dark:border-lightBorder"
-            } border rounded-lg`}
-          />
+          <div className="flex items-center ml-16 gap-4">
+            <input
+              type="text"
+              onChange={(e) =>
+                setActiveComponent((prev) => ({
+                  ...prev,
+                  name: e.target.value,
+                }))
+              }
+              value={activeComponent.name}
+              placeholder="Component Name"
+              className={`bg-gray-200 dark:bg-backgroundLight ${activeComponent.name ? "dark:text-neutral-400" : "dark:text-red-300"} outline-0 py-2 px-3 w-[300PX] text-sm ${
+                !activeComponent?.name
+                  ? "border-red-600/30"
+                  : "border-gray-300 dark:border-lightBorder"
+              } border rounded-lg`}
+            />
+          </div>
         </div>
 
         <div className="flex items-center justify-between py-1 h-full gap-5">

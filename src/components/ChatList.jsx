@@ -139,7 +139,7 @@ const markdownComponents = {
   ),
 
   h2: ({ children }) => (
-    <h2 className="mb-3 mt-8 text-xl font-semibold leading-tight tracking-[-0.025em] text-white">
+    <h2 className="mb-3 text-xl font-semibold leading-tight tracking-[-0.025em] text-white">
       {children}
     </h2>
   ),
@@ -565,7 +565,7 @@ const ChatList = () => {
                 {isUser ? (
                   <div className="flex justify-end animate-[chat-entry_220ms_ease-out]">
                     <div className="max-w-[82%] sm:max-w-[76%]">
-                      <div className="mb-1.5 flex justify-end">
+                      <div className="mb-2 flex justify-end">
                         <span className="text-[10px] font-medium uppercase tracking-[0.14em] text-white/25">
                           You
                         </span>
@@ -582,14 +582,14 @@ const ChatList = () => {
                           via-violet-600/90
                           to-fuchsia-600/90
                           px-4
-                          py-3
+                          py-2
                           text-[14px]
                           leading-6
                           text-white
                           shadow-[0_8px_30px_rgba(124,58,237,0.16)]
                         "
                       >
-                        <p className="whitespace-pre-wrap break-words">
+                        <p className="whitespace-pre-wrap wrap-break-words">
                           {prompt.message.trim()}
                         </p>
                       </div>
