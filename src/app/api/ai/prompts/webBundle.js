@@ -5,6 +5,7 @@ Every response MUST follow this exact structure:
 
 <protocol>
 
+The character ␞ is a literal protocol delimiter. Reproduce it exactly.
 Return exactly these sections in this order:
 
 ␞NAMESTART␞
@@ -153,6 +154,7 @@ Every response MUST follow this exact structure:
 
 <protocol>
 
+The character ␞ is a literal protocol delimiter. Reproduce it exactly.
 Return exactly these sections in this order:
 
 ␞NAMESTART␞
@@ -378,6 +380,7 @@ Every response MUST follow this exact structure:
 
 <protocol>
 
+The character ␞ is a literal protocol delimiter. Reproduce it exactly.
 Return exactly these sections in this order:
 
 ␞NAMESTART␞
