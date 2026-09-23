@@ -232,78 +232,84 @@ export default function ProductShowcase() {
                   </div>
 
                   {/* Fixed preview stage */}
-                  <div className="flex h-[280px] items-center justify-center bg-[#f3f5f7] p-4 sm:h-[310px]">
-                    <div className="w-full max-w-[225px] overflow-hidden rounded-[15px] border border-zinc-200 bg-white shadow-[0_18px_45px_rgba(0,0,0,0.12)]">
+                  <div className="flex h-[280px] items-center justify-center bg-[#09090b] p-4 sm:h-[310px]">
+                    <div className="relative w-full h-full max-w-[225px] overflow-hidden rounded-[15px] border border-white/[0.08] bg-[#111116] shadow-[0_18px_45px_rgba(0,0,0,0.45)]">
+                      {/* Ambient glow */}
+                      <div
+                        aria-hidden="true"
+                        className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(139,92,246,0.12),transparent_45%)]"
+                      />
+
                       {/* Dashboard header */}
-                      <div className="border-b border-zinc-100 px-3 py-3">
+                      <div className="relative border-b border-white/[0.06] px-3 py-3">
                         <div className="flex items-center justify-between">
                           <div>
-                            <div className="text-[7px] font-medium uppercase tracking-[0.14em] text-violet-500">
+                            <div className="text-[7px] font-medium uppercase tracking-[0.14em] text-violet-400">
                               Overview
                             </div>
 
-                            <div className="mt-1 text-[12px] font-semibold tracking-tight text-zinc-900">
+                            <div className="mt-1 text-[12px] font-semibold tracking-tight text-white">
                               Analytics
                             </div>
                           </div>
 
-                          <div className="flex h-6 w-6 items-center justify-center rounded-lg bg-zinc-900">
-                            <BarChart3 className="h-3 w-3 text-white" />
+                          <div className="flex h-6 w-6 items-center justify-center rounded-lg bg-white/[0.07] ring-1 ring-white/[0.06]">
+                            <BarChart3 className="h-3 w-3 text-violet-300" />
                           </div>
                         </div>
                       </div>
 
                       {/* Stats */}
-                      <div className="grid grid-cols-2 gap-2 p-3">
-                        <div className="rounded-xl border border-zinc-200 bg-zinc-50 p-2.5">
+                      <div className="relative grid grid-cols-2 gap-2 p-3">
+                        <div className="rounded-xl border border-white/[0.07] bg-white/[0.025] p-2.5">
                           <div className="flex items-center justify-between">
-                            <span className="text-[7px] text-zinc-400">
+                            <span className="text-[7px] text-zinc-500">
                               Revenue
                             </span>
-                            <TrendingUp className="h-2.5 w-2.5 text-emerald-500" />
+                            <TrendingUp className="h-2.5 w-2.5 text-emerald-400" />
                           </div>
 
-                          <div className="mt-1 text-[13px] font-semibold text-zinc-900">
+                          <div className="mt-1 text-[13px] font-semibold text-white">
                             $48.2k
                           </div>
 
-                          <div className="mt-0.5 text-[6px] font-medium text-emerald-500">
+                          <div className="mt-0.5 text-[6px] font-medium text-emerald-400">
                             +12.4%
                           </div>
                         </div>
 
-                        <div className="rounded-xl border border-zinc-200 bg-zinc-50 p-2.5">
+                        <div className="rounded-xl border border-white/[0.07] bg-white/[0.025] p-2.5">
                           <div className="flex items-center justify-between">
-                            <span className="text-[7px] text-zinc-400">
+                            <span className="text-[7px] text-zinc-500">
                               Users
                             </span>
-                            <Users className="h-2.5 w-2.5 text-violet-500" />
+                            <Users className="h-2.5 w-2.5 text-violet-400" />
                           </div>
 
-                          <div className="mt-1 text-[13px] font-semibold text-zinc-900">
+                          <div className="mt-1 text-[13px] font-semibold text-white">
                             12.4k
                           </div>
 
-                          <div className="mt-0.5 text-[6px] font-medium text-emerald-500">
+                          <div className="mt-0.5 text-[6px] font-medium text-emerald-400">
                             +8.7%
                           </div>
                         </div>
                       </div>
 
                       {/* Chart */}
-                      <div className="mx-3 rounded-xl border border-zinc-200 p-2.5">
+                      <div className="relative mx-3 rounded-xl border border-white/[0.07] bg-white/[0.015] p-2.5">
                         <div className="flex items-center justify-between">
                           <div>
-                            <div className="text-[7px] font-medium text-zinc-600">
+                            <div className="text-[7px] font-medium text-zinc-300">
                               Revenue
                             </div>
 
-                            <div className="mt-0.5 text-[6px] text-zinc-400">
+                            <div className="mt-0.5 text-[6px] text-zinc-500">
                               Last 30 days
                             </div>
                           </div>
 
-                          <div className="text-[6px] font-medium text-emerald-500">
+                          <div className="text-[6px] font-medium text-emerald-400">
                             +12.4%
                           </div>
                         </div>
@@ -313,7 +319,7 @@ export default function ProductShowcase() {
                             (height, index) => (
                               <div
                                 key={index}
-                                className="flex-1 rounded-t bg-gradient-to-t from-violet-500/80 to-fuchsia-400/80"
+                                className="flex-1 rounded-t bg-gradient-to-t from-violet-500/70 to-fuchsia-400/80"
                                 style={{ height: `${height}%` }}
                               />
                             ),
@@ -322,13 +328,13 @@ export default function ProductShowcase() {
                       </div>
 
                       {/* Recent activity */}
-                      <div className="mx-3 my-3 overflow-hidden rounded-xl border border-zinc-200">
-                        <div className="flex items-center justify-between border-b border-zinc-100 px-2.5 py-2">
-                          <span className="text-[7px] font-medium text-zinc-600">
+                      <div className="relative mx-3 my-3 overflow-hidden rounded-xl border border-white/[0.07] bg-white/[0.015]">
+                        <div className="flex items-center justify-between border-b border-white/[0.06] px-2.5 py-2">
+                          <span className="text-[7px] font-medium text-zinc-300">
                             Recent activity
                           </span>
 
-                          <MoreHorizontal className="h-2.5 w-2.5 text-zinc-400" />
+                          <MoreHorizontal className="h-2.5 w-2.5 text-zinc-500" />
                         </div>
 
                         {[
@@ -339,16 +345,16 @@ export default function ProductShowcase() {
                             key={label}
                             className="flex items-center gap-2 px-2.5 py-2"
                           >
-                            <div className="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-50">
-                              <Check className="h-2.5 w-2.5 text-emerald-500" />
+                            <div className="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-400/10">
+                              <Check className="h-2.5 w-2.5 text-emerald-400" />
                             </div>
 
                             <div className="min-w-0 flex-1">
-                              <div className="text-[7px] font-medium text-zinc-600">
+                              <div className="text-[7px] font-medium text-zinc-300">
                                 {label}
                               </div>
 
-                              <div className="mt-0.5 text-[6px] text-zinc-400">
+                              <div className="mt-0.5 text-[6px] text-zinc-500">
                                 {time}
                               </div>
                             </div>

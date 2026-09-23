@@ -79,91 +79,117 @@ const DEMOS = [
 ];
 
 function Preview({ type }) {
+  const panelClass = (active) =>
+    `absolute inset-0 flex items-center justify-center p-4 transition-all duration-500 ${
+      active
+        ? "scale-100 opacity-100"
+        : "pointer-events-none scale-[0.985] opacity-0"
+    }`;
+
   return (
     <div className="relative h-[292px] w-full overflow-hidden">
-      {/* Pricing */}
+      {/* Shared preview atmosphere */}
       <div
-        className={`absolute inset-0 flex items-center justify-center p-5 transition-all duration-500 ${
-          type === "pricing"
-            ? "scale-100 opacity-100"
-            : "pointer-events-none scale-[0.985] opacity-0"
-        }`}
-      >
-        <div className="w-full max-w-[310px] rounded-[18px] border border-zinc-200 bg-white p-4 shadow-[0_20px_50px_rgba(0,0,0,0.12)]">
-          <div className="mb-4 flex items-start justify-between">
-            <div>
-              <div className="text-[8px] font-semibold uppercase tracking-[0.16em] text-violet-500">
-                Pricing
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_15%,rgba(139,92,246,0.11),transparent_42%)]"
+      />
+
+      {/* Pricing */}
+      <div className={panelClass(type === "pricing")}>
+        <div className="w-full max-w-[320px] overflow-hidden rounded-2xl border border-white/[0.1] bg-[#111117] shadow-[0_25px_60px_rgba(0,0,0,0.4)]">
+          <div className="border-b border-white/[0.07] px-4 py-3.5">
+            <div className="flex items-start justify-between">
+              <div>
+                <div className="text-[7px] font-semibold uppercase tracking-[0.18em] text-violet-300/80">
+                  Plans
+                </div>
+
+                <div className="mt-1 text-[12px] font-semibold tracking-tight text-white">
+                  Choose your plan
+                </div>
+
+                <div className="mt-1 text-[7px] text-zinc-500">
+                  Simple pricing for modern teams.
+                </div>
               </div>
 
-              <div className="mt-1 text-[13px] font-semibold tracking-tight text-zinc-900">
-                Choose your plan
+              <div className="rounded-full border border-emerald-400/15 bg-emerald-400/[0.08] px-2 py-1 text-[6px] font-medium text-emerald-300">
+                Save 20%
               </div>
-
-              <div className="mt-1 text-[8px] text-zinc-400">
-                Simple pricing for growing teams.
-              </div>
-            </div>
-
-            <div className="rounded-full bg-emerald-50 px-2 py-1 text-[7px] font-medium text-emerald-600">
-              Save 20%
             </div>
           </div>
 
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-3 gap-2 p-3">
             {[
               {
                 name: "Starter",
                 price: "$9",
-                description: "For individuals",
+                features: ["3 projects", "Basic analytics"],
               },
               {
                 name: "Pro",
                 price: "$29",
-                description: "For growing teams",
+                features: ["Unlimited projects", "Advanced analytics"],
                 featured: true,
               },
               {
                 name: "Team",
                 price: "$79",
-                description: "For larger teams",
+                features: ["Team access", "Priority support"],
               },
             ].map((plan) => (
               <div
                 key={plan.name}
-                className={`rounded-xl border p-3 ${
+                className={`rounded-xl p-2.5 ${
                   plan.featured
-                    ? "border-violet-300 bg-violet-50/70 shadow-[0_8px_25px_rgba(124,58,237,0.10)]"
-                    : "border-zinc-200 bg-white"
+                    ? "border border-violet-400/30 bg-violet-500/[0.08] shadow-[0_8px_30px_rgba(124,58,237,0.12)]"
+                    : "border border-white/[0.07] bg-white/[0.02]"
                 }`}
               >
-                <div className="flex items-center justify-between">
-                  <span className="text-[7px] font-medium text-zinc-500">
+                <div className="flex items-center justify-between gap-1">
+                  <span
+                    className={`text-[7px] font-medium ${
+                      plan.featured ? "text-violet-200" : "text-zinc-400"
+                    }`}
+                  >
                     {plan.name}
                   </span>
 
                   {plan.featured && (
-                    <span className="rounded-full bg-violet-100 px-1.5 py-0.5 text-[6px] font-medium text-violet-600">
+                    <span className="rounded-full bg-violet-400/10 px-1.5 py-0.5 text-[5px] font-medium text-violet-200">
                       Popular
                     </span>
                   )}
                 </div>
 
-                <div className="mt-2 text-[17px] font-semibold tracking-tight text-zinc-900">
-                  {plan.price}
+                <div className="mt-2 flex items-end gap-0.5">
+                  <span className="text-[16px] font-semibold tracking-tight text-white">
+                    {plan.price}
+                  </span>
+
+                  <span className="pb-0.5 text-[6px] text-zinc-600">/mo</span>
                 </div>
 
-                <div className="mt-0.5 text-[6px] text-zinc-400">/ month</div>
+                <div className="mt-2 space-y-1.5">
+                  {plan.features.map((feature) => (
+                    <div
+                      key={feature}
+                      className="flex items-center gap-1 text-[6px] text-zinc-500"
+                    >
+                      <div className="flex h-3 w-3 shrink-0 items-center justify-center rounded-full bg-emerald-400/[0.08]">
+                        <Check className="h-1.5 w-1.5 text-emerald-300" />
+                      </div>
 
-                <div className="mt-2 text-[7px] leading-3 text-zinc-400">
-                  {plan.description}
+                      {feature}
+                    </div>
+                  ))}
                 </div>
 
                 <div
-                  className={`mt-3 rounded-lg py-1.5 text-center text-[7px] font-semibold ${
+                  className={`mt-3 rounded-lg py-1.5 text-center text-[6px] font-semibold ${
                     plan.featured
-                      ? "bg-violet-600 text-white"
-                      : "bg-zinc-100 text-zinc-600"
+                      ? "bg-violet-500 text-white"
+                      : "bg-white/[0.06] text-zinc-400"
                   }`}
                 >
                   Get started
@@ -175,31 +201,29 @@ function Preview({ type }) {
       </div>
 
       {/* Dashboard */}
-      <div
-        className={`absolute inset-0 flex items-center justify-center p-5 transition-all duration-500 ${
-          type === "dashboard"
-            ? "scale-100 opacity-100"
-            : "pointer-events-none scale-[0.985] opacity-0"
-        }`}
-      >
-        <div className="w-full max-w-[320px] rounded-[18px] border border-zinc-200 bg-white p-4 shadow-[0_20px_50px_rgba(0,0,0,0.12)]">
-          <div className="flex items-center justify-between">
+      <div className={panelClass(type === "dashboard")}>
+        <div className="w-full max-w-[320px] overflow-hidden rounded-2xl border border-white/[0.1] bg-[#111117] shadow-[0_25px_60px_rgba(0,0,0,0.4)]">
+          <div className="flex items-center justify-between border-b border-white/[0.07] px-4 py-3">
             <div>
-              <div className="text-[8px] font-semibold uppercase tracking-[0.16em] text-violet-500">
+              <div className="text-[7px] font-semibold uppercase tracking-[0.18em] text-violet-300/80">
                 Analytics
               </div>
 
-              <div className="mt-1 text-[13px] font-semibold tracking-tight text-zinc-900">
+              <div className="mt-1 text-[12px] font-semibold tracking-tight text-white">
                 Overview
               </div>
             </div>
 
-            <div className="rounded-lg border border-zinc-200 px-2 py-1 text-[7px] text-zinc-400">
-              Last 30 days
+            <div className="flex items-center gap-2">
+              <div className="rounded-lg border border-white/[0.08] bg-white/[0.025] px-2 py-1 text-[6px] text-zinc-500">
+                30 days
+              </div>
+
+              <MoreHorizontal className="h-3 w-3 text-zinc-700" />
             </div>
           </div>
 
-          <div className="mt-4 grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-3 gap-2 p-3">
             {[
               ["Revenue", "$48.2k", "+12.4%"],
               ["Users", "12.4k", "+8.7%"],
@@ -207,40 +231,40 @@ function Preview({ type }) {
             ].map(([label, value, growth]) => (
               <div
                 key={label}
-                className="rounded-xl border border-zinc-200 bg-zinc-50 p-2.5"
+                className="rounded-xl border border-white/[0.07] bg-white/[0.025] p-2.5"
               >
-                <div className="text-[7px] text-zinc-400">{label}</div>
+                <div className="text-[6px] text-zinc-600">{label}</div>
 
-                <div className="mt-1 text-[12px] font-semibold text-zinc-900">
+                <div className="mt-1 text-[11px] font-semibold text-white">
                   {value}
                 </div>
 
-                <div className="mt-1 text-[6px] font-medium text-emerald-500">
+                <div className="mt-1 text-[6px] font-medium text-emerald-300/80">
                   {growth}
                 </div>
               </div>
             ))}
           </div>
 
-          <div className="mt-3 rounded-xl border border-zinc-200 p-3">
+          <div className="mx-3 rounded-xl border border-white/[0.07] bg-white/[0.02] p-3">
             <div className="flex items-center justify-between">
               <div>
-                <div className="text-[8px] font-medium text-zinc-600">
+                <div className="text-[7px] font-medium text-zinc-300">
                   Revenue
                 </div>
 
-                <div className="mt-0.5 text-[7px] text-zinc-400">
+                <div className="mt-0.5 text-[6px] text-zinc-600">
                   Monthly performance
                 </div>
               </div>
 
-              <div className="text-[7px] font-medium text-emerald-500">
+              <span className="rounded-full bg-emerald-400/[0.07] px-1.5 py-0.5 text-[6px] font-medium text-emerald-300">
                 +12.4%
-              </div>
+              </span>
             </div>
 
             <div className="mt-4 flex h-16 items-end gap-1">
-              {[28, 42, 36, 57, 49, 63, 55, 71, 67, 82, 74, 91].map(
+              {[26, 37, 32, 48, 43, 60, 51, 66, 58, 76, 68, 88].map(
                 (height, index) => (
                   <div
                     key={index}
@@ -252,83 +276,110 @@ function Preview({ type }) {
             </div>
           </div>
 
-          <div className="mt-3 flex items-center justify-between rounded-xl bg-zinc-50 px-3 py-2">
-            <div className="flex items-center gap-2">
-              <div className="h-5 w-5 rounded-full bg-violet-100" />
-              <div>
-                <div className="h-1.5 w-16 rounded bg-zinc-200" />
-                <div className="mt-1 h-1.5 w-10 rounded bg-zinc-100" />
-              </div>
+          <div className="mx-3 my-3 rounded-xl border border-white/[0.07] bg-white/[0.02]">
+            <div className="flex items-center justify-between border-b border-white/[0.06] px-3 py-2">
+              <span className="text-[6px] font-medium text-zinc-500">
+                Recent activity
+              </span>
+
+              <span className="text-[6px] text-zinc-700">View all</span>
             </div>
 
-            <div className="text-[7px] font-medium text-zinc-400">2m ago</div>
+            {[
+              ["New customer", "2m ago"],
+              ["Payment received", "8m ago"],
+            ].map(([label, time]) => (
+              <div key={label} className="flex items-center gap-2 px-3 py-2">
+                <div className="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-400/[0.07]">
+                  <Check className="h-2.5 w-2.5 text-emerald-300" />
+                </div>
+
+                <div className="min-w-0 flex-1">
+                  <div className="text-[6px] font-medium text-zinc-400">
+                    {label}
+                  </div>
+
+                  <div className="mt-0.5 text-[5px] text-zinc-700">{time}</div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>
 
       {/* Navigation */}
-      <div
-        className={`absolute inset-0 flex items-center justify-center p-5 transition-all duration-500 ${
-          type === "navigation"
-            ? "scale-100 opacity-100"
-            : "pointer-events-none scale-[0.985] opacity-0"
-        }`}
-      >
-        <div className="w-full max-w-[320px] overflow-hidden rounded-[18px] border border-zinc-200 bg-white shadow-[0_20px_50px_rgba(0,0,0,0.12)]">
-          <div className="border-b border-zinc-200 px-4 py-3">
+      <div className={panelClass(type === "navigation")}>
+        <div className="w-full max-w-[320px] overflow-hidden rounded-2xl border border-white/[0.1] bg-[#111117] shadow-[0_25px_60px_rgba(0,0,0,0.4)]">
+          {/* Navigation */}
+          <div className="border-b border-white/[0.07] px-4 py-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <div className="flex h-6 w-6 items-center justify-center rounded-lg bg-zinc-950">
-                  <div className="h-2.5 w-2.5 rounded-sm bg-white" />
+                <div className="flex h-6 w-6 items-center justify-center rounded-lg bg-gradient-to-br from-violet-500 to-fuchsia-500 shadow-[0_4px_16px_rgba(124,58,237,0.25)]">
+                  <div className="h-2.5 w-2.5 rounded-[3px] bg-white/90" />
                 </div>
 
-                <span className="text-[10px] font-semibold text-zinc-900">
-                  Acme
+                <span className="text-[9px] font-semibold text-white">
+                  Nova
                 </span>
               </div>
 
               <div className="flex items-center gap-4">
-                <span className="text-[7px] font-medium text-zinc-900">
+                <span className="text-[6px] font-medium text-white">
                   Product
                 </span>
 
-                <span className="text-[7px] text-zinc-400">Solutions</span>
+                <span className="text-[6px] text-zinc-600">Solutions</span>
 
-                <span className="text-[7px] text-zinc-400">Pricing</span>
+                <span className="text-[6px] text-zinc-600">Pricing</span>
 
-                <div className="rounded-md bg-zinc-900 px-2 py-1.5 text-[6px] font-semibold text-white">
+                <div className="rounded-md bg-white px-2 py-1.5 text-[5px] font-semibold text-black">
                   Start free
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="relative overflow-hidden bg-gradient-to-br from-violet-50 via-white to-fuchsia-50 px-6 py-10 text-center">
-            <div className="absolute left-1/2 top-[-35px] h-32 w-32 -translate-x-1/2 rounded-full bg-violet-300/20 blur-3xl" />
+          {/* Hero */}
+          <div className="relative overflow-hidden bg-[radial-gradient(circle_at_50%_0%,rgba(139,92,246,0.16),transparent_50%)] px-6 py-9 text-center">
+            <div
+              aria-hidden="true"
+              className="absolute left-1/2 top-[-70px] h-40 w-40 -translate-x-1/2 rounded-full bg-violet-500/[0.12] blur-3xl"
+            />
 
             <div className="relative">
-              <div className="mx-auto inline-flex rounded-full border border-violet-200 bg-white/80 px-2 py-1 text-[6px] font-medium text-violet-600 shadow-sm">
+              <div className="mx-auto inline-flex rounded-full border border-violet-400/15 bg-violet-400/[0.06] px-2 py-1 text-[5px] font-medium text-violet-200">
                 New · Built for modern teams
               </div>
 
-              <div className="mx-auto mt-3 max-w-[220px] text-[20px] font-semibold leading-6 tracking-[-0.04em] text-zinc-900">
+              <div className="mx-auto mt-3 max-w-[220px] text-[20px] font-semibold leading-6 tracking-[-0.045em] text-white">
                 Build better products,
-                <span className="text-violet-500"> faster.</span>
+                <span className="text-violet-300"> faster.</span>
               </div>
 
-              <div className="mx-auto mt-2 max-w-[195px] text-[7px] leading-3.5 text-zinc-400">
-                A simple workflow for teams that want to move from idea to
-                production quickly.
+              <div className="mx-auto mt-2 max-w-[200px] text-[6px] leading-3 text-zinc-500">
+                Everything your team needs to move from idea to production.
               </div>
 
               <div className="mt-4 flex justify-center gap-2">
-                <div className="rounded-lg bg-zinc-900 px-3 py-2 text-[7px] font-semibold text-white">
+                <div className="rounded-lg bg-white px-3 py-2 text-[6px] font-semibold text-black">
                   Get started
                 </div>
 
-                <div className="rounded-lg border border-zinc-200 bg-white px-3 py-2 text-[7px] font-medium text-zinc-600">
+                <div className="rounded-lg border border-white/[0.1] bg-white/[0.03] px-3 py-2 text-[6px] font-medium text-zinc-400">
                   Learn more
                 </div>
+              </div>
+
+              <div className="mx-auto mt-6 flex max-w-[210px] items-center justify-center gap-3 text-[5px] text-zinc-600">
+                <span className="flex items-center gap-1">
+                  <Check className="h-2 w-2 text-emerald-300" />
+                  Fast setup
+                </span>
+
+                <span className="flex items-center gap-1">
+                  <Check className="h-2 w-2 text-emerald-300" />
+                  No credit card
+                </span>
               </div>
             </div>
           </div>
@@ -562,7 +613,7 @@ function HeroWorkspace() {
                 </div>
               </div>
 
-              <div className="flex min-h-[330px] items-center justify-center bg-[#f4f6f8] p-5 sm:min-h-[360px]">
+              <div className="flex min-h-[330px] items-center justify-center bg-black p-5 sm:min-h-[360px]">
                 <div
                   key={demoIndex}
                   className="w-full animate-[previewIn_0.55s_ease-out]"
