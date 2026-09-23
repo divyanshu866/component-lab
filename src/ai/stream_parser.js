@@ -1,21 +1,22 @@
 // Helper function to create streaming response
 const startMarkers = {
-  "###NAME_START###": "name",
-  "###MESSAGE_START###": "message",
-  "###HTML_START###": "html",
-  "###JSX_START###": "jsx",
-  "###CSS_START###": "css",
-  "###JS_START###": "js",
+  "␞NAMESTART␞": "name",
+  "␞MESSAGESTART␞": "message",
+  "␞HTMLSTART␞": "html",
+  "JSXSTART␞": "jsx",
+  "CSSSTART␞": "css",
+  "␞JSSTART␞": "js",
 };
 
 const endMarkers = {
-  "###NAME_END###": "name",
-  "###MESSAGE_END###": "message",
-  "###HTML_END###": "html",
-  "###JSX_END###": "jsx",
-  "###CSS_END###": "css",
-  "###JS_END###": "js",
+  "␞NAMEEND␞": "name",
+  "␞MESSAGEEND␞": "message",
+  "␞HTMLEND␞": "html",
+  "␞JSXEND␞": "jsx",
+  "␞CSSEND␞": "css",
+  "␞JSEND␞": "js",
 };
+const longestMarkerLngth = 13;
 export async function createStreamingResponse(stream, headers = {}) {
   // Create a ReadableStream for SSE
   const encoder = new TextEncoder();
@@ -36,9 +37,9 @@ export async function createStreamingResponse(stream, headers = {}) {
 
           // Process markers and content in the accumulator
           let remaining = accumulator;
-          // console.log("Remaining:", remaining);
+          console.log("Remaining:", remaining);
           //No start untill lengths is greater than 19
-          while (remaining.length >= 19) {
+          while (remaining.length >= longestMarkerLngth) {
             if (inSection == false) {
               //Check for all markers
               let foundStartMarker = false;
@@ -58,7 +59,7 @@ export async function createStreamingResponse(stream, headers = {}) {
               //If none of the startMarker is found
               if (foundStartMarker == false) {
                 //remove everything except last 19 characters
-                remaining = remaining.slice(-19);
+                remaining = remaining.slice(-1 * longestMarkerLngth);
                 break;
               } else {
                 //remove marker & everything before it & set inSection to true
@@ -68,7 +69,7 @@ export async function createStreamingResponse(stream, headers = {}) {
                 inSection = true;
                 currSection = foundSection;
                 // Send section start signal
-                // console.log("Found Section Start:", currSection);
+                console.log("Found Section Start:", currSection);
                 controller.enqueue(
                   encoder.encode(
                     `data: ${JSON.stringify({
@@ -97,8 +98,8 @@ export async function createStreamingResponse(stream, headers = {}) {
               }
               if (foundEndMarker == false) {
                 //Emit Everything except last 19 characters
-                const emitContent = remaining.slice(0, -19);
-                // console.log("Emitting Content for Section:", emitContent);
+                const emitContent = remaining.slice(0, -1 * longestMarkerLngth);
+                console.log("Emitting Content for Section:", emitContent);
                 controller.enqueue(
                   encoder.encode(
                     `data: ${JSON.stringify({
@@ -108,7 +109,7 @@ export async function createStreamingResponse(stream, headers = {}) {
                   ),
                 );
                 //Retain last 19 characters for next iteration
-                remaining = remaining.slice(-19);
+                remaining = remaining.slice(-1 * longestMarkerLngth);
                 break;
               }
               //If End marker found, emit everything before the marker and send section end signal
@@ -117,7 +118,7 @@ export async function createStreamingResponse(stream, headers = {}) {
                   0,
                   remaining.indexOf(foundMarker),
                 );
-                // console.log("Emitting Content for Section:", emitContent);
+                console.log("Emitting Content for Section:", emitContent);
                 controller.enqueue(
                   encoder.encode(
                     `data: ${JSON.stringify({

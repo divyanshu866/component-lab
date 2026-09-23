@@ -8,8 +8,8 @@ export async function* mockStream(text, chunkSize = 1, delay = 50) {
   }
 }
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-export const mockText = `###NAME_START### Brutalist Cards ###NAME_END###
-###MESSAGE_START###A **Brutalist card collection** has been created, showcasing bold typography, strong borders, and a raw, minimalist aesthetic inspired by classic Brutalist design.
+export const mockText = `␞NAMESTART␞ Brutalist Cards ␞NAMEEND␞
+␞MESSAGESTART␞A **Brutalist card collection** has been created, showcasing bold typography, strong borders, and a raw, minimalist aesthetic inspired by classic Brutalist design.
 
 ## ✨ What's Included
 
@@ -35,8 +35,8 @@ export const mockText = `###NAME_START### Brutalist Cards ###NAME_END###
 - Consistent spacing and typography across all cards.
 - Multiple card layouts for increased flexibility.
 - Fully responsive design with reusable styling patterns.
-- Production-ready HTML and CSS suitable for immediate use.###MESSAGE_END###
-###HTML_START###<div class="brutalist-cards-container">
+- Production-ready HTML and CSS suitable for immediate use.␞MESSAGEEND␞
+␞HTMLSTART␞<div class="brutalist-cards-container">
   <div class="brutalist-card card-image-text">
     <img src="https://wowslider.com/sliders/demo-93/data1/images/landscape.jpg" alt="Minimalist Landscape" class="card-image">
     <div class="card-content">
@@ -67,8 +67,8 @@ export const mockText = `###NAME_START### Brutalist Cards ###NAME_END###
       <button class="card-button">EXPLORE NOW</button>
     </div>
   </div>
-</div>###HTML_END###
-###CSS_START###html, body {
+</div>␞HTMLEND␞
+␞CSSSTART␞html, body {
   margin: 0;
   padding: 0;
   width: 100%;
@@ -219,20 +219,21 @@ export const mockText = `###NAME_START### Brutalist Cards ###NAME_END###
   background-color: var(--brutalist-bg-color);
   color: var(--brutalist-accent-color);
   border-color: var(--brutalist-accent-color);
-}###CSS_END###
-###JS_START###//No javascript required###JS_END###`;
+}
+␞CSSEND␞
+␞JSSTART␞//No javascript required␞JSEND␞`;
 export const mockReactText = `
-###NAME_START###
+␞NAMESTART␞
 Framer Motion Rotation Component
-###NAME_END###
-###MESSAGE_START###
+␞NAMEEND␞
+␞MESSAGESTART␞
 Created an interactive rotation component demonstrating Framer Motion animations with Tailwind CSS.
 
 - Implemented smooth rotation, scaling, and dragging using \`framer-motion\`.
 - Added control buttons to trigger infinite spin, stop, flip, and pulse effects.
 - Styled with a modern dark theme using Tailwind CSS and Lucide icons.
-###MESSAGE_END###
-###JSX_START###
+␞MESSAGEEND␞
+␞JSXSTART␞
 import React, { useState } from "react";
 import { motion, useAnimation } from "framer-motion";
 import { RotateCw, Square, Sparkles, Play, Pause, RefreshCw } from "lucide-react";
@@ -351,7 +352,7 @@ export default function ComponentLabComponent() {
     </div>
   );
 }
-###JSX_END###
-###CSS_START###
+␞JSXEND␞
+␞CSSSTART␞
  /* No custom CSS required Tailwind utilities are fully sufficient */
-###CSS_END###`;
+␞CSSEND␞`;

@@ -34,33 +34,33 @@ function buildComponentStateBundle(component) {
   const componentState = `
 Current component:
 
-###NAME_START###
+␞NAMESTART␞
 ${component.name}
-###NAME_END###
-###HTML_START###
+␞NAMEEND␞
+␞HTMLSTART␞
 ${component.html}
-###HTML_END###
-###CSS_START###
+␞HTMLEND␞
+␞CSSSTART␞
 ${component.css}
-###CSS_END###
-###JS_START###
+␞CSSEND␞
+␞JSSTART␞
 ${component.js}
-###JS_END###`;
+␞JSEND␞`;
   return componentState;
 }
 function buildComponentStateReact(component) {
   const componentState = `
 Current component:
 
-###NAME_START###
+␞NAMESTART␞
 ${component.name}
-###NAME_END###
-###JSX_START###
+␞NAMEEND␞
+␞JSXSTART␞
 ${component.jsx}
-###JSX_END###
-###CSS_START###
+␞JSXEND␞
+␞CSSSTART␞
 ${component.css}
-###CSS_END###`;
+␞CSSEND␞`;
   return componentState;
 }
 
@@ -109,18 +109,18 @@ export function buildBundleEditGeminiContents(request) {
 
 Current component:
 
-###NAME_START###
+␞NAMESTART␞
 ${component.name}
-###NAME_END###
-###HTML_START###
+␞NAMEEND␞
+␞HTMLSTART␞
 ${component.html}
-###HTML_END###
-###CSS_START###
+␞HTMLEND␞
+␞CSSSTART␞
 ${component.css}
-###CSS_END###
-###JS_START###
+␞CSSEND␞
+␞JSSTART␞
 ${component.js}
-###JS_END###`
+␞JSEND␞`
                   : ""),
             },
           ],
@@ -132,20 +132,20 @@ ${component.js}
       role: "user",
       parts: [
         {
-          text: `###MESSAGE_START###${messages[0].message}###MESSAGE_END###
+          text: `␞MESSAGESTART␞${messages[0].message}␞MESSAGEEND␞
               Component Current State:
-              ###NAME_START###
+              ␞NAMESTART␞
               ${component.name}
-              ###NAME_END###
-              ###HTML_START###
+              ␞NAMEEND␞
+              ␞HTMLSTART␞
               ${component.html}
-              ###HTML_END###
-              ###CSS_START###
+              ␞HTMLEND␞
+              ␞CSSSTART␞
               ${component.css}
-              ###CSS_END###
-              ###JS_START###
+              ␞CSSEND␞
+              ␞JSSTART␞
               ${component.js}
-              ###JS_END###
+              ␞JSEND␞
               `,
         },
       ],
@@ -186,15 +186,15 @@ export function buildReactEditGeminiContents(request) {
 
 Current component:
 
-###NAME_START###
+␞NAMESTART␞
 ${component.name}
-###NAME_END###
-###JSX_START###
+␞NAMEEND␞
+␞JSXSTART␞
 ${component.jsx}
-###JSX_END###
-###CSS_START###
+␞JSXEND␞
+␞CSSSTART␞
 ${component.css}
-###CSS_END###`
+␞CSSEND␞`
                   : ""),
             },
           ],
@@ -206,17 +206,17 @@ ${component.css}
       role: "user",
       parts: [
         {
-          text: `###MESSAGE_START###${messages[0].message}###MESSAGE_END###
+          text: `␞MESSAGESTART␞${messages[0].message}␞MESSAGEEND␞
               Component Current State:
-              ###NAME_START###
+              ␞NAMESTART␞
               ${component.name}
-              ###NAME_END###
-              ###JSX_START###
+              ␞NAMEEND␞
+              ␞JSXSTART␞
               ${component.jsx}
-              ###JSX_END###
-              ###CSS_START###
+              ␞JSXEND␞
+              ␞CSSSTART␞
               ${component.css}
-              ###CSS_END###
+              ␞CSSEND␞
               `,
         },
       ],
