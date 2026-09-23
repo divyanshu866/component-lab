@@ -947,7 +947,7 @@ const AIEditor = ({ user, isMobile }) => {
           className={`${reworkUI || showPreview ? "absolute bottom-4" : "absolute bottom-[50%]"} w-full flex flex-col justify-center items-center max-w-4xl`}
         >
           <h1
-            className={` ${reworkUI ? "hidden" : ""} lg:text-3xl xl:text-4xl text-center font-sans font-medium mb-12 bg-linear-to-r from-pink-700 to-purple-700 bg-clip-text text-transparent`}
+            className={` ${reworkUI && activeMessages.length > 0 ? "hidden" : ""} lg:text-3xl xl:text-4xl text-center font-sans font-medium mb-12 bg-linear-to-r from-pink-700 to-purple-700 bg-clip-text text-transparent`}
           >
             Good to see you, {user.name}!
           </h1>
@@ -955,14 +955,14 @@ const AIEditor = ({ user, isMobile }) => {
 
           <div
             className={`flex justify-between items-center w-full gap-5 px-4
-    overflow-hidden transition-all duration-300 ease-out
-    ${reworkUI ? "hidden" : ""}
-    ${
-      showFilters
-        ? "max-h-32 opacity-100 translate-y-0 mb-4 mt-1 pointer-events-auto"
-        : "max-h-0 opacity-0 -translate-y-2 mb-0 pointer-events-none"
-    }
-  `}
+              overflow-hidden transition-all duration-300 ease-out
+              ${reworkUI ? "hidden" : ""}
+              ${
+                showFilters
+                  ? "max-h-32 opacity-100 translate-y-0 mb-4 mt-1 pointer-events-auto"
+                  : "max-h-0 opacity-0 -translate-y-2 mb-0 pointer-events-none"
+              }
+          `}
           >
             <select
               value={selectedType}
