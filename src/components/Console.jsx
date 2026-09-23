@@ -286,7 +286,9 @@ export default function Console() {
       );
 
       appendConsoleLog(event.data.diagnostics);
-      setShowConsole(true);
+      if (showConsole == false) {
+        setShowConsole(true);
+      }
     };
     window.addEventListener("message", handlePreviewMessage);
 
@@ -297,7 +299,9 @@ export default function Console() {
 
   useEffect(() => {
     if (consoleLogs.length > 0) {
-      setShowConsole(true);
+      if (showConsole == false) {
+        setShowConsole(true);
+      }
     } else {
       setShowConsole(false);
     }

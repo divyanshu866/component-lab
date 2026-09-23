@@ -31,6 +31,7 @@ export default function Sidebar({ isMobile }) {
     setChangeDesc,
     isGenerating,
     setIsGenerating,
+    showPreview,
     setShowPreview,
     updatePreview,
     sidebarCollapsed,
@@ -90,7 +91,9 @@ export default function Sidebar({ isMobile }) {
     if (isGenerating) {
       return;
     }
-    setShowPreview(true);
+    if (showPreview == false) {
+      setShowPreview(true);
+    }
     setActiveComponentIndex(index);
     if (index != null && index >= 0) {
       setReworkUI(true);

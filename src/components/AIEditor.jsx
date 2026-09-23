@@ -1,7 +1,13 @@
 "use client";
 import { useState, useRef } from "react";
 import { useEditorContext } from "@/context/EditorContext";
-import { SlidersHorizontal, Sparkle, Sparkles } from "lucide-react";
+import {
+  Eye,
+  EyeClosed,
+  SlidersHorizontal,
+  Sparkle,
+  Sparkles,
+} from "lucide-react";
 import { ArrowUp } from "lucide-react";
 import { useConsole } from "@/context/ConsoleContext";
 import { AI_MODELS } from "@/ai/models";
@@ -474,7 +480,7 @@ const AIEditor = ({ user, isMobile }) => {
     try {
       setIsGenerating(true);
       setReworkUI(true);
-      setShowPreview(true);
+      // setShowPreview(true);
       let usageMetadata;
       const userMessage = {
         id: null,
@@ -523,6 +529,7 @@ const AIEditor = ({ user, isMobile }) => {
         if (resolvedMode !== "REWORK") {
           return;
         }
+        setShowPreview(true);
         setActiveEditor(section.toUpperCase());
         streamState[section] += content;
         setActiveComponent({ ...streamState });
@@ -669,7 +676,7 @@ const AIEditor = ({ user, isMobile }) => {
       return;
     }
     try {
-      setShowPreview(true);
+      // setShowPreview(true);
       setIsGenerating(true);
 
       const userMessage = {
@@ -711,6 +718,7 @@ const AIEditor = ({ user, isMobile }) => {
         if (resolvedMode !== "REWORK") {
           return;
         }
+        setShowPreview(true);
         setActiveEditor(section.toUpperCase());
         streamState[section] += content;
         setActiveComponent({ ...streamState });
@@ -988,8 +996,7 @@ const AIEditor = ({ user, isMobile }) => {
           </div>
 
           <div className="w-full h-full px-4">
-            {/* chat bar */}
-
+            {/* Prompt bar */}
             <div
               className={`${isExpanded ? "flex-col" : "flex-row"} ${generationMode === "ASK" ? "border-green-500/30" : reworkUI ? "border-lightBorder" : "border-white/15"} ${reworkUI ? "bg-[#151516]" : "bg-white/10"} border min-h-12 py-0 flex items-center justify-center rounded-xl`}
             >

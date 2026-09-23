@@ -16,13 +16,16 @@ const Editor = ({ user, isMobile }) => {
     updatePreview,
     components,
     setShowPreview,
+    showPreview,
     saveComponent,
     activeComponentIndex,
     activeEditor,
     setActiveEditor,
     isMaximised,
     setIsMaximised,
+    reworkUI,
     setReworkUI,
+
     isGenerating,
     setActiveMessages,
     setActiveComponentIndex,
@@ -142,6 +145,9 @@ const Editor = ({ user, isMobile }) => {
           targetTech={targetTech}
           setTargetTech={setTargetTech}
           activeComponentIndex={activeComponentIndex}
+          reworkUI={reworkUI}
+          setShowPreview={setShowPreview}
+          showPreview={showPreview}
         />
         {/* <EditorTabs
           activeEditor={activeEditor}

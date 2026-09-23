@@ -14,6 +14,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeHighlight from "rehype-highlight";
 import "highlight.js/styles/github-dark.css";
+import { Eye } from "lucide-react";
 
 const getCodeText = (node) => {
   if (node == null) return "";
@@ -475,7 +476,13 @@ const markdownComponents = {
 };
 
 const ChatList = () => {
-  const { reworkUI, activeMessages, isGenerating } = useEditorContext();
+  const {
+    reworkUI,
+    activeMessages,
+    isGenerating,
+    showPreview,
+    setShowPreview,
+  } = useEditorContext();
 
   const chatListRef = useRef(null);
 
@@ -529,7 +536,7 @@ const ChatList = () => {
           overflow-y-auto
           px-5
           pt-8
-          pb-28
+          pb-24
           sm:px-6
           lg:px-7
           scrollbar-thin
@@ -688,6 +695,67 @@ const ChatList = () => {
                           <span className="text-white/10">•</span>
 
                           <span>Total {aiRequest.totalTokens ?? 0}</span>
+                          {index == activeMessages.length - 1 && reworkUI && (
+                            <div className="flex items-center justify-end flex-1">
+                              <button
+                                type="button"
+                                onClick={() => setShowPreview((prev) => !prev)}
+                                aria-pressed={showPreview}
+                                className="
+                                  group
+                                  inline-flex
+                                  h-8
+                                  items-center
+                                  gap-2
+                                  rounded-full
+                                  border
+                                  border-white/20
+                                  bg-neutral-900/40
+                                  px-3
+                                  sticky
+                                  text-[12px]
+                                  font-medium
+                                  tracking-[0.12em]
+                                  text-white/50
+                                  transition-all
+                                  duration-200
+                                  hover:border-violet-400/20
+                                  hover:bg-violet-400/[0.045]
+                                  hover:text-white/55
+                                  focus:outline-none
+
+                                  focus:ring-violet-400/30
+                                  cursor-pointer"
+                              >
+                                <span
+                                  className={`
+          relative
+          flex
+          h-4
+          w-4
+          items-center
+          justify-center
+          rounded-md
+          border
+          transition-all
+          duration-200
+          ${
+            showPreview
+              ? "border-violet-400/30 bg-violet-400/[0.08] text-violet-300"
+              : "border-white/[0.06] bg-white/[0.02] text-white/25"
+          }
+        `}
+                                >
+                                  <Eye
+                                    className="h-3.5 w-3.5 transition-transform duration-200 group-hover:scale-105"
+                                    strokeWidth={1.8}
+                                  />
+                                </span>
+
+                                <span>Preview</span>
+                              </button>
+                            </div>
+                          )}
                         </div>
                       ) : null}
                     </div>

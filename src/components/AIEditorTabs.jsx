@@ -1,4 +1,4 @@
-import { Sparkles } from "lucide-react";
+import { Eye, Sparkles } from "lucide-react";
 import Image from "next/image";
 
 const AIEditorTabs = ({
@@ -7,6 +7,9 @@ const AIEditorTabs = ({
   setActiveEditor,
   targetTech,
   setTargetTech,
+  reworkUI,
+  setShowPreview,
+  showPreview,
 }) => {
   return (
     <div className="flex h-12 w-full items-stretch border-b border-gray-200 px-2 text-xs dark:border-darkBorder dark:bg-transparent">
@@ -87,7 +90,7 @@ const AIEditorTabs = ({
           </button>
         )}
       </div>
-      <div className="ml-3 mr-auto h-full py-1">
+      <div className="flex ml-3 mr-auto h-full py-1 gap-4">
         <button
           onClick={() => setActiveEditor("AI")}
           className={`${
@@ -101,6 +104,68 @@ const AIEditorTabs = ({
           />
           AI
         </button>
+        {/* Preview Toggle */}
+        {reworkUI ||
+          (showPreview && (
+            <div className="flex items-center">
+              <button
+                type="button"
+                onClick={() => setShowPreview((prev) => !prev)}
+                aria-pressed={showPreview}
+                className="
+                    group
+                    inline-flex
+                    h-8
+                    items-center
+                    gap-2
+                    rounded-full
+                    border
+                    border-white/[0.07]
+                    bg-neutral-900/40
+                    px-3
+                    text-[10px]
+                    font-medium
+                    tracking-[0.12em]
+                    text-white/30
+                    transition-all
+                    duration-200
+                    hover:border-violet-400/20
+                    hover:bg-violet-400/[0.045]
+                    hover:text-white/55
+                    focus:outline-none
+
+                    focus:ring-violet-400/30
+                    cursor-pointer"
+              >
+                <span
+                  className={`
+          relative
+          flex
+          h-4
+          w-4
+          items-center
+          justify-center
+          rounded-md
+          border
+          transition-all
+          duration-200
+          ${
+            showPreview
+              ? "border-violet-400/30 bg-violet-400/[0.08] text-violet-300"
+              : "border-white/[0.06] bg-white/[0.02] text-white/25"
+          }
+        `}
+                >
+                  <Eye
+                    className="h-3.5 w-3.5 transition-transform duration-200 group-hover:scale-105"
+                    strokeWidth={1.8}
+                  />
+                </span>
+
+                {/* <span>Preview</span> */}
+              </button>
+            </div>
+          ))}
       </div>
 
       {activeComponentIndex != null && (

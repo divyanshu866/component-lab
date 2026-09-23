@@ -24,7 +24,7 @@ const WebBundleIFrame = ({ isMobile }) => {
             ? "w-full h-full absolute mt-10 bg-white"
             : isMaximised
               ? "w-full justify-self-end"
-              : "w-[45%]"
+              : "w-[35%]"
           : "w-0 opacity-0"
       } ${
         isMobile ? "" : ""
