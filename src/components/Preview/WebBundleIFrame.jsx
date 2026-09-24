@@ -45,7 +45,7 @@ const WebBundleIFrame = ({ isMobile }) => {
         key={previewKey}
         srcDoc={htmlPreviewDocument}
         sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-presentation"
-        className={`w-full h-full ${showPreview ? "" : "opacity-0"} ${
+        className={`w-full h-full ${showPreview ? "" : "none"} ${
           isGenerating ? "" : ""
         } transition-all duration-75`}
       />

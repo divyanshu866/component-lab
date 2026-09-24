@@ -8,8 +8,8 @@ const EditorContext = createContext();
 
 export function EditorProvider({ children }) {
   const { appendConsoleLog, setConsoleLogs } = useConsole();
-  const [selectedType, setSelectedType] = useState();
-  const [selectedStyle, setSelectedStyle] = useState();
+  const [selectedType, setSelectedType] = useState("Custom type");
+  const [selectedStyle, setSelectedStyle] = useState("Custom style");
   const [activeEditor, setActiveEditor] = useState("AI");
   const [targetTech, setTargetTech] = useState("REACT");
 

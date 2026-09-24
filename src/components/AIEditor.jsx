@@ -11,7 +11,7 @@ import {
 import { ArrowUp } from "lucide-react";
 import { useConsole } from "@/context/ConsoleContext";
 import { AI_MODELS } from "@/ai/models";
-import ChatList from "./ChatList";
+import ChatList from "@/components/Chat/ChatList";
 import TargetTechTabs from "./TargetTechTabs";
 const AIEditor = ({ user, isMobile }) => {
   const [selectedModel, setSelectedModel] = useState(AI_MODELS[0].value);
@@ -19,6 +19,8 @@ const AIEditor = ({ user, isMobile }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
   const [generationMode, setGenerationMode] = useState("AUTO");
+  const [isGeneratingCode, setIsGeneratingCode] = useState(false);
+  const [resolvedGenerationMode, setResolvedGenerationMode] = useState("ASK");
   const {
     components,
     activeMessages,
@@ -479,6 +481,7 @@ const AIEditor = ({ user, isMobile }) => {
 
     try {
       setIsGenerating(true);
+      setIsGeneratingCode(false);
       setReworkUI(true);
       // setShowPreview(true);
       let usageMetadata;
@@ -529,8 +532,9 @@ const AIEditor = ({ user, isMobile }) => {
         if (resolvedMode !== "REWORK") {
           return;
         }
+        setIsGeneratingCode(true);
         setShowPreview(true);
-        setActiveEditor(section.toUpperCase());
+        // setActiveEditor(section.toUpperCase());
         streamState[section] += content;
         setActiveComponent({ ...streamState });
         streamState.targetTech === "HTML" && updatePreview(streamState);
@@ -572,6 +576,7 @@ const AIEditor = ({ user, isMobile }) => {
       if (resolvedMode !== "ASK" && resolvedMode !== "REWORK") {
         resolvedMode = "ASK";
       }
+      setResolvedGenerationMode(resolvedMode);
 
       console.log("RESOLVED MODE========>", resolvedMode);
       if (resolvedMode === "REWORK") {
@@ -641,7 +646,7 @@ const AIEditor = ({ user, isMobile }) => {
             streamState.targetTech === "REACT" && updatePreview(streamState);
             setActiveEditor("AI");
             // Streaming complete
-
+            setIsGeneratingCode(false);
             console.log(
               "Active streamState.messages at the end of streaming:",
               streamState.messages,
@@ -668,6 +673,7 @@ const AIEditor = ({ user, isMobile }) => {
       setActiveEditor("AI");
     } finally {
       setIsGenerating(false);
+      setIsGeneratingCode(false);
     }
   };
   async function rework() {
@@ -678,6 +684,7 @@ const AIEditor = ({ user, isMobile }) => {
     try {
       // setShowPreview(true);
       setIsGenerating(true);
+      setIsGeneratingCode(false);
 
       const userMessage = {
         id: null,
@@ -719,7 +726,8 @@ const AIEditor = ({ user, isMobile }) => {
           return;
         }
         setShowPreview(true);
-        setActiveEditor(section.toUpperCase());
+        setIsGeneratingCode(true);
+        // setActiveEditor(section.toUpperCase());
         streamState[section] += content;
         setActiveComponent({ ...streamState });
         streamState.targetTech === "HTML" && updatePreview(streamState);
@@ -766,6 +774,8 @@ const AIEditor = ({ user, isMobile }) => {
       if (resolvedMode !== "ASK" && resolvedMode !== "REWORK") {
         resolvedMode = "ASK";
       }
+      setResolvedGenerationMode(resolvedMode);
+
       console.log("RESOLVED MODE========>", resolvedMode);
       if (resolvedMode === "REWORK") {
         streamState.name = "";
@@ -832,7 +842,7 @@ const AIEditor = ({ user, isMobile }) => {
           } else if (event.startsWith("event: end")) {
             //Update React Preview
             streamState.targetTech === "REACT" && updatePreview(streamState);
-
+            setIsGeneratingCode(false);
             setActiveEditor("AI");
             console.log(
               "REACHED PATCH PERSIST STAGE========================>>>",
@@ -883,6 +893,7 @@ const AIEditor = ({ user, isMobile }) => {
       setActiveEditor("AI");
     } finally {
       setIsGenerating(false);
+      setIsGeneratingCode(false);
     }
   }
 
@@ -941,7 +952,10 @@ const AIEditor = ({ user, isMobile }) => {
         className={`w-full h-full flex flex-col ${reworkUI ? "justify-end" : "justify-center"} gap-1 items-center overflow-hidden`}
       >
         {/* Chat List */}
-        <ChatList />
+        <ChatList
+          resolvedGenerationMode={resolvedGenerationMode}
+          isGeneratingCode={isGeneratingCode}
+        />
         {/* heading/textarea container */}
         <div
           className={`${reworkUI || showPreview ? "absolute bottom-4" : "absolute bottom-[50%]"} w-full flex flex-col justify-center items-center max-w-4xl`}

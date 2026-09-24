@@ -155,98 +155,289 @@ body {
   }
 }
 
-@keyframes chat-placeholder {
+/* -------------------------------------------------------------------------- */
+/* ComponentLab pending assistant                                              */
+/* -------------------------------------------------------------------------- */
+
+@keyframes cl-pending-enter {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes cl-pending-icon-pulse {
   0%,
   100% {
-    opacity: 0.25;
+    box-shadow:
+      0 0 0 0 rgba(139, 92, 246, 0),
+      0 0 18px rgba(139, 92, 246, 0.14);
   }
 
   50% {
-    opacity: 0.7;
+    box-shadow:
+      0 0 0 4px rgba(139, 92, 246, 0.055),
+      0 0 26px rgba(139, 92, 246, 0.24);
   }
 }
 
-.chat-ai-orbit {
-  isolation: isolate;
+@keyframes cl-pending-icon-shimmer {
+  0% {
+    opacity: 0.15;
+    transform: translateX(-8px);
+  }
+
+  50% {
+    opacity: 0.75;
+    transform: translateX(8px);
+  }
+
+  100% {
+    opacity: 0.15;
+    transform: translateX(-8px);
+  }
 }
 
-.chat-ai-orbit::before {
+@keyframes cl-pending-dot {
+  0%,
+  65%,
+  100% {
+    opacity: 0.25;
+    transform: translateY(0);
+  }
+
+  32% {
+    opacity: 1;
+    transform: translateY(-1px);
+  }
+}
+
+@keyframes cl-pending-sweep {
+  from {
+    transform: translateX(-125%);
+  }
+
+  to {
+    transform: translateX(260%);
+  }
+}
+
+@keyframes cl-pending-trace {
+  0%,
+  100% {
+    opacity: 0.28;
+    transform: scaleX(0.96);
+  }
+
+  50% {
+    opacity: 0.8;
+    transform: scaleX(1);
+  }
+}
+
+.cl-pending {
+  animation: cl-pending-enter 260ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* -------------------------------------------------------------------------- */
+/* AI icon                                                                     */
+/* -------------------------------------------------------------------------- */
+
+.cl-pending-icon {
+  position: relative;
+  display: flex;
+  height: 28px;
+  width: 28px;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border: 1px solid rgba(167, 139, 250, 0.28);
+  border-radius: 9px;
+  background:
+    radial-gradient(
+      circle at 50% 45%,
+      rgba(167, 139, 250, 0.22),
+      transparent 62%
+    ),
+    rgba(139, 92, 246, 0.08);
+  box-shadow:
+    0 0 18px rgba(139, 92, 246, 0.14),
+    inset 0 0 16px rgba(139, 92, 246, 0.06);
+
+  animation: cl-pending-icon-pulse 2.4s ease-in-out infinite;
+}
+
+.cl-pending-icon::before {
   content: "";
   position: absolute;
-  inset: -1px;
-  border-radius: inherit;
-  padding: 1px;
-  background: conic-gradient(
-    from 0deg,
-    transparent 0deg,
-    rgba(139, 92, 246, 0.05) 65deg,
-    rgba(196, 181, 253, 0.8) 130deg,
-    rgba(217, 70, 239, 0.45) 180deg,
-    transparent 245deg
-  );
-
-  -webkit-mask:
-    linear-gradient(#000 0 0) content-box,
-    linear-gradient(#000 0 0);
-
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-
-  animation: chat-orbit 2.4s linear infinite;
-}
-
-.animate-chat-status {
-  animation: chat-status 2.2s linear infinite;
-}
-
-.chat-generating::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 28%;
-  height: 1px;
+  inset: -10px;
   background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(196, 181, 253, 0.15),
-    rgba(217, 70, 239, 0.9),
-    rgba(196, 181, 253, 0.15),
-    transparent
+    110deg,
+    transparent 25%,
+    rgba(196, 181, 253, 0.18) 50%,
+    transparent 75%
   );
-
-  filter: blur(0.2px);
-  animation: chat-sweep 2.6s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  filter: blur(4px);
+  animation: cl-pending-icon-shimmer 2s ease-in-out infinite;
 }
 
-.chat-placeholder-line {
-  height: 10px;
+/* -------------------------------------------------------------------------- */
+/* Status pill                                                                 */
+/* -------------------------------------------------------------------------- */
+
+.cl-pending-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 3px 8px;
+  border: 1px solid rgba(139, 92, 246, 0.16);
   border-radius: 999px;
-
-  background: linear-gradient(
-    90deg,
-    rgba(255, 255, 255, 0.035),
-    rgba(196, 181, 253, 0.13),
-    rgba(255, 255, 255, 0.035)
-  );
-
-  background-size: 200% 100%;
-  animation: chat-placeholder 1.8s ease-in-out infinite;
+  background: rgba(139, 92, 246, 0.065);
+  color: rgba(221, 214, 254, 0.72);
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  line-height: 1;
+  box-shadow: inset 0 0 14px rgba(139, 92, 246, 0.035);
 }
 
-.chat-placeholder-line:nth-child(2) {
+.cl-pending-dots {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.cl-pending-dots span {
+  display: block;
+  height: 3px;
+  width: 3px;
+  border-radius: 999px;
+  background: rgba(196, 181, 253, 0.9);
+
+  animation: cl-pending-dot 1.2s ease-in-out infinite;
+}
+
+.cl-pending-dots span:nth-child(2) {
   animation-delay: 120ms;
 }
 
-.chat-placeholder-line:nth-child(3) {
+.cl-pending-dots span:nth-child(3) {
   animation-delay: 240ms;
 }
 
+/* -------------------------------------------------------------------------- */
+/* Activity trace                                                              */
+/* -------------------------------------------------------------------------- */
+
+.cl-pending-body {
+  max-width: 660px;
+}
+
+.cl-pending-trace {
+  display: flex;
+  height: 14px;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 14px;
+}
+
+.cl-pending-trace-marker {
+  position: relative;
+  display: block;
+  height: 6px;
+  width: 6px;
+  flex-shrink: 0;
+  border-radius: 999px;
+  background: rgb(167 139 250);
+  box-shadow:
+    0 0 0 3px rgba(139, 92, 246, 0.09),
+    0 0 12px rgba(139, 92, 246, 0.5);
+}
+
+.cl-pending-trace-line {
+  display: block;
+  height: 1px;
+  transform-origin: left center;
+  border-radius: 999px;
+  animation: cl-pending-trace 1.8s ease-in-out infinite;
+}
+
+.cl-pending-trace-line-primary {
+  width: 68px;
+  background: linear-gradient(
+    90deg,
+    rgba(167, 139, 250, 0.55),
+    rgba(167, 139, 250, 0.08)
+  );
+}
+
+.cl-pending-trace-line-secondary {
+  width: 28px;
+  opacity: 0.5;
+  animation-delay: 180ms;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Response lines                                                              */
+/* -------------------------------------------------------------------------- */
+
+.cl-pending-lines {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.cl-pending-line {
+  position: relative;
+  height: 9px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.cl-pending-line::after {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 -40%;
+  width: 38%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(167, 139, 250, 0.16),
+    rgba(255, 255, 255, 0.08),
+    transparent
+  );
+  transform: translateX(-125%);
+
+  animation: cl-pending-sweep 2.1s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+.cl-pending-line:nth-child(2)::after {
+  animation-delay: 120ms;
+}
+
+.cl-pending-line:nth-child(3)::after {
+  animation-delay: 240ms;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Reduced motion                                                             */
+/* -------------------------------------------------------------------------- */
+
 @media (prefers-reduced-motion: reduce) {
-  .chat-ai-orbit::before,
-  .animate-chat-status,
-  .chat-generating::before,
-  .chat-placeholder-line {
+  .cl-pending,
+  .cl-pending-icon,
+  .cl-pending-icon::before,
+  .cl-pending-dots span,
+  .cl-pending-trace-line,
+  .cl-pending-line::after {
     animation: none;
   }
 }

@@ -345,34 +345,29 @@ export async function buildReactPreviewDocument(component) {
     <html>
       <head>
         <meta charset="UTF-8" />
+        <script src="https://cdn.tailwindcss.com"></script>
         <style>
-
           html,
           body {
+            width: 100%;
+            height: 100%;
             margin: 0;
             padding: 0;
-            width: 100%;
-            min-height: 100%;
             box-sizing: border-box;
           }
-        
+
           *,
           *::before,
           *::after {
             box-sizing: inherit;
           }
-        
-          body {
-            min-height: 100vh;
-          }
-        
+
           #root {
             width: 100%;
-            min-height: 100vh;
+            height: 100%;
           }
           ${component.css}
         </style>
-        <script src="https://cdn.tailwindcss.com"></script>
         <script type="importmap">
           ${JSON.stringify(importMap)}
         </script>
@@ -414,29 +409,29 @@ export async function buildReactPreviewDocument(component) {
 
           ${SERIALIZE_CONSOLE_VALUE_SOURCE}
           function reportConsoleMessage(method, severity, args) {
-  const serializedArguments = args.map(
-  (arg) => serializeConsoleValue(arg)
-
-  );
-
-  reportPreviewDiagnostic({
-    source: "console",
-    severity,
-    type: method,
-    message: serializedArguments
-      .map((arg) => arg.preview)
-      .join(" "),
-    stack: null,
-    location: {
-      file: "Component.jsx",
-      line: null,
-      column: null,
-    },
-    metadata: {
-      arguments: serializedArguments,
-    },
-  });
-}
+            const serializedArguments = args.map(
+            (arg) => serializeConsoleValue(arg)
+            
+            );
+          
+            reportPreviewDiagnostic({
+              source: "console",
+              severity,
+              type: method,
+              message: serializedArguments
+                .map((arg) => arg.preview)
+                .join(" "),
+              stack: null,
+              location: {
+                file: "Component.jsx",
+                line: null,
+                column: null,
+              },
+              metadata: {
+                arguments: serializedArguments,
+              },
+            });
+          }
           
           //Preserve original implementation
           const originalConsoleLog = console.log;

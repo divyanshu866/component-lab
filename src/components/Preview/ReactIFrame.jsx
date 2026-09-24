@@ -39,11 +39,9 @@ const ReactIFrame = ({ isMobile }) => {
         sandbox="allow-scripts allow-same-origin" //Reduced security access to localstorage & parent dom
         // sandbox="allow-scripts"                Enhanced Security
         srcDoc={reactPreviewDocument}
-        style={{
-          width: "100%",
-          height: "100%",
-          border: "none",
-        }}
+        className={`w-full h-full ${showPreview ? "" : "none"} ${
+          isGenerating ? "" : ""
+        } transition-all duration-75`}
       />
     </div>
   );
