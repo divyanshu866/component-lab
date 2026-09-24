@@ -1,4 +1,4 @@
-import { ArrowUpRight, Eye } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 
 const ChatPreviewToggle = ({ showPreview, setShowPreview }) => {
   return (
@@ -6,65 +6,69 @@ const ChatPreviewToggle = ({ showPreview, setShowPreview }) => {
       type="button"
       onClick={() => setShowPreview((prev) => !prev)}
       aria-pressed={showPreview}
+      aria-label={showPreview ? "Hide preview" : "Show preview"}
+      title={showPreview ? "Hide preview" : "Show preview"}
       className="
         absolute
-        -bottom-5
+        -bottom-6
         right-0
         z-50
         group
         inline-flex
-        h-8
         items-center
-        gap-2
-        rounded-full
+        gap-1.5
+        rounded-2xl
+        rounded-tr-md
         border
-        border-white/20
-        bg-neutral-900/40
+        border-white/[0.10]
+        bg-white/[0.035]
         px-3
+        py-2
         text-[12px]
-        font-medium
-        tracking-[0.12em]
-        text-white/50
-        transition-all
-        duration-200
-        hover:border-violet-400/20
-        hover:bg-violet-400/4.5
-        hover:text-white/55
+        font-normal
+        tracking-normal
+        text-white/55
+        transition-colors
+        duration-150
+        hover:border-violet-300/[0.20]
+        hover:bg-violet-300/[0.055]
+        hover:text-white/80
+        active:bg-violet-300/[0.075]
         focus:outline-none
-        focus:ring-1
-        focus:ring-violet-400/30
+        focus-visible:ring-1
+        focus-visible:ring-violet-400/45
+        focus-visible:ring-offset-2
+        focus-visible:ring-offset-[#08080a]
         cursor-pointer
       "
     >
       <span
         className={`
-          relative
-          flex
-          h-4
-          w-4
-          items-center
-          justify-center
-          rounded-md
-          border
-          transition-all
-          duration-200
+          transition-colors
+          duration-150
           ${
             showPreview
-              ? "border-violet-400/30 bg-violet-400/8 text-violet-300"
-              : "border-white/6 bg-white/2 text-white/25"
+              ? "text-violet-300"
+              : "text-white/55 group-hover:text-violet-200"
           }
         `}
       >
-        <Eye
-          className="h-3.5 w-3.5 transition-transform duration-200 group-hover:scale-105"
-          strokeWidth={1.8}
-        />
+        Preview
       </span>
 
-      <span>Preview</span>
-
       <ArrowUpRight
-        className="h-3.5 w-3.5 transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+        className={`
+          h-3.5
+          w-3.5
+          shrink-0
+          transition-colors
+          duration-150
+          ${
+            showPreview
+              ? "text-violet-300/85"
+              : "text-white/40 group-hover:text-violet-200/80"
+          }
+        `}
         strokeWidth={1.8}
       />
     </button>
