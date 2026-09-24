@@ -518,11 +518,11 @@ const AIEditor = ({ user, isMobile }) => {
       //Enrich messages for ai call
       const enrichedPrompt = `Use the following 'User Request' to resolve 'REWORK' or 'ASK' mode and acomplish the task.
   
-  Component Type:${selectedType}
+        Component Type:${selectedType}
 
-  Component Style:${selectedStyle}
+        Component Style:${selectedStyle}
 
-  User Request:${changeDesc}`;
+        User Request:${changeDesc}`;
       const messages = [
         { role: "USER", message: enrichedPrompt },
         { role: "ASSISTANT", message: "" },
@@ -534,10 +534,9 @@ const AIEditor = ({ user, isMobile }) => {
         }
         setIsGeneratingCode(true);
         setShowPreview(true);
-        // setActiveEditor(section.toUpperCase());
         streamState[section] += content;
         setActiveComponent({ ...streamState });
-        streamState.targetTech === "HTML" && updatePreview(streamState);
+        // streamState.targetTech === "HTML" && updatePreview(streamState);
       };
       const appendAssistantMessageChunk = (content) => {
         streamState.messages = streamState.messages.map((msg, index) =>
@@ -619,19 +618,15 @@ const AIEditor = ({ user, isMobile }) => {
                   appendAssistantMessageChunk(data.content);
                   break;
                 case "html":
-                  // setActiveEditor("HTML");
                   updateStreamingComponent(data.type, data.content);
                   break;
                 case "css":
-                  // setActiveEditor("CSS");
                   updateStreamingComponent(data.type, data.content);
                   break;
                 case "js":
-                  // setActiveEditor("JS");
                   updateStreamingComponent(data.type, data.content);
                   break;
                 case "jsx":
-                  // setActiveEditor("JSX");
                   updateStreamingComponent(data.type, data.content);
                   break;
                 case "usage_metadata":
@@ -642,8 +637,8 @@ const AIEditor = ({ user, isMobile }) => {
               console.error("Error parsing streaming data:", err);
             }
           } else if (event.startsWith("event: end")) {
-            //update react preview
-            streamState.targetTech === "REACT" && updatePreview(streamState);
+            //update preview
+            updatePreview(streamState);
             setActiveEditor("AI");
             // Streaming complete
             setIsGeneratingCode(false);
@@ -727,10 +722,9 @@ const AIEditor = ({ user, isMobile }) => {
         }
         setShowPreview(true);
         setIsGeneratingCode(true);
-        // setActiveEditor(section.toUpperCase());
         streamState[section] += content;
         setActiveComponent({ ...streamState });
-        streamState.targetTech === "HTML" && updatePreview(streamState);
+        // streamState.targetTech === "HTML" && updatePreview(streamState);
       };
       const appendAssistantMessageChunk = (content) => {
         streamState.messages = streamState.messages.map((msg, index) =>
@@ -815,21 +809,17 @@ const AIEditor = ({ user, isMobile }) => {
                   break;
 
                 case "html":
-                  // setActiveEditor("HTML");
                   updateStreamingComponent(data.type, data.content);
                   break;
 
                 case "css":
-                  // setActiveEditor("CSS");
                   updateStreamingComponent(data.type, data.content);
                   break;
 
                 case "js":
-                  // setActiveEditor("JS");
                   updateStreamingComponent(data.type, data.content);
                   break;
                 case "jsx":
-                  // setActiveEditor("JSX");
                   updateStreamingComponent(data.type, data.content);
                   break;
                 case "usage_metadata":
@@ -840,8 +830,8 @@ const AIEditor = ({ user, isMobile }) => {
               console.error("Error parsing streaming data:", err);
             }
           } else if (event.startsWith("event: end")) {
-            //Update React Preview
-            streamState.targetTech === "REACT" && updatePreview(streamState);
+            //Update Preview
+            updatePreview(streamState);
             setIsGeneratingCode(false);
             setActiveEditor("AI");
             console.log(
