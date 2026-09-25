@@ -1,6 +1,5 @@
 "use client";
 
-import { Check, Sparkles } from "lucide-react";
 import ChatMarkdown from "./ChatMarkdown";
 import ChatPreviewToggle from "./ChatPreviewToggle";
 import AnimatedCodePreview from "./AnimatedCodePreview";
@@ -22,7 +21,7 @@ const MessageMeta = ({ aiRequest }) => {
         gap-y-1
         text-[10px]
         leading-4
-        text-white/25
+        text-neutral-400
       "
     >
       <span>Input {aiRequest.inputTokens ?? 0}</span>
@@ -44,7 +43,7 @@ const AssistantHeader = ({ isGenerating }) => {
           flex
           h-7
           w-7
-          mt-1
+          mt-0
           shrink-0
           items-center
           justify-center
@@ -58,7 +57,7 @@ const AssistantHeader = ({ isGenerating }) => {
       </div>
 
       <div className="flex min-w-0 items-center gap-2">
-        <span className="text-[11px] font-medium tracking-[0.01em] text-white/60">
+        <span className="text-[13px] font-medium tracking-[0.01em] text-violet-400">
           ComponentLab
         </span>
 
@@ -112,8 +111,8 @@ const UserMessage = ({ message }) => {
           motion-safe:animate-[chat-entry_220ms_cubic-bezier(0.22,1,0.36,1)]
         "
       >
-        <div className="mb-2 flex justify-end px-1">
-          <span className="text-[10px] font-medium tracking-[0.02em] text-white/25">
+        <div className="mb-4 flex justify-end px-1">
+          <span className="text-[13px] font-medium tracking-[0.01em] text-neutral-400">
             You
           </span>
         </div>
