@@ -48,13 +48,13 @@ const Editor = ({ user, isMobile }) => {
 
       setActiveComponent({
         id: c.id,
-        messages: c.prompts || [],
-        name: c.name,
+        messages: c.prompts ?? [],
+        name: c.name ?? "",
         targetTech: c.targetTech,
-        jsx: c.jsx,
-        html: c.html,
-        css: c.css,
-        js: c.js,
+        jsx: c.jsx ?? "",
+        html: c.html ?? "",
+        css: c.css ?? "",
+        js: c.js ?? "",
       });
       setTargetTech(c.targetTech);
       setConsoleLogs([]);
@@ -67,12 +67,12 @@ const Editor = ({ user, isMobile }) => {
   useEffect(() => {
     const updatedComponent = {
       id: activeComponent.id,
-      name: activeComponent.name,
+      name: activeComponent.name ?? "",
       messages: [],
-      html: activeComponent.html,
-      css: activeComponent.css,
-      js: activeComponent.js,
-      jsx: activeComponent.jsx,
+      html: activeComponent.html ?? "",
+      css: activeComponent.css ?? "",
+      js: activeComponent.js ?? "",
+      jsx: activeComponent.jsx ?? "",
       targetTech: targetTech,
     };
     const handleSaveShortcut = (e) => {

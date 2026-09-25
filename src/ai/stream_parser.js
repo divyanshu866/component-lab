@@ -1,22 +1,23 @@
 // Helper function to create streaming response
-const startMarkers = {
-  "␞NAMESTART␞": "name",
-  "␞MESSAGESTART␞": "message",
-  "␞HTMLSTART␞": "html",
-  "JSXSTART␞": "jsx",
-  "CSSSTART␞": "css",
-  "␞JSSTART␞": "js",
+export const markerString = `"@@"`;
+export const startMarkers = {
+  name: "@@NAME_START@@",
+  message: "@@MESSAGE_START@@",
+  html: "@@HTML_START@@",
+  jsx: "@@JSX_START@@",
+  css: "@@CSS_START@@",
+  js: "@@JS_START@@",
 };
 
-const endMarkers = {
-  "␞NAMEEND␞": "name",
-  "␞MESSAGEEND␞": "message",
-  "␞HTMLEND␞": "html",
-  "␞JSXEND␞": "jsx",
-  "␞CSSEND␞": "css",
-  "␞JSEND␞": "js",
+export const endMarkers = {
+  name: "@@NAME_END@@",
+  message: "@@MESSAGE_END@@",
+  html: "@@HTML_END@@",
+  jsx: "@@JSX_END@@",
+  css: "@@CSS_END@@",
+  js: "@@JS_END@@",
 };
-const longestMarkerLngth = 13;
+const longestMarkerLngth = 18;
 export async function createStreamingResponse(stream, headers = {}) {
   // Create a ReadableStream for SSE
   const encoder = new TextEncoder();
@@ -46,7 +47,7 @@ export async function createStreamingResponse(stream, headers = {}) {
               let foundMarker = null;
               let foundSection = null;
               //Check for all start markers
-              for (const [marker, section] of Object.entries(startMarkers)) {
+              for (const [section, marker] of Object.entries(startMarkers)) {
                 //If a startMarker is found
                 if (remaining.includes(marker)) {
                   foundMarker = marker;
@@ -86,7 +87,7 @@ export async function createStreamingResponse(stream, headers = {}) {
               let foundSection = null;
               let foundEndMarker = false;
               //check for all endMarkers
-              for (const [marker, section] of Object.entries(endMarkers)) {
+              for (const [section, marker] of Object.entries(endMarkers)) {
                 //If none of the endMarker is found
                 if (remaining.includes(marker)) {
                   foundMarker = marker;

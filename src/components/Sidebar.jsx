@@ -115,13 +115,7 @@ export default function Sidebar({ isMobile }) {
     }
     fetchComponents();
   }, []);
-  const clearScreen = (
-    name = "",
-    html = "",
-    css = "",
-    js = "",
-    jsx = EMPTY_JSX,
-  ) => {
+  const clearScreen = (name, html, css, js, jsx = EMPTY_JSX) => {
     if (isGenerating) {
       return;
     }
@@ -135,13 +129,13 @@ export default function Sidebar({ isMobile }) {
     setActiveEditor("AI");
     setActiveComponent({
       id: "",
-      name: name,
       messages: [],
-      html: html,
-      css: css,
-      jsx: jsx,
-      js: js,
+      name: name ?? "",
       targetTech: targetTech,
+      jsx: jsx ?? "",
+      html: html ?? "",
+      css: css ?? "",
+      js: js ?? "",
     });
 
     setConsoleLogs([]);

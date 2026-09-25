@@ -28,7 +28,7 @@ const WebBundleIFrame = ({ isMobile }) => {
           : "w-0 opacity-0"
       } ${
         isMobile ? "" : ""
-      }  flex flex-col h-full justify-center items-center border-l overflow-hidden border-gray-200 dark:border-darkBorder relative transition-all duration-200`}
+      }  flex flex-col h-full justify-center items-center border-l overflow-hidden border-gray-200 dark:border-darkBorder relative transition-all duration-400`}
     >
       <PreviewHeader
         isMaximised={isMaximised}

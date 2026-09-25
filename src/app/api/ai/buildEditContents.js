@@ -1,3 +1,5 @@
+import { endMarkers, startMarkers } from "../../../ai/stream_parser";
+
 export function buildNeutralEditContext(request) {
   const messages = request.messages;
   const component = request.component;
@@ -34,33 +36,33 @@ function buildComponentStateBundle(component) {
   const componentState = `
 Current component:
 
-␞NAMESTART␞
+${startMarkers.name}
 ${component.name}
-␞NAMEEND␞
-␞HTMLSTART␞
+${endMarkers.name}
+${startMarkers.html}
 ${component.html}
-␞HTMLEND␞
-␞CSSSTART␞
+${endMarkers.html}
+${startMarkers.css}
 ${component.css}
-␞CSSEND␞
-␞JSSTART␞
+${endMarkers.css}
+${startMarkers.js}
 ${component.js}
-␞JSEND␞`;
+${endMarkers.js}`;
   return componentState;
 }
 function buildComponentStateReact(component) {
   const componentState = `
 Current component:
 
-␞NAMESTART␞
+${startMarkers.name}
 ${component.name}
-␞NAMEEND␞
-␞JSXSTART␞
+${endMarkers.name}
+${startMarkers.jsx}
 ${component.jsx}
-␞JSXEND␞
-␞CSSSTART␞
+${endMarkers.jsx}
+${startMarkers.css}
 ${component.css}
-␞CSSEND␞`;
+${endMarkers.css}`;
   return componentState;
 }
 
@@ -109,18 +111,18 @@ export function buildBundleEditGeminiContents(request) {
 
 Current component:
 
-␞NAMESTART␞
+${startMarkers.name}
 ${component.name}
-␞NAMEEND␞
-␞HTMLSTART␞
+${endMarkers.name}
+${startMarkers.html}
 ${component.html}
-␞HTMLEND␞
-␞CSSSTART␞
+${endMarkers.html}
+${startMarkers.css}
 ${component.css}
-␞CSSEND␞
-␞JSSTART␞
+${endMarkers.css}
+${startMarkers.js}
 ${component.js}
-␞JSEND␞`
+${endMarkers.js}`
                   : ""),
             },
           ],
@@ -132,20 +134,26 @@ ${component.js}
       role: "user",
       parts: [
         {
-          text: `␞MESSAGESTART␞${messages[0].message}␞MESSAGEEND␞
-              Component Current State:
-              ␞NAMESTART␞
-              ${component.name}
-              ␞NAMEEND␞
-              ␞HTMLSTART␞
-              ${component.html}
-              ␞HTMLEND␞
-              ␞CSSSTART␞
-              ${component.css}
-              ␞CSSEND␞
-              ␞JSSTART␞
-              ${component.js}
-              ␞JSEND␞
+          text: `
+          ${startMarkers.message}
+          ${messages[0].message}
+          ${endMarkers.message}
+          Component Current State:
+          ${startMarkers.name}
+          ${component.name}
+          ${endMarkers.name}
+
+          ${startMarkers.html}
+          ${component.html}
+          ${endMarkers.html}
+
+          ${startMarkers.css}
+          ${component.css}
+          ${endMarkers.css}
+
+          ${startMarkers.js}
+          ${component.js}
+          ${endMarkers.js}
               `,
         },
       ],
@@ -186,15 +194,15 @@ export function buildReactEditGeminiContents(request) {
 
 Current component:
 
-␞NAMESTART␞
+${startMarkers.name}
 ${component.name}
-␞NAMEEND␞
-␞JSXSTART␞
+${endMarkers.name}
+${startMarkers.jsx}
 ${component.jsx}
-␞JSXEND␞
-␞CSSSTART␞
+${endMarkers.jsx}
+${startMarkers.css}
 ${component.css}
-␞CSSEND␞`
+${endMarkers.css}`
                   : ""),
             },
           ],
@@ -206,17 +214,21 @@ ${component.css}
       role: "user",
       parts: [
         {
-          text: `␞MESSAGESTART␞${messages[0].message}␞MESSAGEEND␞
+          text: `${startMarkers.message}
+          ${messages[0].message}
+          ${endMarkers.message}
               Component Current State:
-              ␞NAMESTART␞
+              ${startMarkers.name}
               ${component.name}
-              ␞NAMEEND␞
-              ␞JSXSTART␞
+              ${endMarkers.name}
+
+              ${startMarkers.jsx}
               ${component.jsx}
-              ␞JSXEND␞
-              ␞CSSSTART␞
+              ${endMarkers.jsx}
+
+              ${startMarkers.css}
               ${component.css}
-              ␞CSSEND␞
+              ${endMarkers.css}
               `,
         },
       ],

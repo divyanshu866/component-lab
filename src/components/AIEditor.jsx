@@ -474,8 +474,8 @@ const AIEditor = ({ user, isMobile }) => {
   ]);
   const promptAreaRef = useRef(null);
   const generateComponent = async () => {
-    if (!changeDesc.trim()) {
-      console.log("EMPTY");
+    if (!changeDesc?.trim()) {
+      console.log("PROMPT EMPTY");
       return;
     }
 
@@ -504,11 +504,11 @@ const AIEditor = ({ user, isMobile }) => {
       const streamState = {
         name: activeComponent.name ?? "",
         messages: [userMessage, assistantPlaceholder],
+        targetTech: targetTech,
+        jsx: activeComponent.jsx ?? "",
         html: activeComponent.html ?? "",
         css: activeComponent.css ?? "",
         js: activeComponent.js ?? "",
-        jsx: activeComponent.jsx ?? "",
-        targetTech: targetTech,
         usageMetadata: null,
         model: selectedModel,
       };
@@ -700,12 +700,12 @@ const AIEditor = ({ user, isMobile }) => {
       // Initialize streaming component with existing values
       const streamState = {
         id: activeComponent.id,
-        name: activeComponent.name,
+        name: activeComponent.name ?? "",
         messages: [...activeMessages, userMessage, assistantPlaceholder],
-        html: activeComponent.html,
-        css: activeComponent.css,
-        js: activeComponent.js,
-        jsx: activeComponent.jsx,
+        html: activeComponent.html ?? "",
+        css: activeComponent.css ?? "",
+        js: activeComponent.js ?? "",
+        jsx: activeComponent.jsx ?? "",
         targetTech: targetTech,
         usageMetadata: null,
         model: selectedModel,
@@ -744,12 +744,12 @@ const AIEditor = ({ user, isMobile }) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          name: activeComponent.name,
-          messages: streamState.messages,
-          html: activeComponent.html,
-          css: activeComponent.css,
-          js: activeComponent.js,
-          jsx: activeComponent.jsx,
+          name: activeComponent.name ?? "",
+          messages: streamState.messages ?? [],
+          html: activeComponent.html ?? "",
+          css: activeComponent.css ?? "",
+          js: activeComponent.js ?? "",
+          jsx: activeComponent.jsx ?? "",
           targetTech: streamState.targetTech,
           generationMode: generationMode,
           model: selectedModel,
@@ -887,14 +887,7 @@ const AIEditor = ({ user, isMobile }) => {
     }
   }
 
-  const clearScreen = (
-    name = "",
-    html = "",
-    css = "",
-    js = "",
-    jsx = "",
-    targetTech = "",
-  ) => {
+  const clearScreen = (name, html, css, js, jsx, targetTech) => {
     console.log("Editor cleared from AI-EDITOR");
     setSelectedType("Custom type");
     setSelectedStyle("Custom style");
@@ -903,12 +896,12 @@ const AIEditor = ({ user, isMobile }) => {
     setActiveComponent({
       id: "",
       messages: [],
-      name: name,
-      html: html,
-      css: css,
-      js: js,
-      jsx: jsx,
+      name: name ?? "",
       targetTech: targetTech,
+      jsx: jsx ?? "",
+      html: html ?? "",
+      css: css ?? "",
+      js: js ?? "",
     });
 
     setConsoleLogs([]);

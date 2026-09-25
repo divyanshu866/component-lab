@@ -104,13 +104,13 @@ export default function Navbar({ user }) {
           <div className="flex items-center ml-16 gap-4">
             <input
               type="text"
-              onChange={(e) =>
+              onChange={(event) =>
                 setActiveComponent((prev) => ({
                   ...prev,
-                  name: e.target.value,
+                  name: event.target.value,
                 }))
               }
-              value={activeComponent.name}
+              value={activeComponent?.name ?? ""}
               placeholder="Component Name"
               className={`bg-gray-200 dark:bg-backgroundLight ${activeComponent.name ? "dark:text-neutral-400" : "dark:text-red-300"} outline-0 py-2 px-3 w-[300PX] text-sm ${
                 !activeComponent?.name

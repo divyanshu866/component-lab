@@ -46,20 +46,23 @@ export function EditorProvider({ children }) {
 
   const saveComponent = async (component) => {
     // (messages, name, html, css, js);
-    if (!component.name.trim()) {
-      return;
+    if (!component?.name?.trim()) {
+      return NextResponse.json(
+        { error: "Missing component name" },
+        { status: 400 },
+      );
     }
     const payload = {
-      id: component.id,
-      messages: component.messages,
-      name: component.name,
-      html: component.html,
-      css: component.css,
-      js: component.js,
-      jsx: component.jsx,
-      targetTech: component.targetTech,
-      usageMetadata: component.usageMetadata,
-      model: component.model,
+      id: component?.id ?? "",
+      messages: Array.isArray(component?.messages) ? component.messages : [],
+      name: String(component?.name ?? ""),
+      html: String(component?.html ?? ""),
+      css: String(component?.css ?? ""),
+      js: String(component?.js ?? ""),
+      jsx: String(component?.jsx ?? ""),
+      targetTech: component?.targetTech ?? "REACT",
+      usageMetadata: component?.usageMetadata ?? null,
+      model: component?.model ?? "",
     };
     // Is New Component generation?
     if (!component?.id) {
