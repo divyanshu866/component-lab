@@ -45,12 +45,8 @@ export function EditorProvider({ children }) {
   const [reactPreviewDocument, setReactPreviewDocument] = useState("");
 
   const saveComponent = async (component) => {
-    // (messages, name, html, css, js);
     if (!component?.name?.trim()) {
-      return NextResponse.json(
-        { error: "Missing component name" },
-        { status: 400 },
-      );
+      component.name = "New Component";
     }
     const payload = {
       id: component?.id ?? "",
