@@ -553,7 +553,7 @@ function HeroWorkspace() {
                 </div>
 
                 {/* Code preview */}
-                <div className="mt-3 overflow-hidden rounded-xl border border-white/[0.07] bg-[#0b0b0e]">
+                <div className="mt-3 max-w-[92%] overflow-hidden rounded-xl border border-white/[0.07] bg-[#0b0b0e]">
                   <div className="flex h-8 items-center justify-between border-b border-white/[0.06] px-3">
                     <span className="text-[9px] text-zinc-600">
                       Generated JSX
