@@ -17,7 +17,7 @@ export const endMarkers = {
   css: "@@CSS_END@@",
   js: "@@JS_END@@",
 };
-const longestMarkerLngth = 18;
+const longestMarkerLength = startMarkers.message.length + 1;
 export async function createStreamingResponse(stream, headers = {}) {
   // Create a ReadableStream for SSE
   const encoder = new TextEncoder();
@@ -40,7 +40,7 @@ export async function createStreamingResponse(stream, headers = {}) {
           let remaining = accumulator;
           console.log("Remaining:", remaining);
           //No start untill lengths is greater than 19
-          while (remaining.length >= longestMarkerLngth) {
+          while (remaining.length >= longestMarkerLength) {
             if (inSection == false) {
               //Check for all markers
               let foundStartMarker = false;
@@ -60,7 +60,7 @@ export async function createStreamingResponse(stream, headers = {}) {
               //If none of the startMarker is found
               if (foundStartMarker == false) {
                 //remove everything except last 19 characters
-                remaining = remaining.slice(-1 * longestMarkerLngth);
+                remaining = remaining.slice(-1 * longestMarkerLength);
                 break;
               } else {
                 //remove marker & everything before it & set inSection to true
@@ -99,7 +99,10 @@ export async function createStreamingResponse(stream, headers = {}) {
               }
               if (foundEndMarker == false) {
                 //Emit Everything except last 19 characters
-                const emitContent = remaining.slice(0, -1 * longestMarkerLngth);
+                const emitContent = remaining.slice(
+                  0,
+                  -1 * longestMarkerLength,
+                );
                 console.log("Emitting Content for Section:", emitContent);
                 controller.enqueue(
                   encoder.encode(
@@ -110,7 +113,7 @@ export async function createStreamingResponse(stream, headers = {}) {
                   ),
                 );
                 //Retain last 19 characters for next iteration
-                remaining = remaining.slice(-1 * longestMarkerLngth);
+                remaining = remaining.slice(-1 * longestMarkerLength);
                 break;
               }
               //If End marker found, emit everything before the marker and send section end signal
