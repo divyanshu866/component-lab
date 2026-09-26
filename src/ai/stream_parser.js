@@ -38,7 +38,7 @@ export async function createStreamingResponse(stream, headers = {}) {
 
           // Process markers and content in the accumulator
           let remaining = accumulator;
-          console.log("Remaining:", remaining);
+          // console.log("Remaining:", remaining);
           //No start untill lengths is greater than 19
           while (remaining.length >= longestMarkerLength) {
             if (inSection == false) {
@@ -70,7 +70,7 @@ export async function createStreamingResponse(stream, headers = {}) {
                 inSection = true;
                 currSection = foundSection;
                 // Send section start signal
-                console.log("Found Section Start:", currSection);
+                // console.log("Found Section Start:", currSection);
                 controller.enqueue(
                   encoder.encode(
                     `data: ${JSON.stringify({
@@ -103,7 +103,7 @@ export async function createStreamingResponse(stream, headers = {}) {
                   0,
                   -1 * longestMarkerLength,
                 );
-                console.log("Emitting Content for Section:", emitContent);
+                // console.log("Emitting Content for Section:", emitContent);
                 controller.enqueue(
                   encoder.encode(
                     `data: ${JSON.stringify({
@@ -122,7 +122,7 @@ export async function createStreamingResponse(stream, headers = {}) {
                   0,
                   remaining.indexOf(foundMarker),
                 );
-                console.log("Emitting Content for Section:", emitContent);
+                // console.log("Emitting Content for Section:", emitContent);
                 controller.enqueue(
                   encoder.encode(
                     `data: ${JSON.stringify({

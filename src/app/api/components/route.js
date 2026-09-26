@@ -3,12 +3,11 @@ import { NextResponse } from "next/server";
 import { getSession } from "@/lib/get-session";
 import { prisma } from "@/lib/prisma";
 import { PromptRole, TargetTech } from "@/generated/prisma/client";
-import { Console } from "console";
 
 export async function POST(request) {
   // 1. Check session
-  console.log("REACHED COMP/POST==> REQ=>");
-  console.dir(request, { depth: null });
+  // console.log("REACHED COMP/POST==> REQ=>");
+  // console.dir(request, { depth: null });
   const session = await getSession(); // ← reads cookies from `request` internally
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
