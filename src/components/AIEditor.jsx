@@ -13,6 +13,8 @@ import { useConsole } from "@/context/ConsoleContext";
 import { AI_MODELS } from "@/ai/models";
 import ChatList from "@/components/Chat/ChatList";
 import TargetTechTabs from "./TargetTechTabs";
+import GenerationSuggestions from "./GenerationSuggestions";
+
 const AIEditor = ({ user, isMobile }) => {
   const [selectedModel, setSelectedModel] = useState(AI_MODELS[0].value);
   const { setConsoleLogs } = useConsole();
@@ -473,8 +475,9 @@ const AIEditor = ({ user, isMobile }) => {
     },
   ]);
   const promptAreaRef = useRef(null);
-  const generateComponent = async () => {
-    if (!changeDesc?.trim()) {
+  const generateComponent = async (promptOverride) => {
+    const prompt = promptOverride ?? changeDesc;
+    if (!prompt?.trim()) {
       console.log("PROMPT EMPTY");
       return;
     }
@@ -488,7 +491,7 @@ const AIEditor = ({ user, isMobile }) => {
       const userMessage = {
         id: null,
         role: "USER",
-        message: changeDesc,
+        message: prompt,
         componentId: null,
         createdAt: null,
       };
@@ -516,13 +519,14 @@ const AIEditor = ({ user, isMobile }) => {
       setActiveMessages(streamState.messages);
 
       //Enrich messages for ai call
-      const enrichedPrompt = `Use the following 'User Request' to resolve 'REWORK' or 'ASK' mode and acomplish the task.
+      const enrichedPrompt = `Use the following 'User Request' to resolve user intent to 'REWORK' or 'ASK' mode.
   
         Component Type:${selectedType}
 
         Component Style:${selectedStyle}
 
-        User Request:${changeDesc}`;
+        User Request:${prompt}`;
+
       const messages = [
         { role: "USER", message: enrichedPrompt },
         { role: "ASSISTANT", message: "" },
@@ -930,7 +934,6 @@ const AIEditor = ({ user, isMobile }) => {
           ))}
         </select>
       </div>
-
       <div
         className={`w-full h-full flex flex-col ${reworkUI ? "justify-end" : "justify-center"} gap-1 items-center overflow-hidden`}
       >
@@ -941,7 +944,7 @@ const AIEditor = ({ user, isMobile }) => {
         />
         {/* heading/textarea container */}
         <div
-          className={`${reworkUI || showPreview ? "absolute bottom-4" : "absolute bottom-[50%]"} w-full flex flex-col justify-center items-center max-w-4xl`}
+          className={`${reworkUI || showPreview ? "absolute bottom-4" : "absolute bottom-[35%]"} w-full flex flex-col justify-center items-center max-w-4xl`}
         >
           <h1
             className={` ${reworkUI && activeMessages.length > 0 ? "hidden" : ""} lg:text-3xl xl:text-4xl text-center font-sans font-medium mb-12 bg-linear-to-r from-pink-700 to-purple-700 bg-clip-text text-transparent`}
@@ -1077,6 +1080,16 @@ const AIEditor = ({ user, isMobile }) => {
                 </button>
               </div>
             </div>
+            {activeComponent.id === "" &&
+              activeMessages.length === 0 &&
+              !isGenerating && (
+                <GenerationSuggestions
+                  disabled={isGenerating}
+                  onGenerate={(prompt) => {
+                    generateComponent(prompt);
+                  }}
+                />
+              )}
           </div>
         </div>
       </div>

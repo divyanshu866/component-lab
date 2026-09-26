@@ -36,8 +36,8 @@ const ReactIFrame = ({ isMobile }) => {
       <iframe
         key={previewKey}
         title="React Preview"
-        sandbox="allow-scripts allow-same-origin" //Reduced security access to localstorage & parent dom
-        // sandbox="allow-scripts"                Enhanced Security
+        // sandbox="allow-scripts allow-same-origin" //Reduced security access to localstorage & parent dom
+        sandbox="allow-scripts" //Enhanced Security
         srcDoc={reactPreviewDocument}
         className={`w-full h-full ${showPreview ? "" : "none"} ${
           isGenerating ? "" : ""

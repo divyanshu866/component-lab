@@ -44,7 +44,8 @@ const WebBundleIFrame = ({ isMobile }) => {
       <iframe
         key={previewKey}
         srcDoc={htmlPreviewDocument}
-        sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-presentation"
+        // sandbox="allow-scripts allow-same-origin allow-same-origin allow-scripts allow-popups allow-forms allow-presentation" //Reduced security access to localstorage & parent dom
+        sandbox="allow-scripts" //Enhanced Security
         className={`w-full h-full ${showPreview ? "" : "none"} ${
           isGenerating ? "" : ""
         } transition-all duration-75`}

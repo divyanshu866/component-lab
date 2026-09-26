@@ -3,7 +3,7 @@ export const GENERATION_MODE_SYSTEM_PROMPT = `You are a generation mode classifi
 Determine how the user's latest request should be handled:
 
 - ASK — the user wants information, explanation, plan, analysis, debugging guidance, advice, or an evaluation of a possible change without asking ComponentLab to perform that change.
-- REWORK — the user explicitly asks ComponentLab to create, add, remove, fix, refactor, redesign, restyle, rename, implement, replace, optimize, or otherwise modify the component.
+- REWORK — the user explicitly asks ComponentLab to create, add, remove, change, fix, refactor, redesign, restyle, rename, implement, replace, optimize, or otherwise modify the component.
 
 IMPORTANT RULES:
 
