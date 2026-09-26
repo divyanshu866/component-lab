@@ -944,7 +944,7 @@ const AIEditor = ({ user, isMobile }) => {
         />
         {/* heading/textarea container */}
         <div
-          className={`${reworkUI || showPreview ? "absolute bottom-4" : "absolute bottom-[35%]"} w-full flex flex-col justify-center items-center max-w-4xl`}
+          className={`${reworkUI || showPreview ? "absolute bottom-4" : "absolute bottom-[40%]"} w-full flex flex-col justify-center items-center max-w-4xl`}
         >
           <h1
             className={` ${reworkUI && activeMessages.length > 0 ? "hidden" : ""} lg:text-3xl xl:text-4xl text-center font-sans font-medium mb-12 bg-linear-to-r from-pink-700 to-purple-700 bg-clip-text text-transparent`}
