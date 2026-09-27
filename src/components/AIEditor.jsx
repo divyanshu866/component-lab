@@ -944,8 +944,8 @@ const AIEditor = ({ user, isMobile }) => {
           className={`${
             reworkUI || showPreview
               ? "absolute bottom-4"
-              : "absolute bottom-[40%]"
-          } w-full max-w-4xl px-5 sm:px-6 lg:px-7 flex flex-col items-center justify-center`}
+              : "absolute bottom-[39%]"
+          } w-full max-w-4xl px-5 sm:px-6 lg:px-5 flex flex-col items-center justify-center`}
         >
           {/* Greeting */}
           <h1
