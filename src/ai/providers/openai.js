@@ -10,6 +10,8 @@ export async function* generateWithOpenAI(
   model = "gpt-5.6-luna",
   webSearchEnabeled = false,
 ) {
+  // console.log("WEB_SEARCH OPEN_AI=====>", webSearchEnabeled);
+
   const contents = toOpenAIContext(context);
   let summary = "";
   // console.log("OPEN_AI CONTEXT=========>");

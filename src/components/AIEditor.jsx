@@ -6,6 +6,7 @@ import { ArrowUp } from "lucide-react";
 import { useConsole } from "@/context/ConsoleContext";
 import { AI_MODELS } from "@/ai/models";
 import ChatList from "@/components/Chat/ChatList";
+import ModelSelector from "@/components/ModelSelector";
 import TargetTechTabs from "./TargetTechTabs";
 import GenerationSuggestions from "./GenerationSuggestions";
 
@@ -915,22 +916,11 @@ const AIEditor = ({ user, isMobile }) => {
       } flex h-full w-full mx-auto flex-col items-center justify-start flex-1 relative transition-all duration-200 overflow-hidden bg-transparent`}
     >
       {/* Model Selection */}
-      <div
-        className={`${reworkUI ? "backdrop-blur-sm" : ""} ${reworkUI && "border-b"} absolute flex flex-nowrap bg-transparent w-full h-12 justify-start items-center text-xs px-2 pl-4 border-darkBorder gap-1 top-0 left-0 z-10`}
-      >
-        <Sparkles width={16} height={16} className="text-violet-400" />
-        <select
-          value={selectedModel}
-          onChange={(e) => setSelectedModel(e.target.value)}
-          className="w-full max-w-max text-left text-neutral-400 bg-transparent border-none outline-0 border-gray-300 dark:border-lightBorder cursor-pointer"
-        >
-          {AI_MODELS.map((model) => (
-            <option key={model.value} value={model.value}>
-              {model.label}
-            </option>
-          ))}
-        </select>
-      </div>
+      <ModelSelector
+        selectedModel={selectedModel}
+        setSelectedModel={setSelectedModel}
+        reworkUI={reworkUI}
+      />
       <div
         className={`w-full h-full flex flex-col ${reworkUI ? "justify-end" : "justify-center"} gap-1 items-center overflow-hidden`}
       >

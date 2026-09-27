@@ -8,6 +8,7 @@ export async function* generateWithGemini(
   model,
   webSearchEnabeled = false,
 ) {
+  // console.log("WEB_SEARCH GEMINI=====>", webSearchEnabeled);
   const contents = toGeminiContext(context);
   // console.log("GEMINI CONTEXT=========>");
   // console.dir(contents, { depth: null });
