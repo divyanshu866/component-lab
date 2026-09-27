@@ -1,13 +1,7 @@
 "use client";
 import { useState, useRef } from "react";
 import { useEditorContext } from "@/context/EditorContext";
-import {
-  Eye,
-  EyeClosed,
-  SlidersHorizontal,
-  Sparkle,
-  Sparkles,
-} from "lucide-react";
+import { Search, SlidersHorizontal, Sparkles } from "lucide-react";
 import { ArrowUp } from "lucide-react";
 import { useConsole } from "@/context/ConsoleContext";
 import { AI_MODELS } from "@/ai/models";
@@ -23,6 +17,7 @@ const AIEditor = ({ user, isMobile }) => {
   const [generationMode, setGenerationMode] = useState("AUTO");
   const [isGeneratingCode, setIsGeneratingCode] = useState(false);
   const [resolvedGenerationMode, setResolvedGenerationMode] = useState("ASK");
+  const [webSearchEnabeled, setWebSearchEnabeled] = useState(false);
   const {
     components,
     activeMessages,
@@ -564,6 +559,7 @@ const AIEditor = ({ user, isMobile }) => {
           targetTech: targetTech,
           generationMode: generationMode,
           model: selectedModel,
+          webSearchEnabeled: webSearchEnabeled,
         }),
       });
 
@@ -757,6 +753,7 @@ const AIEditor = ({ user, isMobile }) => {
           targetTech: streamState.targetTech,
           generationMode: generationMode,
           model: selectedModel,
+          webSearchEnabeled: webSearchEnabeled,
         }),
       });
 
@@ -944,67 +941,129 @@ const AIEditor = ({ user, isMobile }) => {
         />
         {/* heading/textarea container */}
         <div
-          className={`${reworkUI || showPreview ? "absolute bottom-4" : "absolute bottom-[40%]"} w-full flex flex-col justify-center items-center max-w-4xl`}
+          className={`${
+            reworkUI || showPreview
+              ? "absolute bottom-4"
+              : "absolute bottom-[40%]"
+          } w-full max-w-4xl px-5 sm:px-6 lg:px-7 flex flex-col items-center justify-center`}
         >
+          {/* Greeting */}
           <h1
-            className={` ${reworkUI && activeMessages.length > 0 ? "hidden" : ""} lg:text-3xl xl:text-4xl text-center font-sans font-medium mb-12 bg-linear-to-r from-pink-700 to-purple-700 bg-clip-text text-transparent`}
+            className={`${
+              reworkUI && activeMessages.length > 0 ? "hidden" : ""
+            } mb-10 text-center font-sans text-3xl font-medium tracking-tight text-transparent bg-linear-to-r from-violet-400 via-fuchsia-400 to-pink-400 bg-clip-text xl:text-4xl`}
           >
             Good to see you, {user.name}!
           </h1>
+
           <TargetTechTabs />
 
+          {/* Filters */}
           <div
-            className={`flex justify-between items-center w-full gap-5 px-4
-              overflow-hidden transition-all duration-300 ease-out
-              ${reworkUI ? "hidden" : ""}
-              ${
-                showFilters
-                  ? "max-h-32 opacity-100 translate-y-0 mb-4 mt-1 pointer-events-auto"
-                  : "max-h-0 opacity-0 -translate-y-2 mb-0 pointer-events-none"
-              }
-          `}
+            className={`w-full overflow-hidden px-4 transition-all duration-300 ease-out ${
+              reworkUI
+                ? "hidden"
+                : showFilters
+                  ? "pointer-events-auto mt-3 mb-4 max-h-24 translate-y-0 opacity-100"
+                  : "pointer-events-none mt-0 mb-0 max-h-0 -translate-y-2 opacity-0"
+            }`}
           >
-            <select
-              value={selectedType}
-              onChange={(e) => setSelectedType(e.target.value)}
-              name="select"
-              className="w-full bg-gray-100 dark:bg-white/5 backdrop-blur-2xl border outline-0 border-gray-300 dark:border-lightBorder rounded-lg px-3 py-2 text-md transition-all duration-200 cursor-pointer"
-            >
-              <option className="dark:text-gray-700" value={"custom type"}>
-                {"Describe type in prompt"}
-              </option>
-              {componentTypes.map((type, index) => (
-                <option key={index} value={type.name}>
-                  {type.name}
+            <div className="grid w-full grid-cols-1 gap-3 sm:grid-cols-2">
+              <select
+                value={selectedType}
+                onChange={(e) => setSelectedType(e.target.value)}
+                name="type"
+                className="
+          h-10 w-full cursor-pointer appearance-none
+          rounded-lg border border-white/10
+          bg-white/[0.04] px-3 text-sm text-neutral-300
+          outline-none backdrop-blur-xl
+          transition
+          hover:border-white/15 hover:bg-white/[0.06]
+          focus:border-violet-400/40 focus:ring-2 focus:ring-violet-500/10
+        "
+              >
+                <option
+                  value="Custom type"
+                  className="bg-[#151516] text-neutral-300"
+                >
+                  Describe type in prompt
                 </option>
-              ))}
-            </select>
-            <select
-              value={selectedStyle}
-              onChange={(e) => setSelectedStyle(e.target.value)}
-              className="w-full bg-gray-100 dark:bg-white/5 backdrop-blur-2xl border outline-0 border-gray-300 dark:border-lightBorder rounded-lg px-3 py-2  text-md transition-all duration-200 cursor-pointer"
-            >
-              <option className="dark:text-gray-700" value={"Custom style"}>
-                {"Describe style in prompt"}
-              </option>
-              {styleOptions.map((style, index) => (
-                <option key={index} value={style.name}>
-                  {style.name}
+
+                {componentTypes.map((type, index) => (
+                  <option
+                    key={index}
+                    value={type.name}
+                    className="bg-[#151516] text-neutral-300"
+                  >
+                    {type.name}
+                  </option>
+                ))}
+              </select>
+
+              <select
+                value={selectedStyle}
+                onChange={(e) => setSelectedStyle(e.target.value)}
+                name="style"
+                className="
+          h-10 w-full cursor-pointer appearance-none
+          rounded-lg border border-white/10
+          bg-white/[0.04] px-3 text-sm text-neutral-300
+          outline-none backdrop-blur-xl
+          transition
+          hover:border-white/15 hover:bg-white/[0.06]
+          focus:border-violet-400/40 focus:ring-2 focus:ring-violet-500/10
+        "
+              >
+                <option
+                  value="Custom style"
+                  className="bg-[#151516] text-neutral-300"
+                >
+                  Describe style in prompt
                 </option>
-              ))}
-            </select>
+
+                {styleOptions.map((style, index) => (
+                  <option
+                    key={index}
+                    value={style.name}
+                    className="bg-[#151516] text-neutral-300"
+                  >
+                    {style.name}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
 
-          <div className="w-full h-full px-4">
-            {/* Prompt bar */}
+          <div className="w-full px-4">
+            {/* Prompt Bar */}
             <div
-              className={`${isExpanded ? "flex-col" : "flex-row"} ${generationMode === "ASK" ? "border-green-500/30" : reworkUI ? "border-lightBorder" : "border-white/15"} ${reworkUI ? "bg-[#151516]" : "bg-white/10"} border min-h-12 py-0 flex items-center justify-center rounded-xl`}
+              className={`
+        flex w-full items-center
+        rounded-2xl border
+        px-2 py-2
+        backdrop-blur-2xl
+        transition-all duration-200
+
+        ${
+          generationMode === "ASK"
+            ? "border-emerald-400/25 bg-emerald-400/[0.04] shadow-[0_0_0_1px_rgba(52,211,153,0.04)]"
+            : reworkUI
+              ? "border-white/10 bg-[#151516]"
+              : "border-white/10 bg-white/[0.04]"
+        }
+
+        ${isExpanded ? "flex-col items-stretch" : "flex-row"}
+
+        focus-within:border-white/20
+        focus-within:shadow-[0_0_0_1px_rgba(255,255,255,0.03)]
+      `}
             >
+              {/* Textarea */}
               <textarea
-                className="flex items-center justify-center p-2 m-0 w-full rounded-lg outline-0 resize-none"
                 ref={promptAreaRef}
-                name=""
-                id=""
+                name="prompt"
+                id="prompt"
                 value={changeDesc}
                 disabled={isGenerating}
                 rows={1}
@@ -1013,6 +1072,18 @@ const AIEditor = ({ user, isMobile }) => {
                     ? "Describe changes..."
                     : "Describe the component you want to generate..."
                 }
+                className="
+          m-0
+          min-h-9 w-full
+          resize-none
+          bg-transparent
+          px-2 py-2
+          text-sm leading-5 text-neutral-200
+          placeholder:text-neutral-500
+          outline-none
+          disabled:cursor-not-allowed
+          disabled:opacity-50
+        "
                 onChange={(e) => {
                   setChangeDesc(e.target.value);
 
@@ -1028,58 +1099,145 @@ const AIEditor = ({ user, isMobile }) => {
                 onKeyDown={(e) => {
                   if (e.key === "Enter" && !e.shiftKey) {
                     e.preventDefault();
+
                     activeComponent.id === "" ? generateComponent() : rework();
+
                     e.target.style.height = "";
                     setIsExpanded(false);
                   }
                 }}
-              ></textarea>
-              {/* Button area */}
-              <div className="flex items-center justify-center p-1 gap-3 ml-auto">
+              />
+
+              {/* Actions */}
+              <div
+                className={`
+          flex items-center gap-1.5
+          ${isExpanded ? "mt-2 w-full justify-end" : "ml-2 shrink-0"}
+        `}
+              >
+                {/* Generation Mode */}
                 <select
-                  name="Generation Mode"
+                  name="generation-mode"
+                  aria-label="Generation mode"
                   value={generationMode}
                   disabled={isGenerating}
-                  onChange={(e) => {
-                    setGenerationMode(e.target.value);
-                  }}
-                  className="outline-0 text-sm text-neutral-500 cursor-pointer"
+                  onChange={(e) => setGenerationMode(e.target.value)}
+                  className="
+            h-9
+            cursor-pointer
+            appearance-none
+            rounded-lg
+            border border-transparent
+            bg-transparent
+            px-2
+            text-xs font-medium
+            text-neutral-400
+            outline-none
+            transition
+            hover:bg-white/[0.05]
+            hover:text-neutral-200
+            focus:bg-white/[0.05]
+            focus:text-neutral-200
+            disabled:cursor-not-allowed
+            disabled:opacity-50
+          "
                 >
-                  <option value="AUTO">Auto</option>
-                  <option value="ASK">Ask</option>
+                  <option value="AUTO" className="bg-[#151516]">
+                    Auto
+                  </option>
+                  <option value="ASK" className="bg-[#151516]">
+                    Ask
+                  </option>
                 </select>
+
+                {/* Filters */}
                 {!reworkUI && (
                   <button
+                    type="button"
+                    aria-label="Toggle filters"
+                    aria-pressed={showFilters}
                     onClick={() => {
                       setShowFilters((v) => !v);
                       setSelectedType("Custom type");
                       setSelectedStyle("Custom style");
                     }}
-                    className={`${showFilters ? "text-orange-400 hover:text-orange-300" : "text-neutral-500 hover:text-white"} flex items-center justify-center rounded-full bg-transparent transition cursor-pointer`}
+                    className={`
+              flex h-9 w-9
+              items-center justify-center
+              rounded-lg
+              transition
+              ${
+                showFilters
+                  ? "bg-violet-500/10 text-violet-400"
+                  : "text-neutral-500 hover:bg-white/[0.05] hover:text-neutral-300"
+              }
+            `}
                   >
                     <SlidersHorizontal size={16} />
                   </button>
                 )}
 
+                {/* Web Search */}
                 <button
+                  type="button"
+                  aria-label="Toggle web search"
+                  aria-pressed={webSearchEnabeled}
+                  onClick={() => {
+                    setWebSearchEnabeled((prev) => !prev);
+                  }}
+                  className={`
+            flex h-9 w-9
+            items-center justify-center
+            rounded-lg
+            transition
+            ${
+              webSearchEnabeled
+                ? "bg-violet-500/10 text-violet-400"
+                : "text-neutral-500 hover:bg-white/[0.05] hover:text-neutral-300"
+            }
+          `}
+                >
+                  <Search size={16} />
+                </button>
+
+                {/* Submit */}
+                <button
+                  type="button"
                   onClick={() => {
                     activeComponent.id === "" ? generateComponent() : rework();
+
                     if (promptAreaRef.current) {
                       promptAreaRef.current.style.height = "";
                     }
+
                     setIsExpanded(false);
                   }}
                   disabled={isGenerating || !changeDesc.trim()}
-                  className={`${isExpanded ? "ml-auto" : ""} flex p-3 items-center justify-center rounded-full bg-violet-100 text-black transition hover:bg-neutral-200 cursor-pointer disabled:cursor-not-allowed disabled:opacity-40`}
+                  className="
+            flex h-9 w-9
+            items-center justify-center
+            rounded-lg
+            bg-violet-500
+            text-white
+            shadow-sm
+            transition
+            hover:bg-violet-400
+            active:scale-95
+            disabled:cursor-not-allowed
+            disabled:opacity-30
+            disabled:hover:bg-violet-500
+          "
                 >
                   {isGenerating ? (
-                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-neutral-400 border-t-black" />
+                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
                   ) : (
                     <ArrowUp className="h-4 w-4" />
                   )}
                 </button>
               </div>
             </div>
+
+            {/* Suggestions */}
             {activeComponent.id === "" &&
               activeMessages.length === 0 &&
               !isGenerating && (

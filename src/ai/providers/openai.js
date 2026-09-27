@@ -8,6 +8,7 @@ export async function* generateWithOpenAI(
   systemPrompt,
   context,
   model = "gpt-5.6-luna",
+  webSearchEnabeled = false,
 ) {
   const contents = toOpenAIContext(context);
   let summary = "";
@@ -17,7 +18,7 @@ export async function* generateWithOpenAI(
     model,
     instructions: systemPrompt,
     input: contents,
-    tools: [{ type: "web_search" }],
+    tools: webSearchEnabeled ? [{ type: "web_search" }] : [],
     reasoning: {
       effort: "low",
     },

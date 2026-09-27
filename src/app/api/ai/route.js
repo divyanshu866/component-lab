@@ -14,6 +14,7 @@ import {
   WEB_BUNDLE_EDIT_SYSTEM_PROMPT,
   WEB_BUNDLE_ASK_SYSTEM_PROMPT,
 } from "./prompts/webBundle";
+
 import {
   REACT_SYSTEM_PROMPT,
   REACT_EDIT_SYSTEM_PROMPT,
@@ -50,7 +51,8 @@ export async function POST(req) {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const { messages, targetTech, generationMode, model } = await req.json();
+  const { messages, targetTech, generationMode, model, webSearchEnabeled } =
+    await req.json();
 
   //Build neutral Contents
   const contents = buildNeutralGenerateContext(messages);
@@ -83,6 +85,7 @@ export async function POST(req) {
       SYSTEM_PROMPTS[targetTech][resolvedMode],
       contents,
       model,
+      webSearchEnabeled,
     );
     const headers = { "X-Resolved-Generation-Mode": resolvedMode };
 
@@ -108,6 +111,7 @@ export async function PATCH(req) {
     targetTech,
     generationMode,
     model,
+    webSearchEnabeled,
   } = await req.json();
 
   const request = {
@@ -150,6 +154,7 @@ export async function PATCH(req) {
       EDIT_SYSTEM_PROMPT[targetTech][resolvedMode],
       contents,
       model,
+      webSearchEnabeled,
     );
     const headers = { "X-Resolved-Generation-Mode": resolvedMode };
 

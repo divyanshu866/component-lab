@@ -2,7 +2,12 @@ import { GoogleGenAI } from "@google/genai";
 import { toGeminiContext } from "../../app/api/ai/buildEditContents";
 const genAI = new GoogleGenAI(process.env.GEMINI_API_KEY);
 
-export async function* generateWithGemini(systemPrompt, context, model) {
+export async function* generateWithGemini(
+  systemPrompt,
+  context,
+  model,
+  webSearchEnabeled = false,
+) {
   const contents = toGeminiContext(context);
   // console.log("GEMINI CONTEXT=========>");
   // console.dir(contents, { depth: null });
@@ -11,7 +16,7 @@ export async function* generateWithGemini(systemPrompt, context, model) {
     contents,
     config: {
       systemInstruction: systemPrompt,
-      tools: [{ googleSearch: {} }],
+      tools: webSearchEnabeled ? [{ googleSearch: {} }] : [],
       thinkingConfig: {
         thinkingLevel: "low",
       },

@@ -1,11 +1,13 @@
 import { generate } from "@/ai/providers/generate";
 import { GENERATION_MODE_SYSTEM_PROMPT } from "./prompts/general";
-const GENERATION_MODE_CLASSIFIER_MODEL = "gemini-3.5-flash-lite";
+import { CLASSIFIER_MODEL } from "@/ai/models";
 export async function classifyGenerationMode(contents) {
+  const webSearchEnabeled = false;
   const stream = await generate(
     GENERATION_MODE_SYSTEM_PROMPT,
     contents,
-    GENERATION_MODE_CLASSIFIER_MODEL,
+    CLASSIFIER_MODEL,
+    webSearchEnabeled,
   );
 
   let response = "";
