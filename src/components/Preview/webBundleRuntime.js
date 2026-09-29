@@ -36,7 +36,7 @@ export async function buildwebBundleDocument(component) {
         <!-- Default component code -->
         ${
           !component.html && !component.css && !component.js
-            ? ' <img src="/newlogo.svg" alt="Logo"/>'
+            ? ""
             : component.html
         }
 

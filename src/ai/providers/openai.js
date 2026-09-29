@@ -61,6 +61,6 @@ export async function* generateWithOpenAI(
     }
     // console.log("OPEN_AI unlogged event RESPONSE=========>");
     // console.dir(event, { depth: null });
-    console.log("Reasoning Summary=======>", summary);
+    // console.log("Reasoning Summary=======>", summary);
   }
 }

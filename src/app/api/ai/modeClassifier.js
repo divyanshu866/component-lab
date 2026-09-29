@@ -21,11 +21,13 @@ export async function classifyGenerationMode(contents) {
     console.log("RESOLVER RESPONSE=========>", result);
 
     if (result.resolvedMode !== "ASK" && result.resolvedMode !== "REWORK") {
+      console.log("CLASSIFIER RETURNED INVALID RESPONSE====>");
       return "ASK";
     }
 
     return result.resolvedMode;
-  } catch {
+  } catch (err) {
+    console.log("CLASSIFIER MODEL FAILED TO GENERATE RESPONSE====>", err);
     return "ASK";
   }
 }

@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useEditorContext } from "@/context/EditorContext";
 import { Maximize2, Minimize2 } from "lucide-react";
 import PreviewHeader from "./PreviewHeader";
@@ -14,7 +14,17 @@ const ReactIFrame = ({ isMobile }) => {
     setIsMaximised,
     targetTech,
   } = useEditorContext();
+  const previewUrl = useMemo(() => {
+    const blob = new Blob([reactPreviewDocument], {
+      type: "text/html",
+    });
 
+    return URL.createObjectURL(blob);
+  }, [reactPreviewDocument]);
+
+  useEffect(() => {
+    return () => URL.revokeObjectURL(previewUrl);
+  }, [previewUrl]);
   return (
     <div
       className={`${targetTech != "REACT" && "hidden"} absolute top-0 right-0 ${
@@ -35,10 +45,9 @@ const ReactIFrame = ({ isMobile }) => {
       />
       <iframe
         key={previewKey}
+        src={previewUrl}
+        sandbox="allow-scripts allow-same-origin allow-popups allow-forms allow-presentation" //Reduced security access to localstorage & parent dom
         title="React Preview"
-        // sandbox="allow-scripts allow-same-origin" //Reduced security access to localstorage & parent dom
-        sandbox="allow-scripts" //Enhanced Security
-        srcDoc={reactPreviewDocument}
         className={`w-full h-full ${showPreview ? "" : "none"} ${
           isGenerating ? "" : ""
         } transition-all duration-75`}

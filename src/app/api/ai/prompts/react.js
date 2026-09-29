@@ -227,6 +227,8 @@ ComponentLab preview runtime:
 - react/jsx-runtime
 
 Rules:
+- Never use window.history.pushState(), window.history.replaceState(), or pathname-based browser routing.
+- Use MemoryRouter or hash routing for client-side navigation.
 - Use standard ES module imports.
 - Only import packages from the supported dependencies list above.
 - Never invent or assume unsupported npm packages.
@@ -345,7 +347,7 @@ If an existing dependency cannot be resolved by the ComponentLab preview runtime
 </TAILWIND>
 
 <CSS>
-- Leave the section empty when Taislwind is sufficient.
+- Leave the section empty when Tailwind is sufficient.
 - Do not add custom CSS when Tailwind can reasonably implement the requested styling.
 - Use CSS custom properties only for values reused multiple times.
 - Do not include <style> tags.
@@ -456,6 +458,8 @@ ComponentLab preview runtime — runtime-only modules, do not import:
 - react/jsx-runtime
 
 Rules:
+- Never use window.history.pushState(), window.history.replaceState(), or pathname-based browser routing.
+- Use MemoryRouter or hash routing for client-side navigation.
 - Use standard ES module imports.
 - Only import packages from the supported dependencies list above.
 - Never invent or assume unsupported npm packages.

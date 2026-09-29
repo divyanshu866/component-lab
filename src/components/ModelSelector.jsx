@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Check, ChevronDown, Sparkles } from "lucide-react";
+import { Brain, Check, ChevronDown } from "lucide-react";
 import { AI_MODELS } from "@/ai/models";
 
 export default function ModelSelector({
@@ -33,7 +33,7 @@ export default function ModelSelector({
         reworkUI ? "backdrop-blur-sm border-b" : ""
       } absolute top-0 left-0 z-10 flex h-12 w-full items-center gap-1 border-darkBorder bg-transparent px-2 pl-4 text-xs`}
     >
-      <Sparkles width={16} height={16} className="shrink-0 text-violet-400" />
+      <Brain width={16} height={16} className="shrink-0 text-violet-400" />
 
       <div className="relative">
         <button

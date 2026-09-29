@@ -3,7 +3,7 @@ import { useConsole } from "@/context/ConsoleContext";
 import { useEditorContext } from "@/context/EditorContext";
 import AILoader from "@/components/AILoader";
 import PreviewHeader from "@/components/Preview/PreviewHeader";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Maximize2, Minimize2 } from "lucide-react";
 const WebBundleIFrame = ({ isMobile }) => {
   const {
@@ -16,6 +16,17 @@ const WebBundleIFrame = ({ isMobile }) => {
     targetTech,
   } = useEditorContext();
   const { consoleLogs, setConsoleLogs } = useConsole();
+  const previewUrl = useMemo(() => {
+    const blob = new Blob([htmlPreviewDocument], {
+      type: "text/html",
+    });
+
+    return URL.createObjectURL(blob);
+  }, [htmlPreviewDocument]);
+
+  useEffect(() => {
+    return () => URL.revokeObjectURL(previewUrl);
+  }, [previewUrl]);
   return (
     <div
       className={`${targetTech != "HTML" && "hidden"} absolute top-0 right-0 ${
@@ -34,18 +45,12 @@ const WebBundleIFrame = ({ isMobile }) => {
         isMaximised={isMaximised}
         setIsMaximised={setIsMaximised}
       />
-      {/* <button
-        onClick={() => setIsMaximised(!isMaximised)}
-        className="absolute top-2 right-2 z-10 bg-gray-200 dark:bg-darkSecondary text-gray-800 dark:text-gray-200 px-2 py-1 rounded hover:bg-gray-300 dark:hover:bg-darkBorder transition-all duration-150"
-      >
-        {isMaximised ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
-      </button> */}
 
       <iframe
         key={previewKey}
-        srcDoc={htmlPreviewDocument}
-        // sandbox="allow-scripts allow-same-origin allow-same-origin allow-scripts allow-popups allow-forms allow-presentation" //Reduced security access to localstorage & parent dom
-        sandbox="allow-scripts" //Enhanced Security
+        src={previewUrl}
+        sandbox="allow-scripts allow-same-origin allow-popups allow-forms allow-presentation" //Reduced security access to localstorage & parent dom
+        title="WebBundle preview"
         className={`w-full h-full ${showPreview ? "" : "none"} ${
           isGenerating ? "" : ""
         } transition-all duration-75`}

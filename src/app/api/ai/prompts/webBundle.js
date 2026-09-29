@@ -103,6 +103,10 @@ font-family: system-ui, -apple-system, sans-serif;
 - Make initialization idempotent: do not duplicate DOM elements or event listeners if the script executes more than once.
 - If an external library is required, load it through a browser-compatible CDN <script src="..."> in the HTML section.
 - Do not use JavaScript import statements.
+- The preview runs from a blob: URL inside a sandboxed iframe.
+- Never use window.history.pushState(), window.history.replaceState(), window.location.pathname, or pathname-based routing.
+- Use hash routing or in-memory state for client-side navigation.
+- Use hash URLs for internal links, e.g. "#/cheques", not "/cheques".
 </JAVASCRIPT>
 
 <DESIGN_QUALITY>
@@ -268,6 +272,10 @@ If an existing dependency cannot be resolved by the ComponentLab preview runtime
 - Make initialization idempotent: do not duplicate DOM elements or event listeners if the script executes more than once.
 - If an external library is required, load it through a browser-compatible CDN <script src="..."> in the HTML section.
 - Do not use JavaScript import statements.
+- The preview runs from a blob: URL inside a sandboxed iframe.
+- Never use window.history.pushState(), window.history.replaceState(), window.location.pathname, or pathname-based routing.
+- Use hash routing or in-memory state for client-side navigation.
+- Use hash URLs for internal links, e.g. "#/cheques", not "/cheques".
 </JAVASCRIPT>
 
 <DESIGN_EDITING>
