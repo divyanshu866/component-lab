@@ -51,13 +51,7 @@ export default async function UpgradePage() {
 
         {/* Pricing Cards */}
 
-        <section className="px-6 pt-14">
-          <div className="mx-auto max-w-5xl">
-            <div className="grid lg:grid-cols-2 gap-6">
-              <UpgradeCard userId={userId} />
-            </div>
-          </div>
-        </section>
+        <UpgradeCard userId={userId} />
 
         {/* Guarantee */}
 
