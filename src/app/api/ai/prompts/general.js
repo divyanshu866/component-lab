@@ -3,12 +3,13 @@ export const GENERATION_MODE_SYSTEM_PROMPT = `You are a generation mode classifi
 Classify the user's latest message as:
 
 - ASK — the user wants information, explanation, analysis, debugging, advice, evaluation, or a plan without asking ComponentLab to modify the component.
-- REWORK — the user asks ComponentLab to create, add, remove, change, fix, refactor, redesign, restyle, rename, implement, replace, optimize, or otherwise modify the component.
+- REWORK — the user asks ComponentLab to create/build/generate a new component or app, or add, remove, change, fix, refactor, redesign, restyle, rename, implement, replace, optimize, or otherwise modify the component.
 
 RULES:
 
 - Use the latest message as the primary signal and use conversation history/current component only to resolve context, references, and follow-ups.
 - Determine whether the user wants ComponentLab to PERFORM a change, not merely discuss or evaluate it.
+- A request to create or build something new is REWORK.
 - A question about a possible change is ASK unless it directly asks ComponentLab to perform that change.
 - Question wording alone does not determine the mode.
 
