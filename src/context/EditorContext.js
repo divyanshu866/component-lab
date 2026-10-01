@@ -12,9 +12,12 @@ export function EditorProvider({ children }) {
   const [selectedStyle, setSelectedStyle] = useState("Custom style");
   const [activeEditor, setActiveEditor] = useState("AI");
   const [targetTech, setTargetTech] = useState("REACT");
-
+  const [generationUsage, setGenerationUsage] = useState(null);
+  const [generationLimitModalOpen, setGenerationLimitModalOpen] =
+    useState(false);
   const [components, setComponents] = useState([]);
   const [reworkUI, setReworkUI] = useState(false);
+
   const [activeComponent, setActiveComponent] = useState({
     id: "",
     messages: [],
@@ -184,6 +187,10 @@ export function EditorProvider({ children }) {
         setReworkUI,
         targetTech,
         setTargetTech,
+        generationUsage,
+        setGenerationUsage,
+        generationLimitModalOpen,
+        setGenerationLimitModalOpen,
       }}
     >
       {children}

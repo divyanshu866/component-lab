@@ -1,34 +1,26 @@
 "use client";
+
 import { useState } from "react";
-import { ArrowRight, Check } from "lucide-react";
+import { Check, Rocket, Crown } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { UpgradeButton } from "./UpgradeButton";
-import { Rocket, Crown } from "lucide-react";
+import { PaddleUpgradeButton } from "./PaddleUpgradeButton";
+
 const UpgradeCard = ({ userId }) => {
   const [billingCycle, setBillingCycle] = useState("monthly");
 
   const plans = [
     {
       id: "free",
-
       name: "Free",
-
       description:
         "Perfect for trying out the platform and building your first components.",
-
       icon: Rocket,
-
       badge: null,
-
       price: {
         monthly: 0,
         yearly: 0,
       },
-
       cta: "Get Started for Free",
-
-      ctaVariant: "secondary",
-
       features: [
         "Generate up to 10 components / month",
         "Access to all base UI components",
@@ -39,30 +31,21 @@ const UpgradeCard = ({ userId }) => {
     },
 
     {
-      id: "premium",
-
+      id: "pro",
       name: "Pro",
-
       description:
         "For developers who build more, move faster, and want more power.",
-
       icon: Crown,
-
       badge: "Most Popular",
-
       price: {
         monthly: 15,
         yearly: 12,
       },
-
       cta: "Get Pro",
-
-      ctaVariant: "primary",
-
       features: [
-        "Unlimited component generations",
-        "Access to premium UI components",
-        "Advanced code exports (React, Vue, HTML)",
+        "500 component generations / billing period",
+        "Access to powerful AI models",
+        "Advanced reasoning effort levels",
         "AI-powered improvements & refactors",
         "Private projects",
         "Priority support",
@@ -73,54 +56,63 @@ const UpgradeCard = ({ userId }) => {
   const router = useRouter();
 
   return (
-    <>
-      <section className="px-6 pt-14">
-        <div className="mx-auto max-w-5xl">
-          <div className="grid lg:grid-cols-2 gap-6">
-            {plans.map((plan) => (
+    <section className="px-6 pt-14">
+      <div className="mx-auto max-w-5xl">
+        <div className="grid gap-6 lg:grid-cols-2">
+          {plans.map((plan) => {
+            const isPro = plan.id === "pro";
+            const Icon = plan.icon;
+
+            return (
               <div
                 key={plan.id}
-                className={`relative overflow-hidden rounded-[28px] bg-[#050505] transition-all duration-300 hover:-translate-y-1 mb-5 ${
-                  plan.id === "premium"
-                    ? "border-2 border-fuchsia-700/80 shadow-[0_0_35px_rgba(217,70,239,.18)]"
-                    : "border-2 border-white/30"
+                className={`relative mb-5 overflow-hidden rounded-[28px] transition-transform duration-300 hover:-translate-y-1 ${
+                  isPro
+                    ? "p-[1px] bg-linear-to-br from-violet-400 via-fuchsia-500 to-pink-500 shadow-[0_0_35px_rgba(217,70,239,0.14)]"
+                    : "border border-white/[0.12]"
                 }`}
               >
-                {/* Border Glow */}
-                {plan.id === "premium" && (
+                {/* Pro-only ambient glow */}
+                {isPro && (
                   <>
-                    <div className="absolute inset-0 rounded-[28px] bg-gradient-to-r from-violet-500/10 via-transparent to-fuchsia-500/10 pointer-events-none" />
-                    <div className="absolute -right-24 top-0 h-52 w-52 rounded-full bg-fuchsia-500/10 blur-[90px]" />
+                    <div className="pointer-events-none absolute -right-24 -top-24 h-64 w-64 rounded-full bg-fuchsia-500/10 blur-[90px]" />
+                    <div className="pointer-events-none absolute -bottom-24 -left-24 h-64 w-64 rounded-full bg-violet-500/10 blur-[90px]" />
                   </>
                 )}
 
-                <div className="relative flex h-full flex-col p-8">
+                <div className="relative flex h-full flex-col rounded-[27px] bg-[#08080a]/95 p-8 backdrop-blur-sm">
                   {/* Plan */}
                   <div>
-                    <h3 className="text-3xl font-semibold text-white">
-                      {plan.name}
-                    </h3>
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-3xl font-semibold text-white">
+                        {plan.name}
+                      </h3>
+
+                      {plan.badge && (
+                        <span className="rounded-full border border-fuchsia-400/20 bg-fuchsia-400/10 px-3 py-1 text-[10px] font-medium uppercase tracking-[0.12em] text-fuchsia-300">
+                          {plan.badge}
+                        </span>
+                      )}
+                    </div>
+
                     {/* Price */}
                     <div className="mt-5 flex items-end">
                       <span className="text-6xl font-bold tracking-tight text-white">
                         ${plan.price[billingCycle]}
                       </span>
+
                       <span className="mb-2 ml-2 text-xl font-medium text-gray-300">
                         /month
                       </span>
                     </div>
 
-                    {billingCycle === "yearly" && billingCycle === "yearly"
-                      ? (plan.price.monthly - plan.price.yearly) * 12
-                      : 0 > 0 && (
-                          <p className="mt-3 text-sm text-emerald-400">
-                            Save $
-                            {billingCycle === "yearly"
-                              ? (plan.price.monthly - plan.price.yearly) * 12
-                              : 0}
-                            /year
-                          </p>
-                        )}
+                    {billingCycle === "yearly" &&
+                      (plan.price.monthly - plan.price.yearly) * 12 > 0 && (
+                        <p className="mt-3 text-sm text-emerald-400">
+                          Save ${(plan.price.monthly - plan.price.yearly) * 12}
+                          /year
+                        </p>
+                      )}
 
                     <p className="mt-8 text-lg leading-8 text-gray-300">
                       {plan.description}
@@ -133,13 +125,14 @@ const UpgradeCard = ({ userId }) => {
                       <div key={feature} className="flex items-center gap-4">
                         <div
                           className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full ${
-                            plan.id === "premium"
-                              ? "bg-fuchsia-500 text-white"
+                            isPro
+                              ? "bg-fuchsia-400 text-black"
                               : "bg-white text-black"
                           }`}
                         >
                           <Check size={11} strokeWidth={3} />
                         </div>
+
                         <span className="text-[17px] leading-8 text-gray-300">
                           {feature}
                         </span>
@@ -152,34 +145,26 @@ const UpgradeCard = ({ userId }) => {
 
                   {/* CTA */}
                   <div className="mt-10">
-                    {plan.id === "premium" && userId != null ? (
-                      /* UpgradeButton component here */
-
-                      <UpgradeButton userId={userId} />
+                    {isPro && userId != null ? (
+                      <PaddleUpgradeButton userId={userId} />
                     ) : (
-                      <div className="w-full">
-                        <button
-                          onClick={() => router.push("/workspace")}
-                          className="group relative flex h-14 w-full items-center justify-center overflow-hidden rounded-2xl font-semibold text-lg transition-all duration-300 bg-linear-to-r from-violet-200 to-fuchsia-200 text-gray-800 hover:brightness-105 cursor-pointer"
-                        >
-                          <div className="absolute inset-0 opacity-0 transition-opacity duration-300 bg-white/20 group-hover:opacity-100" />
-                          <span className="relative flex items-center gap-2">
-                            {plan.cta}
-                          </span>
-                        </button>
-                      </div>
+                      <button
+                        type="button"
+                        onClick={() => router.push("/workspace")}
+                        className="group flex h-14 w-full items-center justify-center rounded-2xl bg-white/[0.06] font-semibold text-lg text-white transition-all duration-300 hover:bg-white/[0.1] cursor-pointer"
+                      >
+                        {plan.cta}
+                      </button>
                     )}
                   </div>
                 </div>
               </div>
-            ))}
-          </div>
+            );
+          })}
         </div>
-      </section>
-    </>
-    // return
+      </div>
+    </section>
   );
-  // func
 };
 
 export default UpgradeCard;

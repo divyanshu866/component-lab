@@ -3,6 +3,8 @@ import { NextResponse } from "next/server";
 import { getSession } from "@/lib/get-session";
 import { prisma } from "@/lib/prisma";
 import { PromptRole, TargetTech } from "@/generated/prisma/client";
+import { getUserEntitlement } from "@/lib/billing/entitlements";
+import { getGenerationUsage } from "@/lib/billing/generation-usage";
 
 export async function POST(request) {
   // 1. Check session
@@ -128,29 +130,52 @@ export async function POST(request) {
 // app/api/components/route.ts
 export async function GET() {
   const session = await getSession();
+
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  // Fetch components for the logged-in user
-  const components = await prisma.component.findMany({
-    where: {
-      userId: session.user.id,
-    },
-    include: {
-      prompts: {
-        orderBy: {
-          id: "asc",
+  const userId = session.user.id;
+
+  try {
+    const [components, entitlement] = await Promise.all([
+      prisma.component.findMany({
+        where: {
+          userId,
         },
         include: {
-          aiRequest: true,
+          prompts: {
+            orderBy: {
+              id: "asc",
+            },
+            include: {
+              aiRequest: true,
+            },
+          },
         },
-      },
-    },
-    orderBy: {
-      id: "desc",
-    },
-  });
+        orderBy: {
+          id: "desc",
+        },
+      }),
 
-  return NextResponse.json(components, { status: 200 });
+      getUserEntitlement(userId),
+    ]);
+
+    const generationUsage = await getGenerationUsage(userId, entitlement);
+
+    return NextResponse.json(
+      {
+        components,
+        generationUsage,
+      },
+      { status: 200 },
+    );
+  } catch (error) {
+    console.error("Failed to fetch components:", error);
+
+    return NextResponse.json(
+      { error: "Failed to fetch components" },
+      { status: 500 },
+    );
+  }
 }

@@ -36,7 +36,7 @@ model User {
   //Application specific relations
   components Component[]
   subscriptions Subscription[]
-
+  generationUsage GenerationUsage[]
   @@unique([email])
   @@map("user")
 }
@@ -198,4 +198,17 @@ model Subscription {
   @@unique([provider, providerSubscriptionId])
   @@index([userId, status])
   @@index([provider, providerCustomerId])
+}
+model GenerationUsage {
+  id              String   @id @default(cuid())
+  userId          String
+  periodStart     DateTime
+  generationsUsed Int      @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, periodStart])
+  @@index([userId])
 }

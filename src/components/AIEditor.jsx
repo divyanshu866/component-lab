@@ -9,8 +9,14 @@ import ChatList from "@/components/Chat/ChatList";
 import ModelSelector from "@/components/ModelSelector";
 import TargetTechTabs from "./TargetTechTabs";
 import GenerationSuggestions from "./GenerationSuggestions";
-
+import PlanRequiredModal from "@/components/upgrade/PlanRequiredModal";
+import GenerationLimitModal from "@/components/GenerationLimitModal";
+import GenerationUsageIndicator from "@/components/GenerationUsageIndicator";
+import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 const AIEditor = ({ user, isMobile }) => {
+  const [planRequiredModel, setPlanRequiredModel] = useState(null);
+
   const [selectedModel, setSelectedModel] = useState(AI_MODELS[0].value);
   const { setConsoleLogs } = useConsole();
   const [isExpanded, setIsExpanded] = useState(false);
@@ -46,8 +52,12 @@ const AIEditor = ({ user, isMobile }) => {
     selectedStyle,
     setSelectedStyle,
     targetTech,
+    generationUsage,
+    setGenerationUsage,
+    generationLimitModalOpen,
+    setGenerationLimitModalOpen,
   } = useEditorContext();
-
+  const router = useRouter();
   const [componentTypes, setComponentTypes] = useState([
     {
       name: "Modal",
@@ -471,7 +481,60 @@ const AIEditor = ({ user, isMobile }) => {
     },
   ]);
   const promptAreaRef = useRef(null);
+  const generationLimitReached = generationUsage?.remaining === 0;
+  const handleAIResponseError = async (response) => {
+    let errorData = null;
+
+    try {
+      errorData = await response.json();
+    } catch {
+      // Response did not contain JSON.
+    }
+
+    if (errorData?.error === "PLAN_REQUIRED") {
+      const requiredModel = AI_MODELS.find(
+        (model) => model.value === errorData.model,
+      );
+
+      if (requiredModel) {
+        setPlanRequiredModel(requiredModel);
+      }
+
+      return true;
+    }
+
+    if (errorData?.error === "INVALID_MODEL") {
+      alert("The selected AI model is not available.");
+      return true;
+    }
+
+    if (response.status === 401) {
+      alert("Please sign in to continue.");
+      return true;
+    }
+    if (errorData?.error === "GENERATION_LIMIT_REACHED") {
+      setGenerationUsage((previous) => {
+        if (!previous) return previous;
+
+        return {
+          ...previous,
+          used: errorData.limit,
+          remaining: 0,
+          limit: errorData.limit,
+        };
+      });
+
+      setGenerationLimitModalOpen(true);
+
+      return true;
+    }
+    return false;
+  };
   const generateComponent = async (promptOverride) => {
+    if (generationUsage?.remaining === 0) {
+      setGenerationLimitModalOpen(true);
+      return;
+    }
     const prompt = promptOverride ?? changeDesc;
     if (!prompt?.trim()) {
       console.log("PROMPT EMPTY");
@@ -565,7 +628,33 @@ const AIEditor = ({ user, isMobile }) => {
       });
 
       if (!response.ok) {
+        const handled = await handleAIResponseError(response);
+
+        if (handled) {
+          return;
+        }
+
         throw new Error(`Failed: ${response.status}`);
+      }
+
+      const generationsRemaining = response.headers.get(
+        "X-Generations-Remaining",
+      );
+
+      if (generationsRemaining !== null) {
+        const remaining = Number(generationsRemaining);
+
+        setGenerationUsage((previous) => {
+          if (!previous) {
+            return previous;
+          }
+
+          return {
+            ...previous,
+            remaining,
+            used: previous.limit - remaining,
+          };
+        });
       }
 
       const reader = response.body.getReader();
@@ -655,7 +744,7 @@ const AIEditor = ({ user, isMobile }) => {
             return;
           } else if (event.startsWith("event: error")) {
             const errorData = JSON.parse(event.substring(12)); // Remove 'event: error\ndata: ' prefix
-            console.error("Streaming error:", errorData.error);
+            console.error("Streaming error:", errorData?.error);
             setIsGenerating(false);
             alert("An Error occurred. Please try again.");
             return;
@@ -673,6 +762,10 @@ const AIEditor = ({ user, isMobile }) => {
     }
   };
   async function rework() {
+    if (generationUsage?.remaining === 0) {
+      setGenerationLimitModalOpen(true);
+      return;
+    }
     if (!changeDesc.trim()) {
       console.log("EMPTY");
       return;
@@ -759,7 +852,32 @@ const AIEditor = ({ user, isMobile }) => {
       });
 
       if (!response.ok) {
+        const handled = await handleAIResponseError(response);
+
+        if (handled) {
+          return;
+        }
+
         throw new Error(`Failed: ${response.status}`);
+      }
+      const generationsRemaining = response.headers.get(
+        "X-Generations-Remaining",
+      );
+
+      if (generationsRemaining !== null) {
+        const remaining = Number(generationsRemaining);
+
+        setGenerationUsage((previous) => {
+          if (!previous) {
+            return previous;
+          }
+
+          return {
+            ...previous,
+            remaining,
+            used: previous.limit - remaining,
+          };
+        });
       }
 
       const reader = response.body.getReader();
@@ -871,7 +989,7 @@ const AIEditor = ({ user, isMobile }) => {
             return;
           } else if (event.startsWith("event: error")) {
             const errorData = JSON.parse(event.substring(12)); // Remove 'event: error\ndata: ' prefix
-            console.error("Streaming error:", errorData.error);
+            console.error("Streaming error:", errorData?.error);
             setIsGenerating(false);
             alert("An Error occurred. Please try again.");
             return;
@@ -919,8 +1037,13 @@ const AIEditor = ({ user, isMobile }) => {
       <ModelSelector
         selectedModel={selectedModel}
         setSelectedModel={setSelectedModel}
+        userPlan={generationUsage?.plan}
         reworkUI={reworkUI}
+        onPlanRequired={(model) => {
+          setPlanRequiredModel(model);
+        }}
       />
+
       <div
         className={`w-full h-full flex flex-col ${reworkUI ? "justify-end" : "justify-center"} gap-1 items-center overflow-hidden`}
       >
@@ -1046,7 +1169,7 @@ const AIEditor = ({ user, isMobile }) => {
         ${isExpanded ? "flex-col items-stretch" : "flex-row"}
 
         focus-within:border-white/20
-        focus-within:shadow-[0_0_0_1px_rgba(255,255,255,0.03)]
+        focus-within:shadow-[0_0_0_1px_rgba(255,255,255,0.03)] relative
       `}
             >
               {/* Textarea */}
@@ -1241,6 +1364,26 @@ const AIEditor = ({ user, isMobile }) => {
           </div>
         </div>
       </div>
+      <PlanRequiredModal
+        model={planRequiredModel}
+        open={Boolean(planRequiredModel)}
+        currentPlan={generationUsage?.plan ?? "FREE"}
+        onClose={() => setPlanRequiredModel(null)}
+        onUpgrade={(requiredPlan) => {
+          setPlanRequiredModel(null);
+
+          router.push("/upgrade");
+        }}
+      />
+      <GenerationLimitModal
+        open={generationLimitModalOpen}
+        generationUsage={generationUsage}
+        onClose={() => setGenerationLimitModalOpen(false)}
+        onUpgrade={() => {
+          setGenerationLimitModalOpen(false);
+          router.push("/upgrade");
+        }}
+      />
     </div>
   );
 };

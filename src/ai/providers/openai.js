@@ -22,13 +22,15 @@ export async function* generateWithOpenAI(
     input: contents,
     tools: webSearchEnabeled ? [{ type: "web_search" }] : [],
     reasoning: {
-      effort: "low",
+      effort: "high",
     },
     stream: true,
   });
 
   //Normalise Stream
   for await (const event of stream) {
+    console.log("OPEN_AI STREAM===>");
+    console.log(event.delta);
     if (event.type === "response.output_text.delta") {
       yield {
         type: "text",

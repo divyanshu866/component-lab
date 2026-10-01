@@ -1,5 +1,3 @@
-import { UpgradeButton } from "./UpgradeButton";
-
 const BillingToggle = ({ plans, billingCycle, setBillingCycle }) => {
   const yearlyDiscount = Math.round(
     ((plans[1].price.monthly - plans[1].price.yearly) /

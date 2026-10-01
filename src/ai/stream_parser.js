@@ -29,12 +29,15 @@ export async function createStreamingResponse(stream, headers = {}) {
         let accumulator = "";
         let inSection = false;
         let currSection = null;
+        console.log("LLM Stream=======>");
+
         for await (const chunk of stream) {
           if (chunk.type === "usage") {
             usageMetadata = chunk.usage;
           }
           const chunkText = chunk.text || "";
           accumulator += chunkText;
+          console.log(chunkText);
 
           // Process markers and content in the accumulator
           let remaining = accumulator;
@@ -172,12 +175,12 @@ export async function createStreamingResponse(stream, headers = {}) {
         controller.close();
       } catch (error) {
         console.error("Streaming error:", error);
-        console.log("Final Gemini usage:", {
-          promptTokens: usageMetadata?.promptTokenCount,
-          outputTokens: usageMetadata?.candidatesTokenCount,
-          thinkingTokens: usageMetadata?.thoughtsTokenCount,
-          totalTokens: usageMetadata?.totalTokenCount,
-        });
+        // console.log("Final Gemini usage:", {
+        //   promptTokens: usageMetadata?.promptTokenCount,
+        //   outputTokens: usageMetadata?.candidatesTokenCount,
+        //   thinkingTokens: usageMetadata?.thoughtsTokenCount,
+        //   totalTokens: usageMetadata?.totalTokenCount,
+        // });
         controller.enqueue(
           encoder.encode(
             `event: error\ndata: ${JSON.stringify({

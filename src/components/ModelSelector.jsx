@@ -1,10 +1,13 @@
 import { useEffect, useRef, useState } from "react";
-import { Brain, Check, ChevronDown } from "lucide-react";
+import { Brain, Check, ChevronDown, Lock } from "lucide-react";
 import { AI_MODELS } from "@/ai/models";
+import { hasPlanAccess } from "@/lib/billing/plans";
 
 export default function ModelSelector({
   selectedModel,
   setSelectedModel,
+  userPlan = "FREE",
+  onPlanRequired,
   reworkUI = false,
 }) {
   const [open, setOpen] = useState(false);
@@ -26,6 +29,21 @@ export default function ModelSelector({
     };
   }, []);
 
+  const handleModelSelect = (model) => {
+    const canAccess = hasPlanAccess(userPlan, model.minimumPlan);
+
+    if (!canAccess) {
+      setOpen(false);
+
+      onPlanRequired?.(model);
+
+      return;
+    }
+
+    setSelectedModel(model.value);
+    setOpen(false);
+  };
+
   return (
     <div
       ref={containerRef}
@@ -46,6 +64,14 @@ export default function ModelSelector({
               <span className="truncate text-neutral-300">
                 {selected?.label ?? "Select model"}
               </span>
+
+              {selected && !hasPlanAccess(userPlan, selected.minimumPlan) && (
+                <Lock
+                  width={10}
+                  height={10}
+                  className="shrink-0 text-yellow-300/80"
+                />
+              )}
             </div>
 
             {selected?.description && (
@@ -65,26 +91,32 @@ export default function ModelSelector({
         </button>
 
         {open && (
-          <div className="absolute left-0 top-full z-50 mt-1 min-w-64 overflow-hidden rounded-lg border border-darkBorder bg-[#18181b] p-1 shadow-xl">
+          <div className="absolute left-0 top-full z-50 mt-1 min-w-54 space-y-1 overflow-hidden rounded-xl border border-lightBorder bg-backgroundLight px-2 py-2 shadow-xl">
             {AI_MODELS.map((model) => {
               const isSelected = model.value === selectedModel;
+              const isLocked = !hasPlanAccess(userPlan, model.minimumPlan);
 
               return (
                 <button
                   key={model.value}
                   type="button"
-                  onClick={() => {
-                    setSelectedModel(model.value);
-                    setOpen(false);
-                  }}
-                  className={`flex w-full items-center gap-3 rounded-md px-3 py-2 text-left transition-colors ${
-                    isSelected ? "bg-white/10" : "hover:bg-white/5"
+                  onClick={() => handleModelSelect(model)}
+                  className={`flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left transition-colors ${
+                    isSelected
+                      ? "bg-white/10"
+                      : isLocked
+                        ? "hover:bg-white/[0.03]"
+                        : "hover:bg-white/5"
                   }`}
                 >
                   <div className="min-w-0 flex-1">
                     <div
                       className={`text-xs font-medium ${
-                        isSelected ? "text-white" : "text-neutral-300"
+                        isSelected
+                          ? "text-white"
+                          : isLocked
+                            ? "text-neutral-500"
+                            : "text-neutral-300"
                       }`}
                     >
                       {model.label}
@@ -97,12 +129,19 @@ export default function ModelSelector({
                     )}
                   </div>
 
-                  {isSelected && (
-                    <Check
-                      width={14}
-                      height={14}
-                      className="shrink-0 text-violet-400"
-                    />
+                  {isLocked ? (
+                    <div className="flex shrink-0 items-center gap-1 text-[10px] font-medium uppercase text-yellow-300/70">
+                      <Lock width={10} height={10} />
+                      {model.minimumPlan}
+                    </div>
+                  ) : (
+                    isSelected && (
+                      <Check
+                        width={13}
+                        height={13}
+                        className="shrink-0 text-violet-400"
+                      />
+                    )
                   )}
                 </button>
               );

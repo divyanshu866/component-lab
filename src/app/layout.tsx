@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-
+import PaddleProvider from "@/components/paddle/PaddleProvider";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -27,6 +27,7 @@ export default function RootLayout({
       <body
         className={`h-full ${geistSans.variable} ${geistMono.variable} antialiased relative`}
       >
+        <PaddleProvider />
         {/* Background ─ drifting radial orbs */}
         {/* <AnimatedBackdrop /> */}
         <div

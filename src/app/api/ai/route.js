@@ -5,6 +5,9 @@ import { buildNeutralEditContext } from "./buildEditContents";
 import { buildNeutralGenerateContext } from "./buildGenerateContents";
 import { resolveMode } from "./modeClassifier";
 import { getSession } from "@/lib/get-session";
+import { AI_MODELS } from "../../../ai/models";
+import { getUserEntitlement } from "../../../lib/billing/entitlements";
+import { hasPlanAccess } from "../../../lib/billing/plans";
 const mockResponse = false; // Set to true to use mock response for testing
 const chunkSize = 2; // Set the chunk size for the mock stream
 const delay = 1; // Set the delay between chunks in milliseconds
@@ -20,6 +23,7 @@ import {
   REACT_EDIT_SYSTEM_PROMPT,
   REACT_ASK_SYSTEM_PROMPT,
 } from "./prompts/react";
+import { consumeGeneration } from "../../../lib/billing/generation-usage";
 
 const SYSTEM_PROMPTS = {
   HTML: {
@@ -42,6 +46,76 @@ const EDIT_SYSTEM_PROMPT = {
     REWORK: REACT_EDIT_SYSTEM_PROMPT,
   },
 };
+async function authorizeModel(userId, model) {
+  const modelDefinition = AI_MODELS.find(
+    (catalogModel) => catalogModel.value === model,
+  );
+
+  if (!modelDefinition) {
+    return Response.json(
+      {
+        error: "INVALID_MODEL",
+      },
+      { status: 400 },
+    );
+  }
+
+  const entitlement = await getUserEntitlement(userId);
+  console.log("=== MODEL AUTH ===");
+  console.log("userId:", userId);
+  console.log("requested model:", model);
+  console.log("minimum plan:", modelDefinition.minimumPlan);
+  console.log("entitlement plan:", entitlement.plan);
+  console.log("subscription:", entitlement.subscription);
+  console.log(
+    "has access:",
+    hasPlanAccess(entitlement.plan, modelDefinition.minimumPlan),
+  );
+  console.log("=================");
+  if (!hasPlanAccess(entitlement.plan, modelDefinition.minimumPlan)) {
+    return Response.json(
+      {
+        error: "PLAN_REQUIRED",
+        requiredPlan: modelDefinition.minimumPlan,
+        model: modelDefinition.value,
+      },
+      { status: 403 },
+    );
+  }
+
+  return {
+    model: modelDefinition,
+    entitlement,
+  };
+}
+async function authorizeAndConsumeGeneration(userId, model) {
+  const authorization = await authorizeModel(userId, model);
+
+  if (authorization instanceof Response) {
+    return authorization;
+  }
+
+  const { entitlement } = authorization;
+  const generationUsage = await consumeGeneration(userId, entitlement);
+
+  if (!generationUsage.allowed) {
+    return Response.json(
+      {
+        error: "GENERATION_LIMIT_REACHED",
+        plan: entitlement.plan,
+        limit: generationUsage.limit,
+        remaining: 0,
+      },
+      { status: 429 },
+    );
+  }
+
+  return {
+    model: authorization.model,
+    entitlement,
+    generationUsage,
+  };
+}
 
 //API GENERATE NEW COMPONENT
 export async function POST(req) {
@@ -53,15 +127,17 @@ export async function POST(req) {
 
   const { messages, targetTech, generationMode, model, webSearchEnabeled } =
     await req.json();
+  const userId = session.user.id;
+  // Authorize the requested model before doing any AI work.
+  const authorization = await authorizeAndConsumeGeneration(userId, model);
+
+  if (authorization instanceof Response) {
+    return authorization;
+  }
+  const { entitlement, generationUsage } = authorization;
 
   //Build neutral Contents
   const contents = buildNeutralGenerateContext(messages);
-
-  // console.log("From frontEnd Messages object==================>>>>>");
-  // console.dir(messages, { depth: null });
-
-  // console.log("POST/GENERATE neutral CONTENTS==============>>>>>");
-  // console.dir(contents, { depth: null });
 
   if (mockResponse) {
     const stream = mockStream(
@@ -69,17 +145,15 @@ export async function POST(req) {
       chunkSize,
       delay,
     );
-    const headers = { "X-Resolved-Generation-Mode": "REWORK" };
+    const headers = {
+      "X-Resolved-Generation-Mode": "REWORK",
+      "X-Generations-Remaining": String(generationUsage.remaining),
+    };
     return createStreamingResponse(stream, headers);
   } else {
     console.log("GENERATION MODE========>:", generationMode);
     const resolvedMode = await resolveMode(generationMode, contents);
     console.log("RESOLVED GENERATION MODE========>:", resolvedMode);
-
-    // console.log(
-    //   "SELECTED SYSTEM PROMPT========>:",
-    //   SYSTEM_PROMPTS[targetTech][resolveMode],
-    // );
 
     const stream = await generate(
       SYSTEM_PROMPTS[targetTech][resolvedMode],
@@ -87,7 +161,10 @@ export async function POST(req) {
       model,
       webSearchEnabeled,
     );
-    const headers = { "X-Resolved-Generation-Mode": resolvedMode };
+    const headers = {
+      "X-Resolved-Generation-Mode": resolvedMode,
+      "X-Generations-Remaining": String(generationUsage.remaining),
+    };
 
     return createStreamingResponse(stream, headers);
   }
@@ -126,15 +203,18 @@ export async function PATCH(req) {
     },
     messages: messages,
   };
+  const userId = session.user.id;
+  // Authorize the requested model before doing any AI work.
+  const authorization = await authorizeAndConsumeGeneration(userId, model);
+
+  if (authorization instanceof Response) {
+    return authorization;
+  }
+
+  const { entitlement, generationUsage } = authorization;
 
   //Build contents
   const contents = buildNeutralEditContext(request);
-
-  // console.log("From frontEnd Messages object==================>>>>>");
-  // console.dir(messages, { depth: null });
-
-  // console.log("PATCH/EDIT neutral CONTENTS==============>>>>>");
-  // console.dir(contents, { depth: null });
 
   if (mockResponse) {
     const stream = mockStream(
@@ -142,7 +222,10 @@ export async function PATCH(req) {
       chunkSize,
       delay,
     );
-    const headers = { "X-Resolved-Generation-Mode": "REWORK" };
+    const headers = {
+      "X-Resolved-Generation-Mode": "REWORK",
+      "X-Generations-Remaining": String(generationUsage.remaining),
+    };
 
     return createStreamingResponse(stream, headers);
   } else {
@@ -156,7 +239,10 @@ export async function PATCH(req) {
       model,
       webSearchEnabeled,
     );
-    const headers = { "X-Resolved-Generation-Mode": resolvedMode };
+    const headers = {
+      "X-Resolved-Generation-Mode": resolvedMode,
+      "X-Generations-Remaining": String(generationUsage.remaining),
+    };
 
     return createStreamingResponse(stream, headers);
   }

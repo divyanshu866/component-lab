@@ -2,34 +2,26 @@ import { Sparkles } from "lucide-react";
 
 const PricingHero = () => {
   return (
-    <div className="mx-auto max-w-5xl text-center">
-      {/* Pricing Badge */}
+    <div className="mx-auto max-w-2xl text-center">
+      <div className="mb-5 flex items-center justify-center gap-2">
+        <Sparkles size={13} className="text-violet-400" />
 
-      <div className="inline-flex items-center gap-2 rounded-full border border-violet-500/30 bg-violet-500/10 px-5 py-2 backdrop-blur-xl">
-        <Sparkles className="h-4 w-4 text-violet-400" />
-
-        <span className="text-sm font-semibold uppercase tracking-[0.22em] text-violet-300">
-          Pricing
+        <span className="text-[9px] font-medium uppercase tracking-[0.22em] text-violet-300/70">
+          ComponentLab Plans
         </span>
       </div>
 
-      {/* Heading */}
-
-      <h1 className="mx-auto mt-10 max-w-5xl text-5xl font-bold tracking-tight text-white md:text-7xl">
-        <span className="block">Simple pricing.</span>
-
-        <span className="mt-2 block">
-          Built for{" "}
-          <span className="bg-gradient-to-r from-violet-400 via-fuchsia-400 to-indigo-400 bg-clip-text text-transparent">
-            developers.
-          </span>
+      <h1 className="text-4xl font-medium leading-[1.05] tracking-[-0.05em] text-white sm:text-5xl lg:text-6xl">
+        Build more with
+        <br className="hidden sm:block" />
+        <span className="bg-linear-to-r from-fuchsia-400 via-violet-400 to-pink-400 bg-clip-text text-transparent">
+          more control.
         </span>
       </h1>
 
-      {/* Subtitle */}
-
-      <p className="mx-auto mt-8 max-w-3xl text-lg leading-8 text-gray-400 md:text-xl">
-        Start for free. Upgrade to Pro when you&apos;re ready to unlock more.
+      <p className="mx-auto mt-5 max-w-xl text-[13px] leading-6 text-neutral-500 sm:text-sm sm:leading-7">
+        Start free and upgrade when you need more generations, more powerful
+        models, and greater control over AI.
       </p>
     </div>
   );

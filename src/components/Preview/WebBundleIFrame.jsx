@@ -15,7 +15,6 @@ const WebBundleIFrame = ({ isMobile }) => {
     setIsMaximised,
     targetTech,
   } = useEditorContext();
-  const { consoleLogs, setConsoleLogs } = useConsole();
   const previewUrl = useMemo(() => {
     const blob = new Blob([htmlPreviewDocument], {
       type: "text/html",

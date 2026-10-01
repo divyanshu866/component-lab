@@ -1,26 +1,40 @@
+"use client";
+
 import { initializePaddle, type Paddle } from "@paddle/paddle-js";
 
 let paddlePromise: Promise<Paddle | undefined> | null = null;
 
-function getPaddle() {
-  if (!paddlePromise) {
-    const token = process.env.NEXT_PUBLIC_PADDLE_CLIENT_TOKEN;
-
-    if (!token) {
-      return Promise.reject(new Error("Paddle client token is not configured"));
-    }
-
-    paddlePromise = initializePaddle({
-      environment: "sandbox",
-      token,
-    });
+export function initializePaddleClient() {
+  if (paddlePromise) {
+    return paddlePromise;
   }
+
+  const token = process.env.NEXT_PUBLIC_PADDLE_CLIENT_TOKEN;
+
+  if (!token) {
+    const error = new Error("Paddle client token is not configured");
+
+    paddlePromise = Promise.reject(error);
+    return paddlePromise;
+  }
+
+  paddlePromise = initializePaddle({
+    environment:
+      process.env.NEXT_PUBLIC_PADDLE_ENV === "production"
+        ? "production"
+        : "sandbox",
+    token,
+  }).catch((error) => {
+    // Don't permanently cache a failed initialization.
+    paddlePromise = null;
+    throw error;
+  });
 
   return paddlePromise;
 }
 
 export async function openProCheckout(userId: string) {
-  const paddle = await getPaddle();
+  const paddle = await initializePaddleClient();
 
   if (!paddle) {
     throw new Error("Failed to initialize Paddle.js");

@@ -5,7 +5,6 @@ import GuaranteeCard from "@/components/upgrade/GuaranteeCard";
 import FeatureComparison from "@/components/upgrade/FeatureComparison";
 import FAQ from "@/components/upgrade/FAQ";
 import CTASection from "@/components/upgrade/CTASection";
-
 import Navbar from "@/components/Landing/Navbar";
 
 import { getSession } from "@/lib/get-session";
@@ -13,11 +12,10 @@ import { getSession } from "@/lib/get-session";
 export default async function UpgradePage() {
   const session = await getSession();
 
-  ("use client");
   // if (!session) redirect("/sign-in");
   const userId = session?.user?.id || null;
 
-  console.log("SESSION===>", session);
+  console.log("SESSION===> 1", session);
 
   return (
     <main className="relative min-h-screen overflow-hidden bg-transparent text-white">
@@ -31,7 +29,20 @@ export default async function UpgradePage() {
           backgroundSize: "48px 48px",
         }}
       />
+      {/* Ambient background */}
 
+      <div
+        className="fixed pointer-events-none inset-x-0 top-0 h-[650px] opacity-[0.018]"
+        style={{
+          backgroundImage: `
+            linear-gradient(rgba(255,255,255,1) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255,255,255,1) 1px, transparent 1px)
+          `,
+          backgroundSize: "44px 44px",
+          maskImage:
+            "linear-gradient(to bottom, black 0%, rgba(0,0,0,.45) 55%, transparent 100%)",
+        }}
+      />
       <div className="relative z-10">
         {/* Hero */}
 

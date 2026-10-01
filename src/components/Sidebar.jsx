@@ -41,6 +41,8 @@ export default function Sidebar({ isMobile }) {
     isMaximised,
     setIsMaximised,
     targetTech,
+    generationUsage,
+    setGenerationUsage,
   } = useEditorContext();
   const { setConsoleLogs, showConsole, setShowConsole } = useConsole();
   async function deleteComponent(id, componentIndex) {
@@ -105,14 +107,20 @@ export default function Sidebar({ isMobile }) {
   useEffect(() => {
     async function fetchComponents() {
       const res = await fetch("/api/components");
+
       if (res.ok) {
-        const data = await res.json();
-        setComponents(data);
-        console.log("Fetched components>>>>:", data);
+        const { components, generationUsage } = await res.json();
+
+        setComponents(components);
+        setGenerationUsage(generationUsage);
+
+        console.log("Fetched components>>>>:", components);
+        console.log("Generation usage>>>>:", generationUsage);
       } else {
         console.error("Failed to fetch components");
       }
     }
+
     fetchComponents();
   }, []);
   const clearScreen = (name, html, css, js, jsx = EMPTY_JSX) => {

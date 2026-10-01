@@ -1,13 +1,23 @@
 "use client";
+
+import { useState } from "react";
 import { ArrowRight } from "lucide-react";
 import { openProCheckout } from "@/lib/paddle/client";
 
 export function PaddleUpgradeButton({ userId }) {
+  const [opening, setOpening] = useState(false);
+
   const handleUpgrade = async () => {
+    if (opening) return;
+
+    setOpening(true);
+
     try {
       await openProCheckout(userId);
     } catch (error) {
       console.error("Paddle checkout failed:", error);
+    } finally {
+      setOpening(false);
     }
   };
 
@@ -15,11 +25,18 @@ export function PaddleUpgradeButton({ userId }) {
     <button
       type="button"
       onClick={handleUpgrade}
-      className="group relative flex h-14 w-full items-center justify-center overflow-hidden rounded-2xl font-semibold text-lg transition-all duration-300 bg-linear-to-r from-violet-200 to-fuchsia-200 text-gray-800 hover:brightness-105 cursor-pointer"
+      disabled={opening}
+      className="group flex h-14 w-full items-center justify-center rounded-2xl bg-white font-semibold text-lg text-black transition-all duration-300 hover:bg-neutral-200 active:scale-[0.99] disabled:cursor-wait disabled:opacity-70"
     >
       <span className="flex items-center gap-2">
-        Get Pro
-        <ArrowRight size={18} />
+        {opening ? "Loading checkout…" : "Get Pro"}
+
+        {!opening && (
+          <ArrowRight
+            size={18}
+            className="transition-transform duration-200 group-hover:translate-x-0.5"
+          />
+        )}
       </span>
     </button>
   );
