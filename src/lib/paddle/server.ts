@@ -1,3 +1,5 @@
+import "server-only";
+
 import { Environment, Paddle } from "@paddle/paddle-node-sdk";
 
 const apiKey = process.env.PADDLE_API_KEY;

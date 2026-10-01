@@ -15,7 +15,7 @@ export default async function UpgradePage() {
   // if (!session) redirect("/sign-in");
   const userId = session?.user?.id || null;
 
-  console.log("SESSION===> 1", session);
+  console.log("SESSION===>", session);
 
   return (
     <main className="relative min-h-screen overflow-hidden bg-transparent text-white">

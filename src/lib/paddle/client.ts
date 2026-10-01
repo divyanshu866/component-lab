@@ -1,5 +1,3 @@
-"use client";
-
 import { initializePaddle, type Paddle } from "@paddle/paddle-js";
 
 let paddlePromise: Promise<Paddle | undefined> | null = null;
@@ -12,9 +10,10 @@ export function initializePaddleClient() {
   const token = process.env.NEXT_PUBLIC_PADDLE_CLIENT_TOKEN;
 
   if (!token) {
-    const error = new Error("Paddle client token is not configured");
+    paddlePromise = Promise.reject(
+      new Error("Paddle client token is not configured"),
+    );
 
-    paddlePromise = Promise.reject(error);
     return paddlePromise;
   }
 
@@ -25,7 +24,6 @@ export function initializePaddleClient() {
         : "sandbox",
     token,
   }).catch((error) => {
-    // Don't permanently cache a failed initialization.
     paddlePromise = null;
     throw error;
   });
