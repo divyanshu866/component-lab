@@ -351,18 +351,16 @@ export default function Navbar({ user }) {
             </button>
           </div>
 
-          {/* Profile */}
-          <div className="shrink-0">
-            <Profile user={user} />
-          </div>
-
           {/* --------------------------------------------------------
               Very small-screen overflow menu
 
               Kept available as a compact escape hatch. The regular
               actions remain visible when there is enough width.
           --------------------------------------------------------- */}
-          <div ref={moreRef} className="relative hidden max-[479px]:block">
+          <div
+            ref={moreRef}
+            className="relative hidden max-[479px]:block ml-auto"
+          >
             <button
               type="button"
               onClick={() => setShowMore((previous) => !previous)}
@@ -486,6 +484,10 @@ export default function Navbar({ user }) {
                 </button>
               </div>
             )}
+          </div>
+          {/* Profile */}
+          <div className="shrink-0">
+            <Profile user={user} />
           </div>
         </div>
       </div>
