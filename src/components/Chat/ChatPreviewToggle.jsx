@@ -10,7 +10,7 @@ const ChatPreviewToggle = ({ showPreview, setShowPreview }) => {
       title={showPreview ? "Hide preview" : "Show preview"}
       className="
         absolute
-        -bottom-6
+        -bottom-16
         right-0
         z-50
         group
