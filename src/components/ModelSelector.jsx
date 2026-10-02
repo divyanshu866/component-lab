@@ -92,59 +92,168 @@ export default function ModelSelector({
         reworkUI ? "border-b backdrop-blur-sm" : ""
       } absolute left-0 top-0 z-10 flex h-12 w-full items-center gap-1 border-darkBorder bg-transparent px-2 pl-4 text-xs`}
     >
-      <Brain width={16} height={16} className="shrink-0 text-violet-400" />
-
       <div className="relative">
         {/* Selected model */}
         <button
           type="button"
+          aria-haspopup="listbox"
+          aria-expanded={open}
           onClick={() => setOpen((previous) => !previous)}
-          className="flex min-w-48 items-center gap-2 rounded-md px-2 py-1.5 text-left transition-colors hover:bg-white/5"
+          className={`
+    group
+    relative
+    flex
+    h-9
+    min-w-[178px]
+    items-center
+    gap-2.5
+    border
+    border-transparent
+    rounded-lg
+    px-1
+    pr-2.5
+    text-left
+    transition-all
+    duration-150
+    ${
+      open
+        ? `
+          border
+          border-lightBorder
+          bg-transparent
+        `
+        : `
+          bg-transparent
+          hover:bg-backgroundLight
+          hover:border-lightBorder
+        `
+    }
+  `}
         >
-          <div className="min-w-0 flex-1">
-            <div className="flex items-center gap-1.5">
-              <span className="truncate text-neutral-300">
-                {selectedModel?.label ?? "Select model"}
-              </span>
+          {/* Accent mark */}
+          <span
+            className={`
+      relative
+      flex
+      h-5.5
+      w-5.5
+      shrink-0
+      items-center
+      justify-center
+      rounded-md
+      border
+      transition-all
+      duration-150
+      ${
+        open
+          ? "border-violet-300/20 bg-violet-400/[0.09]"
+          : "border-white/[0.07] bg-white/[0.028] group-hover:border-violet-300/15 group-hover:bg-violet-400/[0.055]"
+      }
+    `}
+          >
+            <Brain
+              size={12.5}
+              strokeWidth={1.9}
+              className={`
+        transition-colors duration-150
+        ${
+          open
+            ? "text-violet-200/90"
+            : "text-violet-300/70 group-hover:text-violet-200/85"
+        }
+      `}
+            />
 
-              {selectedModel &&
-                !hasPlanAccess(userPlan, selectedModel.minimumPlan) && (
-                  <Lock
-                    width={10}
-                    height={10}
-                    className="shrink-0 text-yellow-300/80"
-                  />
-                )}
-            </div>
+            <span
+              className={`
+        absolute
+        bottom-[3px]
+        right-[3px]
+        h-1
+        w-1
+        rounded-full
+        transition-opacity duration-150
+        ${selectedModel ? "bg-violet-300/60 opacity-100" : "opacity-0"}
+      `}
+            />
+          </span>
 
-            <div className="flex min-w-0 items-center gap-1.5">
-              {selectedModel?.description && (
-                <span className="truncate text-[10px] text-neutral-500">
-                  {selectedModel.description}
+          {/* Model + effort */}
+          <span className="flex min-w-0 flex-1 items-center gap-2">
+            <span
+              className={`
+        min-w-0
+        truncate
+        text-[12px]
+        font-medium
+        leading-none
+        tracking-[-0.01em]
+        ${open ? "text-white/95" : "text-white/80 group-hover:text-white/90"}
+      `}
+            >
+              {selectedModel?.label ?? "Select model"}
+            </span>
+
+            {selectedModel &&
+              !hasPlanAccess(userPlan, selectedModel.minimumPlan) && (
+                <Lock
+                  size={9}
+                  strokeWidth={2}
+                  className="shrink-0 text-amber-300/65"
+                />
+              )}
+
+            {selectedEffort && availableEfforts.includes(selectedEffort) ? (
+              <>
+                <span className="h-3 w-px shrink-0 bg-white/[0.08]" />
+
+                <span
+                  className={`
+            shrink-0
+            text-[9px]
+            font-medium
+            leading-none
+            tracking-[0.025em]
+            ${
+              open
+                ? "text-violet-200/85"
+                : "text-violet-300/65 group-hover:text-violet-200/80"
+            }
+          `}
+                >
+                  {EFFORT_LABELS[selectedEffort] ?? selectedEffort}
                 </span>
-              )}
+              </>
+            ) : null}
+          </span>
 
-              {selectedEffort && availableEfforts.includes(selectedEffort) && (
-                <>
-                  <span className="shrink-0 text-[9px] text-neutral-700">
-                    ·
-                  </span>
-
-                  <span className="shrink-0 text-[10px] text-violet-400/80">
-                    {EFFORT_LABELS[selectedEffort] ?? selectedEffort}
-                  </span>
-                </>
-              )}
-            </div>
-          </div>
-
-          <ChevronDown
-            width={13}
-            height={13}
-            className={`shrink-0 text-neutral-500 transition-transform ${
-              open ? "rotate-180" : ""
-            }`}
-          />
+          {/* Chevron */}
+          <span
+            className={`
+      flex
+      h-5
+      w-5
+      shrink-0
+      items-center
+      justify-center
+      rounded-md
+      transition-colors duration-150
+      ${
+        open
+          ? "bg-white/[0.045] text-white/55"
+          : "text-white/25 group-hover:bg-white/[0.03] group-hover:text-white/45"
+      }
+    `}
+          >
+            <ChevronDown
+              size={12}
+              strokeWidth={1.8}
+              className={`
+        transition-transform duration-200
+        ${open ? "rotate-180" : ""}
+      `}
+            />
+          </span>
         </button>
 
         {open && (
