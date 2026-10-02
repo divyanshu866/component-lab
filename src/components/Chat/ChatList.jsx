@@ -158,7 +158,7 @@ const ChatList = ({ resolvedGenerationMode, isGeneratingCode }) => {
           scrollbar-thumb-white/10
         "
       >
-        <div className="mx-auto flex w-full max-w-3xl flex-col gap-4">
+        <div className="mx-auto flex w-full max-w-3xl flex-col gap-6">
           {messages.map((message, index) => {
             const isAssistant = message.role === "ASSISTANT";
             const hasContent = Boolean(message.message?.trim());
