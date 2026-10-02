@@ -88,24 +88,14 @@ export default function Navbar({ user }) {
       className="relative z-50 w-full border-b border-white/[0.08] bg-[#08080a] px-3 sm:px-4"
     >
       <div className="mx-auto grid w-full max-w-[1800px] grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-2 py-2 md:flex md:min-h-14 md:flex-nowrap md:gap-4 md:py-2">
-        <div className="col-start-1 row-start-1 flex min-w-0 items-center gap-2.5 md:order-1 md:w-auto md:shrink-0 md:gap-2">
-          <button
-            type="button"
-            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-white/[0.09] bg-white/[0.035] text-neutral-300 transition-colors hover:border-white/[0.14] hover:bg-white/[0.07] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-400 active:scale-95 md:hidden"
-            onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-            aria-label="Toggle sidebar"
-            aria-pressed={sidebarCollapsed}
-          >
-            <PanelLeft className="h-[17px] w-[17px]" />
-          </button>
-
+        <div className="col-start-1 row-start-1 flex min-w-0 items-center gap-0.5 md:order-1 md:w-auto md:shrink-0 md:gap-0">
           <Image
             src="/newlogo.svg"
-            width={32}
-            height={32}
+            width={40}
+            height={40}
             alt=""
             aria-hidden="true"
-            className="shrink-0 object-contain opacity-90 md:hidden"
+            className="-ml-1 shrink-0 object-contain opacity-90 md:hidden"
           />
 
           <button
@@ -117,8 +107,8 @@ export default function Navbar({ user }) {
           >
             <Image
               src="/newlogo.svg"
-              width={32}
-              height={32}
+              width={40}
+              height={40}
               alt=""
               aria-hidden="true"
               className="absolute object-contain opacity-90 transition-opacity duration-150 group-hover:opacity-0"
@@ -126,10 +116,10 @@ export default function Navbar({ user }) {
             <Image
               src="/sidebar.svg"
               alt=""
-              width={20}
-              height={20}
+              width={25}
+              height={25}
               aria-hidden="true"
-              className="absolute h-[18px] w-[18px] object-contain opacity-0 transition-opacity duration-150 group-hover:opacity-70"
+              className="absolute object-contain opacity-0 transition-opacity duration-150 group-hover:opacity-70"
             />
           </button>
 
@@ -138,11 +128,20 @@ export default function Navbar({ user }) {
             height={24}
             width={120}
             alt="ComponentLab"
-            className="h-[19px] w-auto max-w-[112px] shrink-0 object-contain opacity-[0.92] sm:h-[21px] md:ml-0.5 md:h-[20px]"
+            className="w-auto max-w-[180px] shrink-0 object-contain opacity-[0.92] sm:h-[50px] mb-1 md:ml-0.5"
           />
         </div>
 
         <div className="col-span-2 row-start-2 flex min-w-0 items-center gap-2 md:order-2 md:col-span-1 md:row-auto md:max-w-[360px] md:flex-1">
+          <button
+            type="button"
+            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-white/[0.09] bg-white/[0.035] text-neutral-300 transition-colors hover:border-white/[0.14] hover:bg-white/[0.07] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-400 active:scale-95 md:hidden"
+            onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+            aria-label="Toggle sidebar"
+            aria-pressed={sidebarCollapsed}
+          >
+            <PanelLeft className="h-[17px] w-[17px]" />
+          </button>
           <div className="min-w-0 flex-1">
             <input
               type="text"
