@@ -1,4 +1,5 @@
 "use client";
+
 import { Plus, Sparkles, Trash, MoreHorizontal } from "lucide-react";
 import { EMPTY_JSX } from "@/components/Preview/defaults";
 import { useEffect, useState } from "react";
@@ -6,16 +7,19 @@ import { useEditorContext } from "@/context/EditorContext";
 import { useConsole } from "@/context/ConsoleContext";
 import { AI_MODELS } from "@/ai/models";
 import Image from "next/image";
-export default function Sidebar({ isMobile }) {
+
+export default function Sidebar() {
   // const pathname = usePathname();
-  console.log(isMobile);
+  const [isMobile, setIsMobile] = useState(false);
   const [showAiPanel, setShowAiPanel] = useState(false);
   const [chatMenu, setChatMenu] = useState(null);
   const [mouseClick, setMouseClick] = useState(false);
   const [selectedModel, setSelectedModel] = useState(AI_MODELS[0].value);
+
   useEffect(() => {
     console.log(selectedModel);
   }, [selectedModel]);
+
   const {
     setSelectedType,
     setSelectedStyle,
@@ -44,7 +48,29 @@ export default function Sidebar({ isMobile }) {
     generationUsage,
     setGenerationUsage,
   } = useEditorContext();
+
   const { setConsoleLogs, showConsole, setShowConsole } = useConsole();
+
+  useEffect(() => {
+    const mobileQuery = window.matchMedia("(max-width: 767px)");
+
+    const updateViewport = () => {
+      const mobile = mobileQuery.matches;
+      setIsMobile(mobile);
+
+      if (mobile) {
+        setSidebarCollapsed(true);
+      }
+    };
+
+    updateViewport();
+    mobileQuery.addEventListener("change", updateViewport);
+
+    return () => {
+      mobileQuery.removeEventListener("change", updateViewport);
+    };
+  }, [setSidebarCollapsed]);
+
   async function deleteComponent(id, componentIndex) {
     setChatMenu(null);
 
@@ -56,6 +82,7 @@ export default function Sidebar({ isMobile }) {
       clearScreen();
       setActiveEditor("AI");
     }
+
     // Implementation for deleting a component
     const res = await fetch(`/api/components/${id}`, {
       method: "DELETE",
@@ -65,6 +92,7 @@ export default function Sidebar({ isMobile }) {
       console.error("Failed to delete component");
       return;
     }
+
     // Handle active component highlighting
     if (
       activeComponentIndexLocal != 0 &&
@@ -80,6 +108,7 @@ export default function Sidebar({ isMobile }) {
   const hideChatMenu = () => {
     setChatMenu(null);
   };
+
   useEffect(() => {
     window.addEventListener("mousedown", hideChatMenu);
 
@@ -93,17 +122,22 @@ export default function Sidebar({ isMobile }) {
     if (isGenerating) {
       return;
     }
+
     if (showPreview == false) {
       setShowPreview(true);
     }
+
     setActiveComponentIndex(index);
+
     if (index != null && index >= 0) {
       setReworkUI(true);
     }
+
     setActiveMessages(components[index]?.prompts || []);
     console.log("activeComponent>>>#####>>>", activeComponent);
     setChangeDesc("");
   }
+
   useEffect(() => {
     async function fetchComponents() {
       const res = await fetch("/api/components");
@@ -123,6 +157,7 @@ export default function Sidebar({ isMobile }) {
 
     fetchComponents();
   }, []);
+
   const clearScreen = (name, html, css, js, jsx = EMPTY_JSX) => {
     if (isGenerating) {
       return;
@@ -153,149 +188,122 @@ export default function Sidebar({ isMobile }) {
 
   return (
     <aside
+      aria-hidden={sidebarCollapsed}
       className={`${
-        isMobile ? "absolute" : "relative"
-      } flex h-full flex-col overflow-hidden border-r rounded-xl border-darkBorder bg-backgroundLight transition-all duration-150 ${
-        sidebarCollapsed ? (isMobile ? "w-0" : "w-12") : "w-65"
+        isMobile ? "absolute inset-y-14 left-0 z-100" : "relative"
+      } flex h-full shrink-0 flex-col overflow-hidden bg-backgroundLight transition-[width] duration-200 ease-in-out ${
+        sidebarCollapsed
+          ? "w-0 border-0"
+          : `${
+              isMobile ? "w-[min(16.25rem,calc(100vw-1rem))]" : "w-[16.25rem]"
+            } rounded-xl border-r border-darkBorder`
       }`}
     >
-      {/* New Component Button */}
-
       <div
-        className={`${sidebarCollapsed === true ? "p-0" : "p-4"} relative border-b border-darkBorder`}
+        className={`flex h-full w-[min(16.25rem,calc(100vw-1rem))] shrink-0 flex-col transition-[opacity,transform] duration-150 ease-out ${
+          sidebarCollapsed
+            ? "pointer-events-none -translate-x-2 opacity-0"
+            : "translate-x-0 opacity-100"
+        }`}
       >
-        <button
-          disabled={isGenerating}
-          onClick={() => {
-            clearScreen();
+        <header className="relative shrink-0 border-b border-darkBorder p-4">
+          <button
+            disabled={isGenerating}
+            onClick={() => {
+              clearScreen();
 
-            if (isMaximised) {
-              setIsMaximised(false);
-            }
-          }}
-          className={`group relative flex w-full items-center justify-center gap-3 overflow-hidden border text-sm font-medium text-white transition-all duration-150 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer ${
-            sidebarCollapsed
-              ? "p-0 m-0 pt-3.5 h-full w-auto border border-transparent bg-transparent"
-              : "px-5 py-3 rounded-xl border-lightBorder bg-white/3  hover:border-purple-500/30 hover:bg-white/6 hover:shadow-[0_0_30px_rgba(168,85,247,0.12)]"
-          }`}
+              if (isMaximised) {
+                setIsMaximised(false);
+              }
+            }}
+            className="group flex w-full items-center gap-3 overflow-hidden rounded-xl border border-lightBorder bg-white/3 px-5 py-3 text-sm font-medium text-white transition-all duration-150 hover:border-purple-500/30 hover:bg-white/6 hover:shadow-[0_0_30px_rgba(168,85,247,0.12)] active:scale-[0.98] cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            <span className="rounded-lg bg-white/5 p-1">
+              <Plus className="size-5 transition-transform duration-300 group-hover:rotate-90" />
+            </span>
+            <span className="flex-1 text-left">New Component</span>
+            <span className="text-xs text-neutral-500 transition-colors duration-100 group-hover:text-neutral-300">
+              ⌘ K
+            </span>
+          </button>
+        </header>
+
+        <nav
+          aria-label="Recent components"
+          className="mt-3 min-h-0 w-full flex-1 overflow-y-auto overscroll-contain px-4 pb-4 text-nowrap"
         >
-          {/* Icon */}
-          <div
-            className={`${sidebarCollapsed ? "h-full w-auto p-2 bg-white/8 border border-lightBorder" : "p-1"} bg-white/5 rounded-lg`}
-          >
-            <Plus
-              className={`${sidebarCollapsed ? "size-4" : "size-5"} transition-transform duration-300 group-hover:rotate-90`}
-            />
-          </div>
-          <span
-            className={`${sidebarCollapsed && "hidden"} w-full text-nowrap transition-all duration-150 flex-1 text-left`}
-          >
-            New Component
-          </span>
-
-          <span
-            className={`${sidebarCollapsed && "hidden"} text-xs text-nowrap text-neutral-500 transition-colors duration-100 group-hover:text-neutral-300`}
-          >
-            ⌘ K
-          </span>
-        </button>
-      </div>
-
-      {/* Search */}
-
-      {/* {!sidebarCollapsed && (
-        <div className="px-3 pb-4">
-          <div className="flex items-center gap-3 rounded-2xl border border-lightBorder bg-white/5 px-4 py-3">
-            <Search size={16} className="text-neutral-500" />
-
-            <input
-              placeholder="Search components..."
-              className="w-full bg-transparent text-sm text-white outline-none placeholder:text-neutral-500"
-            />
-          </div>
-        </div>
-      )} */}
-
-      {/* Components */}
-      <div
-        className={`${sidebarCollapsed === true ? "hidden" : "w-full"} relative overflow-y-auto text-nowrap mt-3 px-4 pb-4`}
-      >
-        <div className={`mb-4 overflow-hidden`}>
-          <p className="px-3 text-xs text-nowrap font-semibold uppercase tracking-wider text-neutral-600">
+          <h2 className="mb-4 px-3 text-xs font-semibold uppercase tracking-wider text-neutral-600">
             Recent Components
-          </p>
-        </div>
+          </h2>
 
-        <div className="space-y-1">
-          {components.map((c, i) => (
-            <div
-              key={c.id ?? i}
-              onClick={() => updateActiveComponent(i)}
-              className={`text-sm group relative cursor-pointer overflow-visible rounded-lg py-1.5 border ${
-                i === activeComponentIndex
-                  ? "border-neutral-800 bg-neutral-900"
-                  : "border-transparent bg-transparent hover:border-lightBorder hover:bg-white/5"
-              }`}
-            >
-              <div className={`flex items-center justify-between px-4 py-1`}>
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center text-nowrap gap-3">
-                    {c.targetTech === "REACT" && (
-                      <Image
-                        src="/jsx.svg"
-                        width={12}
-                        height={12}
-                        alt="React"
-                      />
-                    )}
+          <ul className="space-y-1">
+            {components.map((c, i) => (
+              <li
+                key={c.id ?? i}
+                className={`group relative overflow-visible rounded-lg border text-sm ${
+                  i === activeComponentIndex
+                    ? "border-neutral-800 bg-neutral-900"
+                    : "border-transparent bg-transparent hover:border-lightBorder hover:bg-white/5"
+                }`}
+              >
+                <button
+                  type="button"
+                  disabled={isGenerating}
+                  onClick={() => updateActiveComponent(i)}
+                  className="flex min-h-10 w-full min-w-0 items-center gap-3 rounded-lg py-2 pl-4 pr-11 text-left cursor-pointer disabled:cursor-not-allowed"
+                >
+                  {c.targetTech === "REACT" && (
+                    <Image src="/jsx.svg" width={12} height={12} alt="React" />
+                  )}
 
-                    {c.targetTech === "HTML" && (
-                      <Image
-                        src="/globe2_red.svg"
-                        width={12}
-                        height={12}
-                        alt="Web Bundle"
-                      />
-                    )}
+                  {c.targetTech === "HTML" && (
+                    <Image
+                      src="/globe2_red.svg"
+                      width={12}
+                      height={12}
+                      alt="Web Bundle"
+                    />
+                  )}
 
-                    <h3 className="truncate font-medium text-white">
-                      {c.name}
-                    </h3>
-                  </div>
-                </div>
+                  <span className="truncate font-medium text-white">
+                    {c.name}
+                  </span>
+                </button>
 
                 <button
+                  type="button"
+                  aria-label={`More actions for ${c.name}`}
+                  aria-expanded={chatMenu === i}
                   onMouseDown={(e) => e.stopPropagation()}
                   onClick={(e) => {
                     e.stopPropagation();
                     setChatMenu(chatMenu === i ? null : i);
                   }}
-                  className={`rounded-lg px-2 text-neutral-400 transition hover:text-white hidden cursor-pointer group-hover:block ${
-                    sidebarCollapsed ? "hidden" : ""
-                  }`}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 rounded-lg px-2 py-1 text-neutral-400 transition hover:text-white focus-visible:opacity-100 md:opacity-0 md:group-hover:opacity-100"
                 >
                   <MoreHorizontal size={15} />
                 </button>
-              </div>
 
-              {chatMenu === i && (
-                <div className="absolute right-14 top-0 z-50 w-48 overflow-hidden rounded-2xl border border-lightBorder bg-neutral-900/95 shadow-2xl backdrop-blur-xl">
-                  <button
-                    onMouseDown={(e) => e.stopPropagation()}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      deleteComponent(c.id, i);
-                    }}
-                    className="flex w-full items-center gap-3 px-4 py-2 text-red-400 transition hover:bg-red-500/10"
-                  >
-                    <Trash size={16} />
-                    Delete Component
-                  </button>
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
+                {chatMenu === i && (
+                  <div className="absolute right-2 top-0 z-50 w-48 overflow-hidden rounded-2xl border border-lightBorder bg-neutral-900/95 shadow-2xl backdrop-blur-xl">
+                    <button
+                      type="button"
+                      onMouseDown={(e) => e.stopPropagation()}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        deleteComponent(c.id, i);
+                      }}
+                      className="flex w-full items-center gap-3 px-4 py-2 text-red-400 transition hover:bg-red-500/10"
+                    >
+                      <Trash size={16} />
+                      Delete Component
+                    </button>
+                  </div>
+                )}
+              </li>
+            ))}
+          </ul>
+        </nav>
       </div>
     </aside>
   );
