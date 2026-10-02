@@ -1053,7 +1053,7 @@ const AIEditor = ({ user, isMobile }) => {
     });
 
     return () => cancelAnimationFrame(frame);
-  }, [isGenerating]);
+  }, [isGenerating, activeComponentIndex]);
   return (
     <div
       className={`${
