@@ -1,5 +1,5 @@
 "use client";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useEditorContext } from "@/context/EditorContext";
 import { Search, SlidersHorizontal, Sparkles } from "lucide-react";
 import { ArrowUp } from "lucide-react";
@@ -1034,6 +1034,26 @@ const AIEditor = ({ user, isMobile }) => {
     setConsoleLogs([]);
     updatePreview();
   };
+  useEffect(() => {
+    if (isGenerating) {
+      return;
+    }
+
+    const frame = requestAnimationFrame(() => {
+      const textarea = promptAreaRef.current;
+
+      if (!textarea || textarea.disabled) {
+        return;
+      }
+
+      textarea.focus();
+
+      const length = textarea.value.length;
+      textarea.setSelectionRange(length, length);
+    });
+
+    return () => cancelAnimationFrame(frame);
+  }, [isGenerating]);
   return (
     <div
       className={`${
@@ -1184,6 +1204,7 @@ const AIEditor = ({ user, isMobile }) => {
               {/* Textarea */}
               <textarea
                 ref={promptAreaRef}
+                autoFocus
                 name="prompt"
                 id="prompt"
                 value={changeDesc}
@@ -1224,7 +1245,10 @@ const AIEditor = ({ user, isMobile }) => {
 
                     activeComponent.id === "" ? generateComponent() : rework();
 
-                    e.target.style.height = "";
+                    if (promptAreaRef.current) {
+                      promptAreaRef.current.style.height = "";
+                    }
+
                     setIsExpanded(false);
                   }
                 }}
