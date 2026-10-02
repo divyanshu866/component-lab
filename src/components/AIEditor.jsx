@@ -1,7 +1,8 @@
 "use client";
+
 import { useState, useRef, useEffect } from "react";
 import { useEditorContext } from "@/context/EditorContext";
-import { Search, SlidersHorizontal, Sparkles } from "lucide-react";
+import { Search, SlidersHorizontal } from "lucide-react";
 import { ArrowUp } from "lucide-react";
 import { useConsole } from "@/context/ConsoleContext";
 import { AI_MODELS } from "@/ai/models";
@@ -14,9 +15,9 @@ import GenerationLimitModal from "@/components/GenerationLimitModal";
 import GenerationUsageIndicator from "@/components/GenerationUsageIndicator";
 import { redirect } from "next/navigation";
 import { useRouter } from "next/navigation";
+
 const AIEditor = ({ user, isMobile }) => {
   const [planRequiredModel, setPlanRequiredModel] = useState(null);
-
   const [selectedModel, setSelectedModel] = useState(AI_MODELS[0]);
   const [selectedEffort, setSelectedEffort] = useState(
     selectedModel?.defaultEffort,
@@ -27,6 +28,7 @@ const AIEditor = ({ user, isMobile }) => {
   const [generationMode, setGenerationMode] = useState("AUTO");
   const [resolvedGenerationMode, setResolvedGenerationMode] = useState("ASK");
   const [webSearchEnabeled, setWebSearchEnabeled] = useState(false);
+
   const {
     components,
     activeMessages,
@@ -61,7 +63,9 @@ const AIEditor = ({ user, isMobile }) => {
     generationLimitModalOpen,
     setGenerationLimitModalOpen,
   } = useEditorContext();
+
   const router = useRouter();
+
   const [componentTypes, setComponentTypes] = useState([
     {
       name: "Modal",
@@ -88,7 +92,6 @@ const AIEditor = ({ user, isMobile }) => {
       icon: "menu",
       description: "Top or side navigation bar",
     },
-
     {
       name: "Form",
       icon: "file-text",
@@ -112,7 +115,7 @@ const AIEditor = ({ user, isMobile }) => {
     {
       name: "Radio Group",
       icon: "dot",
-      description: "Exclusive choice among options",
+      description: "Exclusive choice among selections",
     },
     {
       name: "Tabs",
@@ -351,7 +354,6 @@ const AIEditor = ({ user, isMobile }) => {
       description:
         "Industrial-inspired aesthetic featuring sleek metallic surfaces, sharp edges, and durable textures",
     },
-
     {
       name: "Bento Grid",
       icon: "grid-alt",
@@ -447,7 +449,6 @@ const AIEditor = ({ user, isMobile }) => {
       icon: "monitor",
       description: "Pixel art retro palette",
     },
-
     {
       name: "Holographic",
       icon: "prism",
@@ -484,8 +485,10 @@ const AIEditor = ({ user, isMobile }) => {
       description: "Monochrome dashed outlines",
     },
   ]);
+
   const promptAreaRef = useRef(null);
   const generationLimitReached = generationUsage?.remaining === 0;
+
   const handleAIResponseError = async (response) => {
     let errorData = null;
 
@@ -516,6 +519,7 @@ const AIEditor = ({ user, isMobile }) => {
       alert("Please sign in to continue.");
       return true;
     }
+
     if (errorData?.error === "GENERATION_LIMIT_REACHED") {
       setGenerationUsage((previous) => {
         if (!previous) return previous;
@@ -529,16 +533,18 @@ const AIEditor = ({ user, isMobile }) => {
       });
 
       setGenerationLimitModalOpen(true);
-
       return true;
     }
+
     return false;
   };
+
   const generateComponent = async (promptOverride) => {
     if (generationUsage?.remaining === 0) {
       setGenerationLimitModalOpen(true);
       return;
     }
+
     const prompt = promptOverride ?? changeDesc;
     if (!prompt?.trim()) {
       console.log("PROMPT EMPTY");
@@ -549,7 +555,6 @@ const AIEditor = ({ user, isMobile }) => {
       setIsGenerating(true);
       setIsGeneratingCode(false);
       setReworkUI(true);
-      // setShowPreview(true);
       let usageMetadata;
       const userMessage = {
         id: null,
@@ -566,7 +571,6 @@ const AIEditor = ({ user, isMobile }) => {
         componentId: null,
         createdAt: null,
       };
-      // Initialize streaming component
       const streamState = {
         name: activeComponent.name ?? "",
         messages: [userMessage, assistantPlaceholder],
@@ -582,7 +586,6 @@ const AIEditor = ({ user, isMobile }) => {
 
       setActiveMessages(streamState.messages);
 
-      //Enrich messages for ai call
       const enrichedPrompt = `Use the following 'User Request' to resolve user intent to 'REWORK' or 'ASK' mode.
   
         Component Type:${selectedType}
@@ -595,7 +598,7 @@ const AIEditor = ({ user, isMobile }) => {
         { role: "USER", message: enrichedPrompt },
         { role: "ASSISTANT", message: "" },
       ];
-      //Helper Update current component state
+
       const updateStreamingComponent = (section, content) => {
         if (resolvedMode !== "REWORK") {
           return;
@@ -604,8 +607,8 @@ const AIEditor = ({ user, isMobile }) => {
         setShowPreview(true);
         streamState[section] += content;
         setActiveComponent({ ...streamState });
-        // streamState.targetTech === "HTML" && updatePreview(streamState);
       };
+
       const appendAssistantMessageChunk = (content) => {
         streamState.messages = streamState.messages.map((msg, index) =>
           index === streamState.messages.length - 1 && msg.role === "ASSISTANT"
@@ -617,7 +620,7 @@ const AIEditor = ({ user, isMobile }) => {
         );
         setActiveMessages(streamState.messages);
       };
-      console.log("messages right before generate api call====>", messages);
+
       const response = await fetch("/api/ai", {
         method: "POST",
         headers: {
@@ -673,7 +676,6 @@ const AIEditor = ({ user, isMobile }) => {
       }
       setResolvedGenerationMode(resolvedMode);
 
-      console.log("RESOLVED MODE========>", resolvedMode);
       if (resolvedMode === "REWORK") {
         streamState.name = "";
         streamState.html = "";
@@ -681,7 +683,6 @@ const AIEditor = ({ user, isMobile }) => {
         streamState.js = "";
         streamState.jsx = "";
 
-        // Reset the editor now that the stream has been established.
         clearScreen();
         setActiveComponent({
           ...streamState,
@@ -696,14 +697,13 @@ const AIEditor = ({ user, isMobile }) => {
         const chunk = decoder.decode(value, { stream: true });
         buffer += chunk;
 
-        // Process SSE events from buffer
         const events = buffer.split("\n\n");
-        buffer = events.pop() || ""; // Keep incomplete event in buffer
+        buffer = events.pop() || "";
 
         for (const event of events) {
           if (event.startsWith("data: ")) {
             try {
-              const data = JSON.parse(event.substring(6)); // Remove 'data: ' prefix
+              const data = JSON.parse(event.substring(6));
 
               switch (data.type) {
                 case "name":
@@ -733,23 +733,14 @@ const AIEditor = ({ user, isMobile }) => {
               console.error("Error parsing streaming data:", err);
             }
           } else if (event.startsWith("event: end")) {
-            //update preview
             updatePreview(streamState);
             setActiveEditor("AI");
-            // Streaming complete
             setIsGeneratingCode(false);
-            console.log(
-              "Active streamState.messages at the end of streaming:",
-              streamState.messages,
-            );
 
-            //presist to db
             await saveComponent(streamState);
-            console.log("Streaming complete");
-
             return;
           } else if (event.startsWith("event: error")) {
-            const errorData = JSON.parse(event.substring(12)); // Remove 'event: error\ndata: ' prefix
+            const errorData = JSON.parse(event.substring(12));
             console.error("Streaming error:", errorData?.error);
             setIsGenerating(false);
             alert("An Error occurred. Please try again.");
@@ -767,6 +758,7 @@ const AIEditor = ({ user, isMobile }) => {
       setIsGeneratingCode(false);
     }
   };
+
   async function rework() {
     if (generationUsage?.remaining === 0) {
       setGenerationLimitModalOpen(true);
@@ -777,7 +769,6 @@ const AIEditor = ({ user, isMobile }) => {
       return;
     }
     try {
-      // setShowPreview(true);
       setIsGenerating(true);
       setIsGeneratingCode(false);
 
@@ -797,7 +788,7 @@ const AIEditor = ({ user, isMobile }) => {
         componentId: activeComponent.id,
         createdAt: null,
       };
-      // Initialize streaming component with existing values
+
       const streamState = {
         id: activeComponent.id,
         name: activeComponent.name ?? "",
@@ -814,9 +805,6 @@ const AIEditor = ({ user, isMobile }) => {
 
       setActiveMessages(streamState.messages);
 
-      // setActiveComponent(streamState);
-
-      //Helper Update current component state
       const updateStreamingComponent = (section, content) => {
         if (resolvedMode !== "REWORK") {
           return;
@@ -825,8 +813,8 @@ const AIEditor = ({ user, isMobile }) => {
         setIsGeneratingCode(true);
         streamState[section] += content;
         setActiveComponent({ ...streamState });
-        // streamState.targetTech === "HTML" && updatePreview(streamState);
       };
+
       const appendAssistantMessageChunk = (content) => {
         streamState.messages = streamState.messages.map((msg, index) =>
           index === streamState.messages.length - 1 && msg.role === "ASSISTANT"
@@ -868,6 +856,7 @@ const AIEditor = ({ user, isMobile }) => {
 
         throw new Error(`Failed: ${response.status}`);
       }
+
       const generationsRemaining = response.headers.get(
         "X-Generations-Remaining",
       );
@@ -898,7 +887,6 @@ const AIEditor = ({ user, isMobile }) => {
       }
       setResolvedGenerationMode(resolvedMode);
 
-      console.log("RESOLVED MODE========>", resolvedMode);
       if (resolvedMode === "REWORK") {
         streamState.name = "";
         streamState.html = "";
@@ -910,6 +898,7 @@ const AIEditor = ({ user, isMobile }) => {
           ...streamState,
         });
       }
+
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
@@ -917,13 +906,12 @@ const AIEditor = ({ user, isMobile }) => {
         const chunk = decoder.decode(value, { stream: true });
         buffer += chunk;
 
-        // Process SSE events from buffer
         const events = buffer.split("\n\n");
-        buffer = events.pop() || ""; // Keep incomplete event in buffer
+        buffer = events.pop() || "";
         for (const event of events) {
           if (event.startsWith("data: ")) {
             try {
-              const data = JSON.parse(event.substring(6)); // Remove 'data: ' prefix
+              const data = JSON.parse(event.substring(6));
               switch (data.type) {
                 case "name":
                   if (resolvedMode !== "REWORK") {
@@ -935,15 +923,12 @@ const AIEditor = ({ user, isMobile }) => {
                 case "message":
                   appendAssistantMessageChunk(data.content);
                   break;
-
                 case "html":
                   updateStreamingComponent(data.type, data.content);
                   break;
-
                 case "css":
                   updateStreamingComponent(data.type, data.content);
                   break;
-
                 case "js":
                   updateStreamingComponent(data.type, data.content);
                   break;
@@ -958,45 +943,15 @@ const AIEditor = ({ user, isMobile }) => {
               console.error("Error parsing streaming data:", err);
             }
           } else if (event.startsWith("event: end")) {
-            //Update Preview
             updatePreview(streamState);
             setIsGeneratingCode(false);
             setActiveEditor("AI");
-            console.log(
-              "REACHED PATCH PERSIST STAGE========================>>>",
-            );
-            //Persist to db
-            console.log(
-              "STTEAM STATE MESSAGES BEFORE slicing",
-              streamState.messages,
-            );
             const newMessages = streamState.messages.slice(-2);
-
             streamState.messages = newMessages;
-
-            console.log(
-              "STTEAM STATE MESSAGES after slicing",
-              streamState.messages,
-            );
-            console.log("STREAM STATE ASK==========>", streamState);
             await saveComponent(streamState);
-            // Streaming complete
-            console.log(
-              "latest streamState.messages at the end of rework streaming:",
-              streamState.messages,
-            );
-            console.log(
-              "Active Messages at the end of rework streaming:",
-              activeMessages,
-            );
-
-            // Update existing component
-
-            console.log("Updated");
-            console.log("Streaming rework complete");
             return;
           } else if (event.startsWith("event: error")) {
-            const errorData = JSON.parse(event.substring(12)); // Remove 'event: error\ndata: ' prefix
+            const errorData = JSON.parse(event.substring(12));
             console.error("Streaming error:", errorData?.error);
             setIsGenerating(false);
             alert("An Error occurred. Please try again.");
@@ -1035,6 +990,7 @@ const AIEditor = ({ user, isMobile }) => {
     setConsoleLogs([]);
     updatePreview();
   };
+
   useEffect(() => {
     if (isGenerating) {
       return;
@@ -1043,7 +999,11 @@ const AIEditor = ({ user, isMobile }) => {
     const frame = requestAnimationFrame(() => {
       const textarea = promptAreaRef.current;
 
-      if (!textarea || textarea.disabled) {
+      if (
+        !textarea ||
+        textarea.disabled ||
+        window.matchMedia("(max-width: 639px)").matches
+      ) {
         return;
       }
 
@@ -1055,13 +1015,11 @@ const AIEditor = ({ user, isMobile }) => {
 
     return () => cancelAnimationFrame(frame);
   }, [isGenerating, activeComponentIndex]);
+
   return (
     <div
-      className={`${
-        activeEditor == "AI" ? "" : "hidden"
-      } flex h-full min-h-0 w-full mx-auto flex-col items-center justify-start flex-1 relative transition-all duration-200 overflow-hidden bg-transparent`}
+      className={`${activeEditor == "AI" ? "" : "hidden"} relative mx-auto flex h-full min-h-0 w-full flex-1 flex-col overflow-hidden bg-transparent text-zinc-100`}
     >
-      {/* Model Selection */}
       <ModelSelector
         selectedModel={selectedModel}
         setSelectedModel={setSelectedModel}
@@ -1074,138 +1032,159 @@ const AIEditor = ({ user, isMobile }) => {
         }}
       />
 
-      <div
-        className={`w-full h-full min-h-0 flex flex-col ${reworkUI ? "justify-end" : "justify-center"} gap-1 items-center overflow-hidden`}
-      >
-        {/* Chat List */}
-        <ChatList
-          resolvedGenerationMode={resolvedGenerationMode}
-          isGeneratingCode={isGeneratingCode}
-        />
-        {/* heading/textarea container */}
+      <div className="relative flex min-h-0 w-full flex-1 flex-col items-center">
+        <div className="relative flex min-h-0 w-full flex-1 flex-col overflow-y-auto overscroll-contain">
+          <ChatList
+            resolvedGenerationMode={resolvedGenerationMode}
+            isGeneratingCode={isGeneratingCode}
+          />
+
+          {!reworkUI && !showPreview && (
+            <section
+              aria-labelledby="welcome-heading"
+              className="mx-auto w-full max-w-4xl px-4 py-6 mt-auto sm:my-auto sm:px-5 sm:py-10 md:px-10 md:my-auto md:pb-14"
+            >
+              <div className="mb-3 flex items-center gap-2.5 text-[10px] font-semibold uppercase tracking-[0.16em] text-violet-300 sm:mb-5 sm:gap-3 sm:text-[11px] sm:tracking-[0.2em]">
+                <span
+                  aria-hidden="true"
+                  className="h-px w-6 bg-violet-400 sm:w-8"
+                />
+                A blank canvas
+              </div>
+
+              <h1
+                id="welcome-heading"
+                className="max-w-3xl text-balance text-[clamp(1.75rem,8vw,2.25rem)] font-semibold leading-[1.06] tracking-[-0.045em] text-zinc-50 sm:text-5xl lg:text-6xl"
+              >
+                Start with the part{" "}
+                <span className="text-violet-300">you can picture.</span>
+              </h1>
+
+              <p className="mt-3 max-w-xl text-sm leading-6 text-zinc-400 sm:mt-5 sm:text-base sm:leading-7">
+                A rough idea, a tricky interaction, or the whole interface. Tell
+                us what you have in mind.
+              </p>
+
+              <div className="mt-2 border-t border-white/10 pt-4 sm:mt-8 sm:pt-5">
+                <p className="mb-5 text-xs font-medium text-zinc-500 sm:mb-3">
+                  Or pick a place to begin
+                </p>
+                <div
+                  aria-label="Prompt suggestions"
+                  className="flex min-w-0 max-w-full flex-wrap gap-2"
+                >
+                  {activeComponent.id === "" &&
+                    activeMessages.length === 0 &&
+                    !isGenerating && (
+                      <div className="min-w-0 max-w-full">
+                        <GenerationSuggestions
+                          disabled={isGenerating}
+                          onGenerate={(prompt) => {
+                            generateComponent(prompt);
+                          }}
+                        />
+                      </div>
+                    )}
+                </div>
+              </div>
+            </section>
+          )}
+        </div>
+
         <div
-          className={`${
-            reworkUI || showPreview
-              ? "bottom-0 pb-[max(1rem,env(safe-area-inset-bottom))] sm:bottom-4 sm:pb-0"
-              : "top-1/2 -translate-y-1/2 sm:top-auto sm:bottom-[39%] sm:translate-y-0"
-          } absolute w-full max-w-4xl max-h-full overflow-y-auto px-2 sm:px-6 lg:px-5 flex flex-col items-center justify-center`}
+          className={`z-5 w-full ${
+            reworkUI
+              ? "pointer-events-none absolute inset-x-0 bottom-0 bg-transparent"
+              : showPreview
+                ? "shrink-0 border-t border-white/10 bg-[#09090b]"
+                : "shrink-0 border-t border-white/10 bg-[#09090b]/95"
+          }`}
         >
-          {/* Greeting */}
-          <h1
-            className={`${
-              reworkUI && activeMessages.length > 0 ? "hidden" : ""
-            } mb-5 px-2 text-center font-sans text-2xl font-medium tracking-tight text-transparent bg-linear-to-r from-violet-400 via-fuchsia-400 to-pink-400 bg-clip-text sm:mb-10 sm:text-3xl xl:text-4xl`}
-          >
-            Good to see you, {user.name}!
-          </h1>
-
-          <TargetTechTabs />
-
-          {/* Filters */}
           <div
-            className={`w-full overflow-hidden px-2 sm:px-4 transition-all duration-300 ease-out ${
+            className={`mx-auto flex w-full max-w-4xl flex-col overflow-y-auto overscroll-contain px-3 sm:px-6 lg:px-8 ${
               reworkUI
-                ? "hidden"
-                : showFilters
-                  ? "pointer-events-auto mt-3 mb-4 max-h-36 sm:max-h-24 translate-y-0 opacity-100"
-                  : "pointer-events-none mt-0 mb-0 max-h-0 -translate-y-2 opacity-0"
+                ? "pointer-events-none max-h-[min(48dvh,20rem)] gap-1.5 pt-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] sm:gap-2 sm:pt-3 sm:pb-3"
+                : "max-h-[min(70dvh,36rem)] pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:max-h-[min(60dvh,38rem)] sm:pt-4 sm:pb-5"
             }`}
           >
-            <div className="grid w-full grid-cols-1 gap-3 sm:grid-cols-2">
-              <select
-                value={selectedType}
-                onChange={(e) => setSelectedType(e.target.value)}
-                name="type"
-                className="
-          h-10 w-full min-w-0 cursor-pointer appearance-none
-          rounded-lg border border-white/10
-          bg-white/[0.04] px-3 text-sm text-neutral-300
-          outline-none backdrop-blur-xl
-          transition
-          hover:border-white/15 hover:bg-white/[0.06]
-          focus:border-violet-400/40 focus:ring-2 focus:ring-violet-500/10
-        "
-              >
-                <option
-                  value="Custom type"
-                  className="bg-[#151516] text-neutral-300"
-                >
-                  Describe type in prompt
-                </option>
-
-                {componentTypes.map((type, index) => (
-                  <option
-                    key={index}
-                    value={type.name}
-                    className="bg-[#151516] text-neutral-300"
-                  >
-                    {type.name}
-                  </option>
-                ))}
-              </select>
-
-              <select
-                value={selectedStyle}
-                onChange={(e) => setSelectedStyle(e.target.value)}
-                name="style"
-                className="
-          h-10 w-full min-w-0 cursor-pointer appearance-none
-          rounded-lg border border-white/10
-          bg-white/[0.04] px-3 text-sm text-neutral-300
-          outline-none backdrop-blur-xl
-          transition
-          hover:border-white/15 hover:bg-white/[0.06]
-          focus:border-violet-400/40 focus:ring-2 focus:ring-violet-500/10
-        "
-              >
-                <option
-                  value="Custom style"
-                  className="bg-[#151516] text-neutral-300"
-                >
-                  Describe style in prompt
-                </option>
-
-                {styleOptions.map((style, index) => (
-                  <option
-                    key={index}
-                    value={style.name}
-                    className="bg-[#151516] text-neutral-300"
-                  >
-                    {style.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-
-          <div className="w-full px-2 sm:px-4">
-            {/* Prompt Bar */}
             <div
-              className={`
-        flex w-full min-w-0 items-center
-        rounded-2xl border
-        px-2 py-2
-        backdrop-blur-2xl
-        transition-all duration-200
-
-        ${
-          generationMode === "ASK"
-            ? "border-emerald-400/25 bg-emerald-400/[0.04] shadow-[0_0_0_1px_rgba(52,211,153,0.04)]"
-            : reworkUI
-              ? "border-white/10 bg-[#151516]"
-              : "border-white/10 bg-white/[0.04]"
-        }
-
-        ${isExpanded ? "flex-col items-stretch" : "flex-col items-stretch sm:flex-row sm:items-center"}
-
-        focus-within:border-white/20
-        focus-within:shadow-[0_0_0_1px_rgba(255,255,255,0.03)] relative
-      `}
+              className={`flex min-w-0 items-center justify-center ${
+                reworkUI ? "pointer-events-auto" : "mb-3 sm:mb-2"
+              }`}
             >
-              {/* Textarea */}
+              <TargetTechTabs />
+            </div>
+
+            {!reworkUI && showFilters && (
+              <div className="mb-3 grid w-full grid-cols-1 gap-2 sm:mb-4 sm:grid-cols-2">
+                <label className="block min-w-0">
+                  <span className="mb-1.5 block text-xs font-medium text-zinc-400">
+                    Component type
+                  </span>
+                  <select
+                    value={selectedType}
+                    onChange={(e) => setSelectedType(e.target.value)}
+                    name="type"
+                    className="h-11 w-full min-w-0 cursor-pointer rounded-xl border border-white/15 bg-[#18181b] px-3 text-sm text-zinc-100 outline-none transition hover:border-white/25 focus-visible:border-violet-400 focus-visible:ring-2 focus-visible:ring-violet-400/20"
+                  >
+                    <option value="Custom type" className="bg-[#18181b]">
+                      Describe type in prompt
+                    </option>
+                    {componentTypes.map((type, index) => (
+                      <option
+                        key={`${type.name}-${index}`}
+                        value={type.name}
+                        className="bg-[#18181b]"
+                      >
+                        {type.name}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+
+                <label className="block min-w-0">
+                  <span className="mb-1.5 block text-xs font-medium text-zinc-400">
+                    Visual style
+                  </span>
+                  <select
+                    value={selectedStyle}
+                    onChange={(e) => setSelectedStyle(e.target.value)}
+                    name="style"
+                    className="h-11 w-full min-w-0 cursor-pointer rounded-xl border border-white/15 bg-[#18181b] px-3 text-sm text-zinc-100 outline-none transition hover:border-white/25 focus-visible:border-violet-400 focus-visible:ring-2 focus-visible:ring-violet-400/20"
+                  >
+                    <option value="Custom style" className="bg-[#18181b]">
+                      Describe style in prompt
+                    </option>
+                    {styleOptions.map((style, index) => (
+                      <option
+                        key={`${style.name}-${index}`}
+                        value={style.name}
+                        className="bg-[#18181b]"
+                      >
+                        {style.name}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              </div>
+            )}
+
+            <div
+              className={`flex w-full min-w-0 flex-col border transition-colors focus-within:border-violet-400/50 focus-within:ring-2 focus-within:ring-violet-400/10 ${
+                reworkUI
+                  ? "pointer-events-auto rounded-xl p-1.5 shadow-[0_-12px_32px_-14px_rgba(0,0,0,0.7)] sm:p-2"
+                  : "rounded-2xl p-2 shadow-sm sm:p-3"
+              } ${
+                generationMode === "ASK"
+                  ? "border-emerald-400/35 bg-[#14201b]"
+                  : "border-white/15 bg-[#18181b]"
+              }`}
+            >
+              <label htmlFor="prompt" className="sr-only">
+                Describe your component or changes
+              </label>
               <textarea
                 ref={promptAreaRef}
-                autoFocus
                 name="prompt"
                 id="prompt"
                 value={changeDesc}
@@ -1214,27 +1193,20 @@ const AIEditor = ({ user, isMobile }) => {
                 placeholder={
                   activeComponent.id
                     ? "Describe changes..."
-                    : "Describe the component you want to generate..."
+                    : "Describe the component..."
                 }
-                className="
-          m-0
-          min-h-9 min-w-0 w-full
-          resize-none
-          bg-transparent
-          px-2 py-2
-          text-sm leading-5 text-neutral-200
-          placeholder:text-neutral-500
-          outline-none
-          disabled:cursor-not-allowed
-          disabled:opacity-50
-        "
+                className={`m-0 w-full min-w-0 resize-none bg-transparent px-2 text-base text-zinc-100 outline-none placeholder:text-zinc-500 disabled:cursor-not-allowed disabled:opacity-50 sm:text-sm ${
+                  reworkUI
+                    ? "max-h-[140px] min-h-9 py-1.5 leading-6"
+                    : "max-h-[220px] min-h-12 py-2 leading-6"
+                }`}
                 onChange={(e) => {
                   setChangeDesc(e.target.value);
 
                   e.target.style.height = "0px";
                   e.target.style.height = `${Math.min(
                     e.target.scrollHeight,
-                    220,
+                    reworkUI ? 140 : 220,
                   )}px`;
 
                   e.target.value.length > 75 && setIsExpanded(true);
@@ -1255,49 +1227,29 @@ const AIEditor = ({ user, isMobile }) => {
                 }}
               />
 
-              {/* Actions */}
               <div
-                className={`
-          flex items-center gap-1.5
-          ${isExpanded ? "mt-2 w-full justify-end" : "mt-1 w-full justify-end sm:mt-0 sm:ml-2 sm:w-auto sm:shrink-0"}
-        `}
+                className={`flex w-full min-w-0 items-center justify-end gap-1 border-t border-white/10 sm:gap-2 ${
+                  reworkUI ? "mt-0.5 pt-1" : "mt-1 pt-2"
+                }`}
               >
-                {/* Generation Mode */}
                 <select
                   name="generation-mode"
                   aria-label="Generation mode"
                   value={generationMode}
                   disabled={isGenerating}
                   onChange={(e) => setGenerationMode(e.target.value)}
-                  className="
-            h-9
-            cursor-pointer
-            appearance-none
-            rounded-lg
-            border border-transparent
-            bg-transparent
-            px-2
-            text-xs font-medium
-            text-neutral-400
-            outline-none
-            transition
-            hover:bg-white/[0.05]
-            hover:text-neutral-200
-            focus:bg-white/[0.05]
-            focus:text-neutral-200
-            disabled:cursor-not-allowed
-            disabled:opacity-50
-          "
+                  className={`min-w-0 cursor-pointer rounded-lg border border-transparent bg-transparent px-2 text-sm font-medium text-zinc-300 outline-none transition hover:bg-white/10 focus-visible:border-violet-400 disabled:cursor-not-allowed disabled:opacity-50 ${
+                    reworkUI ? "h-9" : "h-10"
+                  }`}
                 >
-                  <option value="AUTO" className="bg-[#151516]">
+                  <option value="AUTO" className="bg-[#18181b]">
                     Auto
                   </option>
-                  <option value="ASK" className="bg-[#151516]">
+                  <option value="ASK" className="bg-[#18181b]">
                     Ask
                   </option>
                 </select>
 
-                {/* Filters */}
                 {!reworkUI && (
                   <button
                     type="button"
@@ -1308,23 +1260,16 @@ const AIEditor = ({ user, isMobile }) => {
                       setSelectedType("Custom type");
                       setSelectedStyle("Custom style");
                     }}
-                    className={`
-              flex h-9 w-9 shrink-0
-              items-center justify-center
-              rounded-lg
-              transition
-              ${
-                showFilters
-                  ? "bg-violet-500/10 text-violet-400"
-                  : "text-neutral-500 hover:bg-white/[0.05] hover:text-neutral-300"
-              }
-            `}
+                    className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-400 ${
+                      showFilters
+                        ? "bg-violet-500/15 text-violet-300"
+                        : "text-zinc-400 hover:bg-white/10 hover:text-zinc-100"
+                    }`}
                   >
-                    <SlidersHorizontal size={16} />
+                    <SlidersHorizontal size={17} aria-hidden="true" />
                   </button>
                 )}
 
-                {/* Web Search */}
                 <button
                   type="button"
                   aria-label="Toggle web search"
@@ -1332,24 +1277,20 @@ const AIEditor = ({ user, isMobile }) => {
                   onClick={() => {
                     setWebSearchEnabeled((prev) => !prev);
                   }}
-                  className={`
-            flex h-9 w-9 shrink-0
-            items-center justify-center
-            rounded-lg
-            transition
-            ${
-              webSearchEnabeled
-                ? "bg-violet-500/10 text-violet-400"
-                : "text-neutral-500 hover:bg-white/[0.05] hover:text-neutral-300"
-            }
-          `}
+                  className={`flex shrink-0 items-center justify-center rounded-lg transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-400 ${
+                    reworkUI ? "h-9 w-9" : "h-10 w-10"
+                  } ${
+                    webSearchEnabeled
+                      ? "bg-violet-500/15 text-violet-300"
+                      : "text-zinc-400 hover:bg-white/10 hover:text-zinc-100"
+                  }`}
                 >
-                  <Search size={16} />
+                  <Search size={17} aria-hidden="true" />
                 </button>
 
-                {/* Submit */}
                 <button
                   type="button"
+                  aria-label={isGenerating ? "Generating" : "Send prompt"}
                   onClick={() => {
                     activeComponent.id === "" ? generateComponent() : rework();
 
@@ -1360,44 +1301,43 @@ const AIEditor = ({ user, isMobile }) => {
                     setIsExpanded(false);
                   }}
                   disabled={isGenerating || !changeDesc.trim()}
-                  className="
-            flex h-9 w-9 shrink-0
-            items-center justify-center
-            rounded-lg
-            bg-violet-500
-            text-white
-            shadow-sm
-            transition
-            hover:bg-violet-400
-            active:scale-95
-            disabled:cursor-not-allowed
-            disabled:opacity-30
-            disabled:hover:bg-violet-500
-          "
+                  className={`flex shrink-0 items-center justify-center rounded-xl bg-violet-600 text-white transition hover:bg-violet-500 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-300 focus-visible:ring-offset-2 focus-visible:ring-offset-[#18181b] disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-violet-600 ${
+                    reworkUI ? "h-9 w-9" : "h-10 w-10"
+                  }`}
                 >
                   {isGenerating ? (
-                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+                    <span
+                      className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white"
+                      aria-hidden="true"
+                    />
                   ) : (
-                    <ArrowUp className="h-4 w-4" />
+                    <ArrowUp className="h-5 w-5" aria-hidden="true" />
                   )}
                 </button>
               </div>
             </div>
 
-            {/* Suggestions */}
-            {activeComponent.id === "" &&
+            {showPreview &&
+              activeComponent.id === "" &&
               activeMessages.length === 0 &&
               !isGenerating && (
-                <GenerationSuggestions
-                  disabled={isGenerating}
-                  onGenerate={(prompt) => {
-                    generateComponent(prompt);
-                  }}
-                />
+                <div
+                  className={`mt-3 min-w-0 sm:mt-4 ${
+                    reworkUI ? "pointer-events-auto" : ""
+                  }`}
+                >
+                  <GenerationSuggestions
+                    disabled={isGenerating}
+                    onGenerate={(prompt) => {
+                      generateComponent(prompt);
+                    }}
+                  />
+                </div>
               )}
           </div>
         </div>
       </div>
+
       <PlanRequiredModal
         model={planRequiredModel}
         open={Boolean(planRequiredModel)}
@@ -1405,7 +1345,6 @@ const AIEditor = ({ user, isMobile }) => {
         onClose={() => setPlanRequiredModel(null)}
         onUpgrade={(requiredPlan) => {
           setPlanRequiredModel(null);
-
           window.location.assign("/upgrade");
         }}
       />
@@ -1421,4 +1360,5 @@ const AIEditor = ({ user, isMobile }) => {
     </div>
   );
 };
+
 export default AIEditor;

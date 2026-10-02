@@ -31,12 +31,6 @@ const suggestions = [
     icon: WandSparkles,
   },
   {
-    title: "AI chat",
-    prompt:
-      "Create a premium AI workspace interface with a strong visual identity rather than a generic chat UI. Design an elegant conversational experience with thoughtful message hierarchy, contextual actions, polished composer interactions, subtle status and activity states, intelligent spacing, and a refined product-like layout. Use a distinctive composition and visual language inspired by high-end developer or creative tools. Avoid unnecessary panels, excessive cards, and generic chatbot styling. Make every detail feel intentional.",
-    icon: MessageSquare,
-  },
-  {
     title: "Admin dashboard",
     prompt:
       "Create a premium command-center style admin dashboard with a distinctive product identity. Avoid the standard sidebar + rows of KPI cards + generic table layout. Use strong information hierarchy, interesting but practical composition, refined data presentation, contextual actions, meaningful visual grouping, sophisticated typography, and subtle depth. Make the dashboard feel like a polished product used by a real team, with realistic data and purposeful interactions rather than decorative filler.",
@@ -60,18 +54,7 @@ export default function GenerationSuggestions({
   };
 
   return (
-    <section aria-label="Example prompts" className="mx-auto mt-7">
-      <div className="mb-2.5 flex items-center gap-2 px-0.5">
-        <Sparkles
-          className="h-3.5 w-3.5 text-violet-400/50"
-          strokeWidth={1.8}
-        />
-
-        <span className="text-[11px] font-medium tracking-wide text-white/35">
-          Need inspiration? Try one of these:
-        </span>
-      </div>
-
+    <section aria-label="Example prompts" className="mx-auto">
       <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-white/10">
         {suggestions.map((suggestion) => {
           const Icon = suggestion.icon;
@@ -91,11 +74,12 @@ export default function GenerationSuggestions({
                 shrink-0
                 items-center
                 gap-2
-                rounded-lg
+                rounded-full
                 border
-                border-white/[0.075]
-                bg-white/[0.018]
-                px-3
+                border-lightBorder
+                bg-backgroundLight/50
+                px-4
+                py-1
                 text-left
                 transition-all
                 duration-150
@@ -114,7 +98,7 @@ export default function GenerationSuggestions({
                   h-3.5
                   w-3.5
                   shrink-0
-                  text-white/35
+                  text-white
                   transition-colors
                   duration-150
                   group-hover:text-violet-300
@@ -127,7 +111,7 @@ export default function GenerationSuggestions({
                   text-[11.5px]
                   font-medium
                   tracking-[-0.005em]
-                  text-white/55
+                  text-white
                   transition-colors
                   duration-150
                   group-hover:text-white/85
@@ -140,7 +124,7 @@ export default function GenerationSuggestions({
                 className="
                   h-3 w-3
                   shrink-0
-                  text-white/15
+                  text-white
                   transition-all
                   duration-150
                   group-hover:-translate-y-0.5

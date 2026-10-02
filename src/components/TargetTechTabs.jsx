@@ -6,7 +6,7 @@ function TargetTechTabs() {
 
   return (
     <div
-      className={`${reworkUI ? "hidden -z-10" : ""} relative w-full flex items-center px-4 mb-3 mt-0`}
+      className={`${reworkUI ? "hidden -z-10" : ""} relative w-full flex items-center`}
     >
       <div className="relative inline-flex gap-1 rounded-xl p-1 bg-white/5 border border-white/10 backdrop-blur-md">
         {[
