@@ -1059,7 +1059,7 @@ const AIEditor = ({ user, isMobile }) => {
     <div
       className={`${
         activeEditor == "AI" ? "" : "hidden"
-      } flex h-full w-full mx-auto flex-col items-center justify-start flex-1 relative transition-all duration-200 overflow-hidden bg-transparent`}
+      } flex h-full min-h-0 w-full mx-auto flex-col items-center justify-start flex-1 relative transition-all duration-200 overflow-hidden bg-transparent`}
     >
       {/* Model Selection */}
       <ModelSelector
@@ -1075,7 +1075,7 @@ const AIEditor = ({ user, isMobile }) => {
       />
 
       <div
-        className={`w-full h-full flex flex-col ${reworkUI ? "justify-end" : "justify-center"} gap-1 items-center overflow-hidden`}
+        className={`w-full h-full min-h-0 flex flex-col ${reworkUI ? "justify-end" : "justify-center"} gap-1 items-center overflow-hidden`}
       >
         {/* Chat List */}
         <ChatList
@@ -1086,15 +1086,15 @@ const AIEditor = ({ user, isMobile }) => {
         <div
           className={`${
             reworkUI || showPreview
-              ? "absolute bottom-4"
-              : "absolute bottom-[39%]"
-          } w-full max-w-4xl px-5 sm:px-6 lg:px-5 flex flex-col items-center justify-center`}
+              ? "bottom-0 pb-[max(1rem,env(safe-area-inset-bottom))] sm:bottom-4 sm:pb-0"
+              : "top-1/2 -translate-y-1/2 sm:top-auto sm:bottom-[39%] sm:translate-y-0"
+          } absolute w-full max-w-4xl max-h-full overflow-y-auto px-2 sm:px-6 lg:px-5 flex flex-col items-center justify-center`}
         >
           {/* Greeting */}
           <h1
             className={`${
               reworkUI && activeMessages.length > 0 ? "hidden" : ""
-            } mb-10 text-center font-sans text-3xl font-medium tracking-tight text-transparent bg-linear-to-r from-violet-400 via-fuchsia-400 to-pink-400 bg-clip-text xl:text-4xl`}
+            } mb-5 px-2 text-center font-sans text-2xl font-medium tracking-tight text-transparent bg-linear-to-r from-violet-400 via-fuchsia-400 to-pink-400 bg-clip-text sm:mb-10 sm:text-3xl xl:text-4xl`}
           >
             Good to see you, {user.name}!
           </h1>
@@ -1103,11 +1103,11 @@ const AIEditor = ({ user, isMobile }) => {
 
           {/* Filters */}
           <div
-            className={`w-full overflow-hidden px-4 transition-all duration-300 ease-out ${
+            className={`w-full overflow-hidden px-2 sm:px-4 transition-all duration-300 ease-out ${
               reworkUI
                 ? "hidden"
                 : showFilters
-                  ? "pointer-events-auto mt-3 mb-4 max-h-24 translate-y-0 opacity-100"
+                  ? "pointer-events-auto mt-3 mb-4 max-h-36 sm:max-h-24 translate-y-0 opacity-100"
                   : "pointer-events-none mt-0 mb-0 max-h-0 -translate-y-2 opacity-0"
             }`}
           >
@@ -1117,7 +1117,7 @@ const AIEditor = ({ user, isMobile }) => {
                 onChange={(e) => setSelectedType(e.target.value)}
                 name="type"
                 className="
-          h-10 w-full cursor-pointer appearance-none
+          h-10 w-full min-w-0 cursor-pointer appearance-none
           rounded-lg border border-white/10
           bg-white/[0.04] px-3 text-sm text-neutral-300
           outline-none backdrop-blur-xl
@@ -1149,7 +1149,7 @@ const AIEditor = ({ user, isMobile }) => {
                 onChange={(e) => setSelectedStyle(e.target.value)}
                 name="style"
                 className="
-          h-10 w-full cursor-pointer appearance-none
+          h-10 w-full min-w-0 cursor-pointer appearance-none
           rounded-lg border border-white/10
           bg-white/[0.04] px-3 text-sm text-neutral-300
           outline-none backdrop-blur-xl
@@ -1178,11 +1178,11 @@ const AIEditor = ({ user, isMobile }) => {
             </div>
           </div>
 
-          <div className="w-full px-4">
+          <div className="w-full px-2 sm:px-4">
             {/* Prompt Bar */}
             <div
               className={`
-        flex w-full items-center
+        flex w-full min-w-0 items-center
         rounded-2xl border
         px-2 py-2
         backdrop-blur-2xl
@@ -1196,7 +1196,7 @@ const AIEditor = ({ user, isMobile }) => {
               : "border-white/10 bg-white/[0.04]"
         }
 
-        ${isExpanded ? "flex-col items-stretch" : "flex-row"}
+        ${isExpanded ? "flex-col items-stretch" : "flex-col items-stretch sm:flex-row sm:items-center"}
 
         focus-within:border-white/20
         focus-within:shadow-[0_0_0_1px_rgba(255,255,255,0.03)] relative
@@ -1218,7 +1218,7 @@ const AIEditor = ({ user, isMobile }) => {
                 }
                 className="
           m-0
-          min-h-9 w-full
+          min-h-9 min-w-0 w-full
           resize-none
           bg-transparent
           px-2 py-2
@@ -1259,7 +1259,7 @@ const AIEditor = ({ user, isMobile }) => {
               <div
                 className={`
           flex items-center gap-1.5
-          ${isExpanded ? "mt-2 w-full justify-end" : "ml-2 shrink-0"}
+          ${isExpanded ? "mt-2 w-full justify-end" : "mt-1 w-full justify-end sm:mt-0 sm:ml-2 sm:w-auto sm:shrink-0"}
         `}
               >
                 {/* Generation Mode */}
@@ -1309,7 +1309,7 @@ const AIEditor = ({ user, isMobile }) => {
                       setSelectedStyle("Custom style");
                     }}
                     className={`
-              flex h-9 w-9
+              flex h-9 w-9 shrink-0
               items-center justify-center
               rounded-lg
               transition
@@ -1333,7 +1333,7 @@ const AIEditor = ({ user, isMobile }) => {
                     setWebSearchEnabeled((prev) => !prev);
                   }}
                   className={`
-            flex h-9 w-9
+            flex h-9 w-9 shrink-0
             items-center justify-center
             rounded-lg
             transition
@@ -1361,7 +1361,7 @@ const AIEditor = ({ user, isMobile }) => {
                   }}
                   disabled={isGenerating || !changeDesc.trim()}
                   className="
-            flex h-9 w-9
+            flex h-9 w-9 shrink-0
             items-center justify-center
             rounded-lg
             bg-violet-500
