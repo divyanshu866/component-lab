@@ -3,7 +3,7 @@
 import Editor from "@/components/Editor";
 import Console from "@/components/Console";
 import Sidebar from "@/components/Sidebar";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import WebBundleIFrame from "@/components/Preview/WebBundleIFrame";
 import ReactIFrame from "./Preview/ReactIFrame";
 
@@ -21,10 +21,9 @@ const WorkspaceClient = ({ user }) => {
 
       setIsMobile(mediaQuery.matches);
       mediaQuery.addEventListener("change", updateIsMobile);
+      return () => mediaQuery.removeEventListener("change", updateIsMobile);
     }
     handleResize();
-
-    return () => mediaQuery.removeEventListener("change", updateIsMobile);
   }, []);
 
   return (
