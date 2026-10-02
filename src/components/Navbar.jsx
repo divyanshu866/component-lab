@@ -1,6 +1,12 @@
 "use client";
 
-import { Ellipsis, RefreshCcw, Save, SquareTerminal } from "lucide-react";
+import {
+  Ellipsis,
+  PanelLeft,
+  RefreshCcw,
+  Save,
+  SquareTerminal,
+} from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useConsole } from "@/context/ConsoleContext";
 import { useEditorContext } from "@/context/EditorContext";
@@ -73,130 +79,70 @@ export default function Navbar({ user }) {
     }
   }
 
+  const iconButtonClass =
+    "group flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-400 focus-visible:ring-offset-2 focus-visible:ring-offset-[#08080a] active:scale-95";
+
   return (
     <nav
-      className="
-        relative
-        z-50
-        w-full
-        border-b
-        border-gray-200
-        bg-brand
-        px-2
-        dark:border-lightBorder
-        sm:px-3
-      "
+      aria-label="Workspace"
+      className="relative z-50 w-full border-b border-white/[0.08] bg-[#08080a] px-3 sm:px-4"
     >
-      <div
-        className="
-          mx-auto
-          flex
-          min-h-14
-          w-full
-          max-w-[1800px]
-          flex-col
-          gap-2
-          py-2
-          md:min-h-12
-          md:flex-row
-          md:items-center
-          md:gap-3
-          md:py-1
-        "
-      >
-        {/* ----------------------------------------------------------
-            Primary navigation / identity
-        ----------------------------------------------------------- */}
-        <div
-          className="
-            flex
-            min-w-0
-            w-full
-            items-center
-            gap-1
-            md:w-auto
-            md:shrink-0
-          "
-        >
-          {/* Sidebar toggle */}
+      <div className="mx-auto flex min-h-[72px] w-full max-w-[1800px] flex-wrap items-center gap-x-3 gap-y-2 py-2 md:min-h-14 md:flex-nowrap md:gap-4 md:py-2">
+        <div className="flex w-full min-w-0 shrink-0 items-center gap-2.5 md:w-auto md:gap-2">
           <button
             type="button"
-            className="
-              group
-              relative
-              h-10
-              w-10
-              shrink-0
-              cursor-col-resize
-              rounded-lg
-              transition-colors
-              hover:bg-white/[0.04]
-              sm:h-11
-              sm:w-11
-            "
-            onClick={() => {
-              setSidebarCollapsed(!sidebarCollapsed);
-            }}
+            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-white/[0.09] bg-white/[0.035] text-neutral-300 transition-colors hover:border-white/[0.14] hover:bg-white/[0.07] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-400 active:scale-95 md:hidden"
+            onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
             aria-label="Toggle sidebar"
+            aria-pressed={sidebarCollapsed}
+          >
+            <PanelLeft className="h-[17px] w-[17px]" />
+          </button>
+
+          <Image
+            src="/newlogo.svg"
+            width={32}
+            height={32}
+            alt=""
+            aria-hidden="true"
+            className="shrink-0 object-contain opacity-90 md:hidden"
+          />
+
+          <button
+            type="button"
+            className="group relative hidden h-9 w-9 shrink-0 cursor-col-resize items-center justify-center rounded-lg text-neutral-300 transition-colors hover:bg-white/[0.055] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-400 active:scale-95 md:flex"
+            onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+            aria-label="Toggle sidebar"
+            aria-pressed={sidebarCollapsed}
           >
             <Image
               src="/newlogo.svg"
-              width={40}
-              height={40}
-              alt="Logo"
-              className="
-                absolute
-                inset-1
-                opacity-100
-                transition-opacity
-                duration-150
-                group-hover:opacity-0
-              "
+              width={32}
+              height={32}
+              alt=""
+              aria-hidden="true"
+              className="absolute object-contain opacity-90 transition-opacity duration-150 group-hover:opacity-0"
             />
-
             <Image
               src="/sidebar.svg"
-              alt="sidebar toggle"
-              className="
-                absolute
-                inset-2.5
-                opacity-0
-                transition-opacity
-                duration-150
-                group-hover:opacity-40
-              "
-              width={28}
-              height={28}
+              alt=""
+              width={20}
+              height={20}
+              aria-hidden="true"
+              className="absolute h-[18px] w-[18px] object-contain opacity-0 transition-opacity duration-150 group-hover:opacity-70"
             />
           </button>
 
-          {/* Product name */}
           <Image
             src="/name.svg"
-            height={32}
-            width={150}
+            height={24}
+            width={120}
             alt="ComponentLab"
-            className="
-              mb-1
-              hidden
-              h-7
-              w-auto
-              shrink-0
-              lg:block
-            "
+            className="h-[19px] w-auto max-w-[112px] shrink-0 object-contain opacity-[0.92] sm:h-[21px] md:ml-0.5 md:h-[20px]"
           />
         </div>
 
-        {/* ----------------------------------------------------------
-            Component name
-        ----------------------------------------------------------- */}
-        <div
-          className="
-            min-w-0
-            w-full
-            md:flex-1
-          "
-        >
+        <div className="min-w-[130px] flex-1 max-[420px]:w-full max-[420px]:flex-none md:max-w-[360px]">
           <input
             type="text"
             onChange={(event) =>
@@ -206,228 +152,76 @@ export default function Navbar({ user }) {
               }))
             }
             value={activeComponent?.name ?? ""}
-            placeholder="Component Name"
+            placeholder="Component name"
             aria-label="Component name"
-            className={`
-              h-10
-              w-full
-              rounded-lg
-              border
-              bg-gray-200
-              px-3
-              text-sm
-              outline-none
-              transition-colors
-              placeholder:text-gray-500
-              dark:bg-backgroundLight
-              sm:h-9
-              md:max-w-[320px]
-              lg:max-w-[360px]
-              ${
-                activeComponent?.name
-                  ? "dark:text-neutral-300"
-                  : "dark:text-red-300"
-              }
-              ${
-                !activeComponent?.name
-                  ? "border-red-600/30"
-                  : "border-gray-300 dark:border-lightBorder"
-              }
-              focus:border-violet-400/40
-            `}
+            className={`h-9 w-full rounded-lg border bg-[#111114] px-3 text-[13px] font-medium tracking-[0.01em] outline-none transition-colors placeholder:text-neutral-500 focus:border-violet-400/70 focus:ring-2 focus:ring-violet-400/15 ${
+              activeComponent?.name
+                ? "border-white/[0.11] text-neutral-100"
+                : "border-red-400/35 text-red-200"
+            }`}
           />
         </div>
 
-        {/* ----------------------------------------------------------
-            Actions
-        ----------------------------------------------------------- */}
-        <div
-          className="
-            flex
-            w-full
-            items-center
-            justify-between
-            gap-2
-            md:w-auto
-            md:shrink-0
-            md:justify-end
-          "
-        >
-          {/* Primary desktop/tablet actions */}
-          <div className="flex items-center gap-1.5 md:gap-2">
-            {/* Save */}
+        <div className="flex shrink-0 items-center gap-2">
+          <div className="flex items-center gap-1.5 max-[420px]:hidden">
             <button
               type="button"
               onClick={onSave}
               title="Save component"
               aria-label="Save component"
-              className="
-                group
-                flex
-                h-9
-                w-9
-                shrink-0
-                cursor-pointer
-                items-center
-                justify-center
-                rounded-lg
-                border
-                border-orange-400/35
-                bg-orange-400/12
-                text-orange-300
-                transition-all
-                duration-150
-                hover:border-orange-300/60
-                hover:bg-orange-400/20
-                hover:text-orange-200
-                hover:shadow-[0_0_18px_rgba(251,146,60,0.14)]
-                active:scale-95
-              "
+              className={`${iconButtonClass} border-orange-300/25 bg-orange-300/[0.07] text-orange-200 hover:border-orange-200/50 hover:bg-orange-300/[0.13]`}
             >
               <Save className="h-4 w-4 transition-transform duration-150 group-hover:scale-110" />
             </button>
 
-            {/* Console */}
             <button
               type="button"
               onClick={() => setShowConsole((prev) => !prev)}
               title="Toggle console"
               aria-label="Toggle console"
               aria-pressed={showConsole}
-              className={`
-                group
-                flex
-                h-9
-                w-9
-                shrink-0
-                cursor-pointer
-                items-center
-                justify-center
-                rounded-lg
-                border
-                transition-all
-                duration-150
-                active:scale-95
-                ${
-                  showConsole
-                    ? "border-pink-300/65 bg-pink-400/18 text-pink-200 shadow-[0_0_20px_rgba(244,114,182,0.16)]"
-                    : "border-pink-400/35 bg-pink-400/12 text-pink-300 hover:border-pink-300/60 hover:bg-pink-400/20 hover:text-pink-200 hover:shadow-[0_0_18px_rgba(244,114,182,0.14)]"
-                }
-              `}
+              className={`${iconButtonClass} ${
+                showConsole
+                  ? "border-pink-300/50 bg-pink-300/[0.14] text-pink-100"
+                  : "border-pink-300/25 bg-pink-300/[0.07] text-pink-200 hover:border-pink-200/50 hover:bg-pink-300/[0.13]"
+              }`}
             >
               <SquareTerminal className="h-4 w-4 transition-transform duration-150 group-hover:scale-110" />
             </button>
 
-            {/* Refresh */}
             <button
               type="button"
               onClick={reRender}
               title="Refresh preview"
               aria-label="Refresh preview"
-              className="
-                group
-                flex
-                h-9
-                w-9
-                shrink-0
-                cursor-pointer
-                items-center
-                justify-center
-                rounded-lg
-                border
-                border-emerald-400/40
-                bg-emerald-400/13
-                text-emerald-300
-                transition-all
-                duration-150
-                hover:border-emerald-300/65
-                hover:bg-emerald-400/21
-                hover:text-emerald-200
-                hover:shadow-[0_0_18px_rgba(52,211,153,0.14)]
-                active:scale-95
-              "
+              className={`${iconButtonClass} border-emerald-300/25 bg-emerald-300/[0.07] text-emerald-200 hover:border-emerald-200/50 hover:bg-emerald-300/[0.13]`}
             >
               <RefreshCcw className="h-4 w-4 transition-transform duration-300 group-hover:rotate-90" />
             </button>
           </div>
 
-          {/* --------------------------------------------------------
-              Very small-screen overflow menu
-
-              Kept available as a compact escape hatch. The regular
-              actions remain visible when there is enough width.
-          --------------------------------------------------------- */}
-          <div
-            ref={moreRef}
-            className="relative hidden max-[479px]:block ml-auto"
-          >
+          <div ref={moreRef} className="relative hidden max-[420px]:block">
             <button
               type="button"
               onClick={() => setShowMore((previous) => !previous)}
               aria-label="More actions"
               aria-expanded={showMore}
-              className="
-                flex
-                h-9
-                w-9
-                items-center
-                justify-center
-                rounded-lg
-                border
-                border-white/10
-                bg-white/[0.035]
-                text-neutral-400
-                transition
-                hover:border-white/15
-                hover:bg-white/[0.06]
-                hover:text-white
-                active:scale-95
-              "
+              className="flex h-9 w-9 items-center justify-center rounded-lg border border-white/[0.12] bg-white/[0.04] text-neutral-300 transition-colors hover:bg-white/[0.08] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-400 active:scale-95"
             >
-              <Ellipsis className="h-4 w-4" />
+              <Ellipsis className="h-5 w-5" />
             </button>
 
             {showMore && (
-              <div
-                className="
-                  absolute
-                  right-0
-                  top-full
-                  z-50
-                  mt-2
-                  w-44
-                  overflow-hidden
-                  rounded-xl
-                  border
-                  border-white/10
-                  bg-[#111113]
-                  p-1
-                  shadow-[0_18px_50px_rgba(0,0,0,0.45)]
-                "
-              >
+              <div className="absolute left-0 top-full z-50 mt-2 w-48 overflow-hidden rounded-xl border border-white/[0.1] bg-[#111114] p-1 shadow-[0_16px_40px_rgba(0,0,0,0.5)]">
                 <button
                   type="button"
                   onClick={() => {
                     onSave();
                     setShowMore(false);
                   }}
-                  className="
-                    flex
-                    w-full
-                    items-center
-                    gap-2.5
-                    rounded-lg
-                    px-3
-                    py-2.5
-                    text-left
-                    text-xs
-                    text-neutral-300
-                    transition
-                    hover:bg-white/[0.05]
-                    hover:text-white
-                  "
+                  className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-left text-sm text-neutral-300 transition-colors hover:bg-white/[0.06] hover:text-white"
                 >
-                  <Save className="h-4 w-4 text-orange-300" />
+                  <Save className="h-4 w-4 text-orange-200" />
                   Save component
                 </button>
 
@@ -437,23 +231,9 @@ export default function Navbar({ user }) {
                     setShowConsole((prev) => !prev);
                     setShowMore(false);
                   }}
-                  className="
-                    flex
-                    w-full
-                    items-center
-                    gap-2.5
-                    rounded-lg
-                    px-3
-                    py-2.5
-                    text-left
-                    text-xs
-                    text-neutral-300
-                    transition
-                    hover:bg-white/[0.05]
-                    hover:text-white
-                  "
+                  className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-left text-sm text-neutral-300 transition-colors hover:bg-white/[0.06] hover:text-white"
                 >
-                  <SquareTerminal className="h-4 w-4 text-pink-300" />
+                  <SquareTerminal className="h-4 w-4 text-pink-200" />
                   {showConsole ? "Hide console" : "Show console"}
                 </button>
 
@@ -463,32 +243,18 @@ export default function Navbar({ user }) {
                     reRender();
                     setShowMore(false);
                   }}
-                  className="
-                    flex
-                    w-full
-                    items-center
-                    gap-2.5
-                    rounded-lg
-                    px-3
-                    py-2.5
-                    text-left
-                    text-xs
-                    text-neutral-300
-                    transition
-                    hover:bg-white/[0.05]
-                    hover:text-white
-                  "
+                  className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-left text-sm text-neutral-300 transition-colors hover:bg-white/[0.06] hover:text-white"
                 >
-                  <RefreshCcw className="h-4 w-4 text-emerald-300" />
+                  <RefreshCcw className="h-4 w-4 text-emerald-200" />
                   Refresh preview
                 </button>
               </div>
             )}
           </div>
-          {/* Profile */}
-          <div className="shrink-0">
-            <Profile user={user} />
-          </div>
+        </div>
+
+        <div className="ml-auto shrink-0 border-l border-white/[0.1] pl-2">
+          <Profile user={user} />
         </div>
       </div>
     </nav>

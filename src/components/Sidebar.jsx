@@ -190,7 +190,7 @@ export default function Sidebar() {
     <aside
       aria-hidden={sidebarCollapsed}
       className={`${
-        isMobile ? "absolute inset-y-14 left-0 z-100" : "relative"
+        isMobile ? "absolute inset-y-0 left-0 z-100" : "relative"
       } flex h-full shrink-0 flex-col overflow-hidden bg-backgroundLight transition-[width] duration-200 ease-in-out ${
         sidebarCollapsed
           ? "w-0 border-0"

@@ -71,29 +71,27 @@ const Profile = ({ user }) => {
   const isPro = plan === "PRO";
 
   return (
-    <div ref={containerRef} className="relative z-105 mr-2">
-      {/* Avatar */}
+    <div ref={containerRef} className="relative z-[105] mr-2">
       <button
         type="button"
-        aria-label="Open account menu"
+        aria-label={open ? "Close account menu" : "Open account menu"}
         aria-haspopup="menu"
         aria-expanded={open}
         onClick={() => setOpen((current) => !current)}
         className={[
-          "relative flex h-9 w-9 items-center justify-center rounded-full",
-          "border bg-white/[0.035]",
-          "cursor-pointer outline-none",
-          "transition-all duration-200",
-          "focus-visible:ring-2 focus-visible:ring-violet-400/40",
+          "relative flex h-10 w-10 items-center justify-center rounded-full",
+          "cursor-pointer border bg-white/[0.04] outline-none",
+          "transition-colors duration-200",
+          "focus-visible:ring-2 focus-visible:ring-violet-400/60 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0b0f]",
           open
-            ? "border-violet-400/40 ring-4 ring-violet-400/[0.07]"
-            : "border-white/[0.09] hover:border-white/[0.18]",
+            ? "border-violet-300/50"
+            : "border-white/15 hover:border-white/30",
         ].join(" ")}
       >
         <Image
           src={user?.image || "/default-avatar.png"}
-          width={36}
-          height={36}
+          width={40}
+          height={40}
           alt={displayName}
           className="h-full w-full rounded-full object-cover"
         />
@@ -108,74 +106,59 @@ const Profile = ({ user }) => {
         <div
           role="menu"
           className={[
-            "absolute right-0 top-[calc(100%+14px)] w-[320px]",
-            "overflow-hidden rounded-2xl",
-            "border border-white/[0.09]",
-            "bg-[#09090d]/95",
-            "shadow-[0_24px_80px_rgba(0,0,0,0.55)]",
-            "backdrop-blur-2xl",
+            "absolute right-0 top-[calc(100%+0.75rem)]",
+            "w-[min(22rem,calc(100vw-1.5rem))] max-h-[min(80vh,38rem)] overflow-y-auto",
+            "rounded-2xl border border-white/10 bg-[#101116]",
+            "shadow-[0_20px_60px_rgba(0,0,0,0.55)]",
           ].join(" ")}
         >
-          {/* Very subtle ambient glow */}
-          <div className="pointer-events-none absolute -right-24 -top-24 h-56 w-56 rounded-full bg-violet-500/[0.05] blur-[90px]" />
-
-          {/* Identity */}
-          <div className="relative px-5 pb-5 pt-5">
-            <div className="flex items-center gap-3.5">
+          <div className="border-b border-white/[0.08] px-5 py-5">
+            <div className="flex min-w-0 items-center gap-3.5">
               <div className="relative shrink-0">
                 <Image
                   src={user?.image || "/default-avatar.png"}
                   width={44}
                   height={44}
                   alt=""
-                  className="h-11 w-11 rounded-full object-cover ring-1 ring-white/[0.10]"
+                  className="h-11 w-11 rounded-full object-cover ring-1 ring-white/15"
                 />
 
                 <span
                   aria-hidden="true"
-                  className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full border-2 border-[#09090d] bg-emerald-400"
+                  className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full border-2 border-[#101116] bg-emerald-400"
                 />
               </div>
 
               <div className="min-w-0">
-                <p className="truncate text-[13px] font-medium tracking-[-0.01em] text-white">
+                <p className="truncate text-sm font-semibold tracking-tight text-white">
                   {displayName}
                 </p>
-
-                <p className="mt-1 truncate text-[11px] leading-4 text-neutral-500">
+                <p className="mt-1 truncate text-xs leading-5 text-neutral-400">
                   {email}
                 </p>
               </div>
             </div>
           </div>
 
-          {/* Usage */}
-          <div className="px-4">
-            <div
-              className={[
-                "rounded-xl",
-                "border border-white/[0.07]",
-                "bg-white/[0.025]",
-                "px-4 py-3.5",
-              ].join(" ")}
-            >
+          <div className="px-4 pt-4">
+            <div className="rounded-xl border border-white/10 bg-white/[0.035] px-4 py-4">
               <div className="mb-3 flex items-center justify-between">
                 <div>
-                  <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-neutral-600">
-                    AI Usage
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-neutral-400">
+                    AI usage
                   </p>
 
-                  <div className="mt-1.5 flex items-center gap-2">
-                    <span className="text-[13px] font-medium text-neutral-200">
+                  <div className="mt-2 flex items-center gap-2">
+                    <span className="text-sm font-semibold text-neutral-100">
                       {isPro ? "Pro" : "Free"}
                     </span>
 
                     <span
                       className={[
-                        "rounded-full px-1.5 py-0.5 text-[8px] font-medium uppercase tracking-[0.12em]",
+                        "rounded px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wide",
                         isPro
-                          ? "bg-violet-400/[0.10] text-violet-300"
-                          : "bg-white/[0.05] text-neutral-500",
+                          ? "bg-violet-400/15 text-violet-200"
+                          : "bg-white/[0.08] text-neutral-300",
                       ].join(" ")}
                     >
                       {isPro ? "Active" : "Current"}
@@ -193,9 +176,8 @@ const Profile = ({ user }) => {
             </div>
           </div>
 
-          {/* Upgrade */}
           {!isPro && (
-            <div className="px-4 pt-3.5">
+            <div className="px-4 pt-3">
               <button
                 type="button"
                 role="menuitem"
@@ -204,55 +186,54 @@ const Profile = ({ user }) => {
                   window.location.assign("/upgrade");
                 }}
                 className={[
-                  "group flex w-full items-center gap-3",
-                  "rounded-xl px-3 py-3",
-                  "cursor-pointer text-left",
-                  "transition-all duration-200",
-                  "hover:bg-violet-400/[0.05]",
+                  "group flex min-h-16 w-full items-center gap-3 rounded-xl px-3 py-3",
+                  "cursor-pointer text-left transition-colors",
+                  "hover:bg-violet-400/[0.08]",
+                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-400/60",
                 ].join(" ")}
               >
-                <div className="flex h-8.5 w-8.5 shrink-0 items-center justify-center rounded-lg bg-violet-400/[0.07]">
-                  <Crown className="h-4 w-4 text-yellow-300 stroke-1" />
-                </div>
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-violet-400/10">
+                  <Crown className="h-4 w-4 text-amber-300" />
+                </span>
 
-                <div className="min-w-0 flex-1">
-                  <p className="text-[12px] font-medium text-neutral-200">
+                <span className="min-w-0 flex-1">
+                  <span className="block text-sm font-medium text-neutral-100">
                     Upgrade to Pro
-                  </p>
-
-                  <p className="mt-0.5 text-[10px] leading-4 text-neutral-600">
+                  </span>
+                  <span className="mt-1 block text-xs leading-4 text-neutral-400">
                     Unlock more AI capacity and powerful models
-                  </p>
-                </div>
+                  </span>
+                </span>
 
-                <span className="text-[10px] text-neutral-700 transition-colors group-hover:text-violet-300/70">
+                <span
+                  aria-hidden="true"
+                  className="text-sm text-neutral-500 transition-colors group-hover:text-violet-200"
+                >
                   →
                 </span>
               </button>
             </div>
           )}
 
-          {/* Sign out */}
-          <div className={["px-4 pb-4", isPro ? "pt-3.5" : "pt-2"].join(" ")}>
+          <div className={["px-4 pb-4", isPro ? "pt-3" : "pt-1"].join(" ")}>
             <button
               type="button"
               role="menuitem"
               onClick={handleSignOut}
               disabled={signingOut}
               className={[
-                "group flex w-full items-center gap-3",
-                "rounded-xl px-3 py-3",
-                "cursor-pointer text-left",
-                "transition-all duration-200",
-                "hover:bg-red-400/[0.045]",
+                "group flex min-h-12 w-full items-center gap-3 rounded-xl px-3 py-3",
+                "cursor-pointer text-left transition-colors",
+                "hover:bg-red-400/[0.08]",
+                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-300/50",
                 "disabled:cursor-not-allowed disabled:opacity-50",
               ].join(" ")}
             >
-              <div className="flex h-8.5 w-8.5 shrink-0 items-center justify-center rounded-lg bg-red-400/[0.035]">
-                <LogOut className="h-4 w-4 text-red-400/70 transition-colors group-hover:text-red-300" />
-              </div>
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-red-400/[0.08]">
+                <LogOut className="h-4 w-4 text-red-300/90 transition-colors group-hover:text-red-200" />
+              </span>
 
-              <span className="text-[12px] font-medium text-red-400/70 transition-colors group-hover:text-red-300">
+              <span className="text-sm font-medium text-red-300/90 transition-colors group-hover:text-red-200">
                 {signingOut ? "Signing out…" : "Sign out"}
               </span>
             </button>
