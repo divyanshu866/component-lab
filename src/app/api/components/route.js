@@ -26,6 +26,7 @@ export async function POST(request) {
     targetTech,
     usageMetadata,
     model,
+    effort,
   } = await request.json();
 
   let component;
@@ -78,6 +79,7 @@ export async function POST(request) {
                     ? {
                         create: {
                           model,
+                          effort,
                           targetTech:
                             targetTech === "HTML"
                               ? TargetTech.HTML

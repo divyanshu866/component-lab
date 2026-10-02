@@ -5,21 +5,24 @@ const genAI = new GoogleGenAI(process.env.GEMINI_API_KEY);
 export async function* generateWithGemini(
   systemPrompt,
   context,
-  model,
+  modelValue,
+  thinkingLevel = "low",
   webSearchEnabeled = false,
 ) {
+  console.log("ModelValue=====>", modelValue);
+  console.log("ThinkingLevel=====>", thinkingLevel);
   // console.log("WEB_SEARCH GEMINI=====>", webSearchEnabeled);
   const contents = toGeminiContext(context);
   // console.log("GEMINI CONTEXT=========>");
   // console.dir(contents, { depth: null });
   const stream = await genAI.models.generateContentStream({
-    model: model,
+    model: modelValue,
     contents,
     config: {
       systemInstruction: systemPrompt,
       tools: webSearchEnabeled ? [{ googleSearch: {} }] : [],
       thinkingConfig: {
-        thinkingLevel: "low",
+        thinkingLevel: thinkingLevel,
       },
     },
   });

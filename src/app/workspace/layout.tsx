@@ -3,6 +3,7 @@
 import { ConsoleProvider } from "@/context/ConsoleContext";
 import { EditorProvider } from "@/context/EditorContext";
 import { SaveProvider } from "@/context/SaveContext";
+
 export default function WorkspaceLayout({
   children,
 }: Readonly<{
@@ -16,7 +17,7 @@ export default function WorkspaceLayout({
             <div className="h-full w-full flex flex-col">{children}</div>
           </main>
         </SaveProvider>
-      </EditorProvider>{" "}
+      </EditorProvider>
     </ConsoleProvider>
   );
 }

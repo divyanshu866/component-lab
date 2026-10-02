@@ -17,7 +17,10 @@ import { useRouter } from "next/navigation";
 const AIEditor = ({ user, isMobile }) => {
   const [planRequiredModel, setPlanRequiredModel] = useState(null);
 
-  const [selectedModel, setSelectedModel] = useState(AI_MODELS[0].value);
+  const [selectedModel, setSelectedModel] = useState(AI_MODELS[0]);
+  const [selectedEffort, setSelectedEffort] = useState(
+    selectedModel?.defaultEffort,
+  );
   const { setConsoleLogs } = useConsole();
   const [isExpanded, setIsExpanded] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
@@ -573,6 +576,7 @@ const AIEditor = ({ user, isMobile }) => {
         js: activeComponent.js ?? "",
         usageMetadata: null,
         model: selectedModel,
+        effort: selectedEffort,
       };
 
       setActiveMessages(streamState.messages);
@@ -622,7 +626,8 @@ const AIEditor = ({ user, isMobile }) => {
           messages: messages,
           targetTech: targetTech,
           generationMode: generationMode,
-          model: selectedModel,
+          model: selectedModel.value,
+          effort: selectedEffort,
           webSearchEnabeled: webSearchEnabeled,
         }),
       });
@@ -803,6 +808,7 @@ const AIEditor = ({ user, isMobile }) => {
         targetTech: targetTech,
         usageMetadata: null,
         model: selectedModel,
+        effort: selectedEffort,
       };
 
       setActiveMessages(streamState.messages);
@@ -846,7 +852,8 @@ const AIEditor = ({ user, isMobile }) => {
           jsx: activeComponent.jsx ?? "",
           targetTech: streamState.targetTech,
           generationMode: generationMode,
-          model: selectedModel,
+          model: selectedModel.value,
+          effort: selectedEffort,
           webSearchEnabeled: webSearchEnabeled,
         }),
       });
@@ -1037,6 +1044,8 @@ const AIEditor = ({ user, isMobile }) => {
       <ModelSelector
         selectedModel={selectedModel}
         setSelectedModel={setSelectedModel}
+        selectedEffort={selectedEffort}
+        setSelectedEffort={setSelectedEffort}
         userPlan={generationUsage?.plan}
         reworkUI={reworkUI}
         onPlanRequired={(model) => {

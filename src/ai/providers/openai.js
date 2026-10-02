@@ -7,9 +7,12 @@ const client = new OpenAI({
 export async function* generateWithOpenAI(
   systemPrompt,
   context,
-  model = "gpt-5.6-luna",
+  modelValue = "gpt-6-luna",
+  effortValue = "low",
   webSearchEnabeled = false,
 ) {
+  console.log("ModelValue=====>", modelValue);
+  console.log("EffortValue=====>", effortValue);
   // console.log("WEB_SEARCH OPEN_AI=====>", webSearchEnabeled);
 
   const contents = toOpenAIContext(context);
@@ -17,12 +20,12 @@ export async function* generateWithOpenAI(
   // console.log("OPEN_AI CONTEXT=========>");
   // console.dir(contents, { depth: null });
   const stream = await client.responses.create({
-    model,
+    model: modelValue,
     instructions: systemPrompt,
     input: contents,
     tools: webSearchEnabeled ? [{ type: "web_search" }] : [],
     reasoning: {
-      effort: "high",
+      effort: effortValue,
     },
     stream: true,
   });

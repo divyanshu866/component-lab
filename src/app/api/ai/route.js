@@ -125,8 +125,14 @@ export async function POST(req) {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const { messages, targetTech, generationMode, model, webSearchEnabeled } =
-    await req.json();
+  const {
+    messages,
+    targetTech,
+    generationMode,
+    model,
+    effort,
+    webSearchEnabeled,
+  } = await req.json();
   const userId = session.user.id;
   // Authorize the requested model before doing any AI work.
   const authorization = await authorizeAndConsumeGeneration(userId, model);
@@ -159,6 +165,7 @@ export async function POST(req) {
       SYSTEM_PROMPTS[targetTech][resolvedMode],
       contents,
       model,
+      effort,
       webSearchEnabeled,
     );
     const headers = {
@@ -188,6 +195,7 @@ export async function PATCH(req) {
     targetTech,
     generationMode,
     model,
+    effort,
     webSearchEnabeled,
   } = await req.json();
 
@@ -237,6 +245,7 @@ export async function PATCH(req) {
       EDIT_SYSTEM_PROMPT[targetTech][resolvedMode],
       contents,
       model,
+      effort,
       webSearchEnabeled,
     );
     const headers = {

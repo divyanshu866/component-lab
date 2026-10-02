@@ -48,6 +48,7 @@ export async function PATCH(req, context) {
     targetTech,
     usageMetadata,
     model,
+    effort,
   } = await req.json();
 
   const component = await prisma.component.findUnique({
@@ -80,6 +81,7 @@ export async function PATCH(req, context) {
             ? {
                 create: {
                   model,
+                  effort,
                   targetTech:
                     targetTech === "HTML" ? TargetTech.HTML : TargetTech.REACT,
                   inputTokens: usageMetadata.inputTokens ?? 0,

@@ -1,10 +1,10 @@
 "use client";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useEditorContext } from "@/context/EditorContext";
-import { Maximize2, Minimize2 } from "lucide-react";
 import PreviewHeader from "./PreviewHeader";
 
 const ReactIFrame = ({ isMobile }) => {
+  const [previewUrl, setPreviewUrl] = useState(null);
   const {
     reactPreviewDocument,
     previewKey,
@@ -14,17 +14,27 @@ const ReactIFrame = ({ isMobile }) => {
     setIsMaximised,
     targetTech,
   } = useEditorContext();
-  const previewUrl = useMemo(() => {
-    const blob = new Blob([reactPreviewDocument], {
-      type: "text/html",
-    });
-
-    return URL.createObjectURL(blob);
-  }, [reactPreviewDocument]);
-
   useEffect(() => {
-    return () => URL.revokeObjectURL(previewUrl);
-  }, [previewUrl]);
+    function generatePreview() {
+      if (!reactPreviewDocument) {
+        setPreviewUrl(null);
+        return;
+      }
+
+      const blob = new Blob([reactPreviewDocument], {
+        type: "text/html",
+      });
+
+      const url = URL.createObjectURL(blob);
+
+      setPreviewUrl(url);
+      return url;
+    }
+    const url = generatePreview();
+    return () => {
+      URL.revokeObjectURL(url);
+    };
+  }, [reactPreviewDocument]);
   return (
     <div
       className={`${targetTech != "REACT" && "hidden"} absolute top-0 right-0 ${

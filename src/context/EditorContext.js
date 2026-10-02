@@ -61,7 +61,8 @@ export function EditorProvider({ children }) {
       jsx: String(component?.jsx ?? ""),
       targetTech: component?.targetTech ?? "REACT",
       usageMetadata: component?.usageMetadata ?? null,
-      model: component?.model ?? "",
+      model: component?.model?.value ?? "",
+      effort: component?.effort ?? "",
     };
     // Is New Component generation?
     if (!component?.id) {

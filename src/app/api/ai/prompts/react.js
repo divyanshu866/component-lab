@@ -63,6 +63,8 @@ The user's requested scope is the highest priority.
 </MESSAGE>
 
 <JSX>
+- Every generated JSX file MUST explicitly import React:
+  import React from "react";
 - The JSX section MUST contain a complete React component file with a default export.
 - Generated code must remain standard, portable React code.
 - Absolutely never use TypeScript syntax or type annotations, interfaces, type aliases, enums, generics, or type assertions.

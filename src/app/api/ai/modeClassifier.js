@@ -1,12 +1,13 @@
 import { generate } from "@/ai/providers/generate";
 import { GENERATION_MODE_SYSTEM_PROMPT } from "./prompts/general";
-import { CLASSIFIER_MODEL } from "@/ai/models";
+import { CLASSIFIER_MODEL_VALUE, CLASSIFIER_EFFORT_VALUE } from "@/ai/models";
 export async function classifyGenerationMode(contents) {
   const webSearchEnabeled = false;
   const stream = await generate(
     GENERATION_MODE_SYSTEM_PROMPT,
     contents,
-    CLASSIFIER_MODEL,
+    CLASSIFIER_MODEL_VALUE,
+    CLASSIFIER_EFFORT_VALUE,
     webSearchEnabeled,
   );
 

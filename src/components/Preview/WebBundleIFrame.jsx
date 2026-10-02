@@ -1,11 +1,11 @@
 "use client";
-import { useConsole } from "@/context/ConsoleContext";
 import { useEditorContext } from "@/context/EditorContext";
 import AILoader from "@/components/AILoader";
 import PreviewHeader from "@/components/Preview/PreviewHeader";
-import { useEffect, useMemo, useState } from "react";
-import { Maximize2, Minimize2 } from "lucide-react";
+import { useEffect, useState } from "react";
+
 const WebBundleIFrame = ({ isMobile }) => {
+  const [previewUrl, setPreviewUrl] = useState(null);
   const {
     htmlPreviewDocument,
     previewKey,
@@ -15,17 +15,27 @@ const WebBundleIFrame = ({ isMobile }) => {
     setIsMaximised,
     targetTech,
   } = useEditorContext();
-  const previewUrl = useMemo(() => {
-    const blob = new Blob([htmlPreviewDocument], {
-      type: "text/html",
-    });
-
-    return URL.createObjectURL(blob);
-  }, [htmlPreviewDocument]);
-
   useEffect(() => {
-    return () => URL.revokeObjectURL(previewUrl);
-  }, [previewUrl]);
+    function generatePreview() {
+      if (!htmlPreviewDocument) {
+        setPreviewUrl(null);
+        return;
+      }
+
+      const blob = new Blob([htmlPreviewDocument], {
+        type: "text/html",
+      });
+
+      const url = URL.createObjectURL(blob);
+
+      setPreviewUrl(url);
+      return url;
+    }
+    const url = generatePreview();
+    return () => {
+      URL.revokeObjectURL(url);
+    };
+  }, [htmlPreviewDocument]);
   return (
     <div
       className={`${targetTech != "HTML" && "hidden"} absolute top-0 right-0 ${
