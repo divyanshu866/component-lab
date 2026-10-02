@@ -1381,7 +1381,7 @@ const AIEditor = ({ user, isMobile }) => {
         onUpgrade={(requiredPlan) => {
           setPlanRequiredModel(null);
 
-          router.push("/upgrade");
+          window.location.assign("/upgrade");
         }}
       />
       <GenerationLimitModal
@@ -1390,7 +1390,7 @@ const AIEditor = ({ user, isMobile }) => {
         onClose={() => setGenerationLimitModalOpen(false)}
         onUpgrade={() => {
           setGenerationLimitModalOpen(false);
-          router.push("/upgrade");
+          window.location.assign("/upgrade");
         }}
       />
     </div>

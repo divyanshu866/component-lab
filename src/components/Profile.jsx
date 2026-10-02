@@ -201,7 +201,7 @@ const Profile = ({ user }) => {
                 role="menuitem"
                 onClick={() => {
                   setOpen(false);
-                  router.push("/upgrade");
+                  window.location.assign("/upgrade");
                 }}
                 className={[
                   "group flex w-full items-center gap-3",

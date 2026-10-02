@@ -47,6 +47,11 @@ export async function openProCheckout(userId: string) {
   }
 
   paddle.Checkout.open({
+    settings: {
+      displayMode: "overlay",
+      theme: "dark",
+      successUrl: process.env.NEXT_PUBLIC_WORKSPACE_URL,
+    },
     items: [
       {
         priceId,
