@@ -117,13 +117,18 @@ export default function Sidebar() {
     };
   }, []);
 
+  // Hide the sidebar when a component is selected on mobile
+  useEffect(() => {
+    isMobile && setSidebarCollapsed(true);
+  }, [activeComponentIndex]);
+
   function updateActiveComponent(index) {
     //prevent switching components while generating
     if (isGenerating) {
       return;
     }
 
-    if (showPreview == false) {
+    if (showPreview == false && !isMobile) {
       setShowPreview(true);
     }
 
@@ -138,6 +143,7 @@ export default function Sidebar() {
     setChangeDesc("");
   }
 
+  // Fetch components on initial load
   useEffect(() => {
     async function fetchComponents() {
       const res = await fetch("/api/components");
