@@ -257,7 +257,7 @@ export default function ModelSelector({
         </button>
 
         {open && (
-          <div className="absolute left-0 top-full z-50 mt-1 w-[290px] overflow-hidden rounded-xl border border-lightBorder bg-backgroundLight p-2 shadow-xl">
+          <div className="absolute left-0 top-full z-50 mt-1 w-[290px] overflow-hidden rounded-2xl border border-white/10 bg-[#101116] p-2 shadow-[0_20px_60px_rgba(0,0,0,0.55)]">
             {/* Models */}
             <div className="space-y-1">
               {AI_MODELS.map((model) => {
