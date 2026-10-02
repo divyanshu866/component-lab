@@ -27,7 +27,7 @@ const WorkspaceClient = ({ user }) => {
   }, []);
 
   return (
-    <div className="flex min-h-0 min-w-0 flex-1 bg-transparent overflow-hidden">
+    <div className="flex min-h-0 min-w-0 flex-1 bg-transparent overflow-hidden relative">
       <Sidebar />
       <div className="relative flex min-h-0 min-w-0 flex-1 flex-col bg-transparent">
         <div className="relative flex min-h-0 flex-1 justify-start bg-backgroundDark">
