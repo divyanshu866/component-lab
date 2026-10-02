@@ -1042,7 +1042,7 @@ const AIEditor = ({ user, isMobile }) => {
           {!reworkUI && !showPreview && (
             <section
               aria-labelledby="welcome-heading"
-              className="mx-auto w-full max-w-4xl px-4 py-6 mt-auto sm:my-auto sm:px-5 sm:py-10 md:px-10 md:my-auto md:pb-14"
+              className="mx-auto w-full max-w-4xl px-5 pb-10 mt-auto sm:my-auto sm:px-5 sm:py-10 md:px-10 md:my-auto md:pb-14"
             >
               <div className="mb-3 flex items-center gap-2.5 text-[10px] font-semibold uppercase tracking-[0.16em] text-violet-300 sm:mb-5 sm:gap-3 sm:text-[11px] sm:tracking-[0.2em]">
                 <span
@@ -1060,13 +1060,8 @@ const AIEditor = ({ user, isMobile }) => {
                 <span className="text-violet-300">you can picture.</span>
               </h1>
 
-              <p className="mt-3 max-w-xl text-sm leading-6 text-zinc-400 sm:mt-5 sm:text-base sm:leading-7">
-                A rough idea, a tricky interaction, or the whole interface. Tell
-                us what you have in mind.
-              </p>
-
-              <div className="mt-2 border-t border-white/10 pt-4 sm:mt-8 sm:pt-5">
-                <p className="mb-5 text-xs font-medium text-zinc-500 sm:mb-3">
+              <div className="mt-5 border-0 border-white/10 pt-3 sm:mt-8 sm:pt-5">
+                <p className="mb-3 text-xs font-medium text-zinc-500 sm:mb-3">
                   Or pick a place to begin
                 </p>
                 <div
