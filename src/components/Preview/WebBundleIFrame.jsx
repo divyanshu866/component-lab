@@ -1,9 +1,11 @@
 "use client";
+
 import { useEditorContext } from "@/context/EditorContext";
 import AILoader from "@/components/AILoader";
 import PreviewHeader from "@/components/Preview/PreviewHeader";
 import { useEffect, useState } from "react";
 import GeneratingIndicator from "./GenerationIndicator";
+
 const WebBundleIFrame = ({ isMobile }) => {
   const [previewUrl, setPreviewUrl] = useState(null);
   const {
@@ -12,10 +14,12 @@ const WebBundleIFrame = ({ isMobile }) => {
     isGenerating,
     isGeneratingCode,
     showPreview,
+    setShowPreview,
     isMaximised,
     setIsMaximised,
     targetTech,
   } = useEditorContext();
+
   useEffect(() => {
     function generatePreview() {
       if (!htmlPreviewDocument) {
@@ -32,41 +36,45 @@ const WebBundleIFrame = ({ isMobile }) => {
       setPreviewUrl(url);
       return url;
     }
+
     const url = generatePreview();
     return () => {
-      URL.revokeObjectURL(url);
+      if (url) URL.revokeObjectURL(url);
     };
   }, [htmlPreviewDocument]);
+
   const showGeneratingIndicator = isGeneratingCode && showPreview;
+
   return (
     <div
-      className={`${targetTech != "HTML" && "hidden"} absolute top-0 right-0 ${
-        showPreview
-          ? isMobile
-            ? "w-full h-full absolute mt-10 bg-white"
-            : isMaximised
-              ? "w-full justify-self-end bg-backgroundLight"
+      className={`${targetTech !== "HTML" ? "hidden" : ""} absolute right-0 top-0 z-20 flex h-full flex-col items-center justify-center overflow-hidden border-l border-darkBorder transition-[width,transform,opacity] duration-300 ease-in-out ${
+        isMobile
+          ? `h-full w-full bg-backgroundLight ${
+              showPreview
+                ? "translate-x-0 opacity-100"
+                : "translate-x-full opacity-0 pointer-events-none"
+            }`
+          : showPreview
+            ? isMaximised
+              ? "w-full bg-backgroundLight"
               : "w-[35%] bg-backgroundLight"
-          : "w-0 opacity-0"
-      } ${
-        isMobile ? "" : ""
-      }  flex flex-col h-full justify-center items-center border-l overflow-hidden border-darkBorder relative transition-all duration-400`}
+            : "w-0 pointer-events-none opacity-0"
+      }`}
     >
       <PreviewHeader
         isMaximised={isMaximised}
         setIsMaximised={setIsMaximised}
+        setShowPreview={setShowPreview}
       />
-
       <iframe
         key={previewKey}
         src={previewUrl}
-        sandbox="allow-scripts allow-same-origin allow-popups allow-forms allow-presentation" //Reduced security access to localstorage & parent dom
+        sandbox="allow-scripts allow-same-origin allow-popups allow-forms allow-presentation"
         title="WebBundle preview"
-        className={`w-full h-full ${showPreview ? "" : "none"} ${
-          isGenerating ? "" : ""
-        } transition-all duration-75`}
+        className={`h-full w-full transition-all duration-75 ${
+          showPreview ? "" : "hidden"
+        } ${isGenerating ? "" : ""}`}
       />
-      {/* Generating indicator overlay */}
       <div
         aria-hidden={!showGeneratingIndicator}
         className={`transition-opacity duration-300 ${

@@ -1,8 +1,10 @@
 "use client";
+
 import { useEffect, useState } from "react";
 import { useEditorContext } from "@/context/EditorContext";
 import PreviewHeader from "./PreviewHeader";
 import GeneratingIndicator from "./GenerationIndicator";
+
 const ReactIFrame = ({ isMobile }) => {
   const [previewUrl, setPreviewUrl] = useState(null);
   const {
@@ -11,10 +13,12 @@ const ReactIFrame = ({ isMobile }) => {
     isGenerating,
     isGeneratingCode,
     showPreview,
+    setShowPreview,
     isMaximised,
     setIsMaximised,
     targetTech,
   } = useEditorContext();
+
   useEffect(() => {
     function generatePreview() {
       if (!reactPreviewDocument) {
@@ -31,40 +35,47 @@ const ReactIFrame = ({ isMobile }) => {
       setPreviewUrl(url);
       return url;
     }
+
     const url = generatePreview();
     return () => {
-      URL.revokeObjectURL(url);
+      if (url) URL.revokeObjectURL(url);
     };
   }, [reactPreviewDocument]);
+
   const showGeneratingIndicator = isGeneratingCode && showPreview;
+
   return (
     <div
-      className={`${targetTech != "REACT" && "hidden"} absolute top-0 right-0 ${
-        showPreview
-          ? isMobile
-            ? "w-full h-full absolute mt-10 bg-white"
-            : isMaximised
-              ? "w-full justify-self-end bg-backgroundLight"
+      className={`${
+        targetTech !== "REACT" ? "hidden" : ""
+      } absolute right-0 top-0 z-20 flex h-full flex-col items-center justify-center overflow-hidden border-l border-darkBorder transition-[width,transform,opacity] duration-300 ease-in-out ${
+        isMobile
+          ? `h-full w-full bg-backgroundLight ${
+              showPreview
+                ? "translate-x-0 opacity-100"
+                : "translate-x-full opacity-0 pointer-events-none"
+            }`
+          : showPreview
+            ? isMaximised
+              ? "w-full bg-backgroundLight"
               : "w-[35%] bg-backgroundLight"
-          : "w-0 opacity-0"
-      } ${
-        isMobile ? "" : ""
-      }  flex flex-col h-full justify-center items-center border-l overflow-hidden border-darkBorder relative transition-all duration-400`}
+            : "w-0 pointer-events-none opacity-0"
+      }`}
     >
       <PreviewHeader
         isMaximised={isMaximised}
         setIsMaximised={setIsMaximised}
+        setShowPreview={setShowPreview}
       />
       <iframe
         key={previewKey}
         src={previewUrl}
-        sandbox="allow-scripts allow-same-origin allow-popups allow-forms allow-presentation" //Reduced security access to localstorage & parent dom
+        sandbox="allow-scripts allow-same-origin allow-popups allow-forms allow-presentation"
         title="React Preview"
-        className={`w-full h-full ${showPreview ? "" : "none"} ${
-          isGenerating ? "" : ""
-        } transition-all duration-75`}
+        className={`h-full w-full transition-all duration-75 ${
+          showPreview ? "" : "hidden"
+        } ${isGenerating ? "" : ""}`}
       />
-      {/* Generating indicator overlay */}
       <div
         aria-hidden={!showGeneratingIndicator}
         className={`transition-opacity duration-300 ${

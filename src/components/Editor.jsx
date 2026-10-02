@@ -1,9 +1,9 @@
 "use client";
+
 import ComponentEditor from "@/components/ComponentEditor";
 import AIEditorTabs from "@/components/AIEditorTabs";
-import EditorTabs from "@/components/EditorTabs";
 import AIEditor from "@/components/AIEditor";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useEditorContext } from "@/context/EditorContext";
 import { useConsole } from "@/context/ConsoleContext";
 
@@ -25,7 +25,6 @@ const Editor = ({ user, isMobile }) => {
     setIsMaximised,
     reworkUI,
     setReworkUI,
-
     isGenerating,
     setActiveMessages,
     setActiveComponentIndex,
@@ -132,11 +131,18 @@ const Editor = ({ user, isMobile }) => {
       window.removeEventListener("keydown", handleNewComponentShortcut);
     };
   }, [isGenerating, activeComponent]);
+
   return (
     <div
       className={`${
-        isMobile ? "w-full h-full absolute" : ""
-      } ${isMaximised ? "hidden" : ""} flex flex-col flex-1 border-r-0 dark:border-lightBorder bg-transparent`}
+        isMobile
+          ? "absolute inset-0 z-0 h-full w-full"
+          : `relative z-0 h-full min-w-0 flex-none ${
+              showPreview ? "w-[65%] left-0" : "w-full"
+            }`
+      } ${
+        isMaximised ? "hidden" : ""
+      } flex flex-col border-r-0 bg-transparent dark:border-lightBorder`}
     >
       <div className="flex h-full w-full flex-col overflow-hidden border-r border-darkBorder">
         <AIEditorTabs
@@ -149,13 +155,6 @@ const Editor = ({ user, isMobile }) => {
           setShowPreview={setShowPreview}
           showPreview={showPreview}
         />
-        {/* <EditorTabs
-          activeEditor={activeEditor}
-          setActiveEditor={setActiveEditor}
-          targetTech={targetTech}
-          setTargetTech={setTargetTech}
-          activeComponentIndex={activeComponentIndex}
-        /> */}
         {/* AI Editor */}
         <AIEditor user={user} isMobile={isMobile} activeEditor={activeEditor} />
         {/* Editors */}
@@ -163,9 +162,9 @@ const Editor = ({ user, isMobile }) => {
           <div
             className={`${
               activeEditor == "JSX" ? "" : "hidden"
-            } flex flex-col flex-1 h-full py-4 overflow-hidden relative`}
+            } relative flex h-full flex-1 flex-col overflow-hidden py-4`}
           >
-            <div className="flex-1 h-0">
+            <div className="h-0 flex-1">
               <ComponentEditor
                 code={activeComponent.jsx}
                 onChange={(val) =>
@@ -180,9 +179,9 @@ const Editor = ({ user, isMobile }) => {
           <div
             className={`${
               activeEditor == "HTML" ? "" : "hidden"
-            } flex flex-col flex-1 h-full py-4 overflow-hidden relative`}
+            } relative flex h-full flex-1 flex-col overflow-hidden py-4`}
           >
-            <div className="flex-1 h-0">
+            <div className="h-0 flex-1">
               <ComponentEditor
                 code={activeComponent.html}
                 onChange={(val) =>
@@ -196,9 +195,9 @@ const Editor = ({ user, isMobile }) => {
         <div
           className={`${
             activeEditor == "CSS" ? "" : "hidden"
-          } flex flex-col flex-1 py-4 overflow-hidden h-full`}
+          } flex h-full flex-1 flex-col overflow-hidden py-4`}
         >
-          <div className="flex-1 h-0">
+          <div className="h-0 flex-1">
             <ComponentEditor
               code={activeComponent.css}
               onChange={(val) =>
@@ -212,9 +211,9 @@ const Editor = ({ user, isMobile }) => {
           <div
             className={`${
               activeEditor == "JS" ? "" : "hidden"
-            } flex flex-col h-full flex-1 py-4 overflow-hidden`}
+            } flex h-full flex-1 flex-col overflow-hidden py-4`}
           >
-            <div className="flex-1 h-0">
+            <div className="h-0 flex-1">
               <ComponentEditor
                 code={activeComponent.js}
                 onChange={(val) =>
