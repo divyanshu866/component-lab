@@ -31,6 +31,7 @@ const ChatList = ({ resolvedGenerationMode, isGeneratingCode }) => {
   const {
     reworkUI,
     activeMessages,
+    activeComponentIndex,
     isGenerating,
     showPreview,
     setShowPreview,
@@ -49,6 +50,9 @@ const ChatList = ({ resolvedGenerationMode, isGeneratingCode }) => {
 
   // Used when changing spacer height while preserving viewport position.
   const pendingRestoreScrollTopRef = useRef(null);
+
+  // Tracks the currently active component.
+  const previousComponentIdRef = useRef(activeComponentIndex);
 
   const [bottomSpacerHeight, setBottomSpacerHeight] = useState(0);
 
@@ -69,14 +73,59 @@ const ChatList = ({ resolvedGenerationMode, isGeneratingCode }) => {
 
   /*
    * ---------------------------------------------------------
+   * COMPONENT SWITCH
+   * ---------------------------------------------------------
+   *
+   * When the user switches to another component, immediately
+   * show the bottom of that component's conversation.
+   *
+   * This is intentionally driven by activeComponentIndex rather
+   * than activeMessages, so streaming updates cannot trigger it.
+   */
+  useLayoutEffect(() => {
+    const element = chatListRef.current;
+
+    if (!element) {
+      return;
+    }
+
+    // Ignore initial mount.
+    if (previousComponentIdRef.current === activeComponentIndex) {
+      return;
+    }
+
+    previousComponentIdRef.current = activeComponentIndex;
+
+    // Reset generation-specific state for the new component.
+    generationAnchorAppliedRef.current = false;
+    wasGeneratingRef.current = false;
+    wasCodePreviewOpenRef.current = false;
+    pendingRestoreScrollTopRef.current = null;
+
+    setBottomSpacerHeight(0);
+
+    requestAnimationFrame(() => {
+      const current = chatListRef.current;
+
+      if (!current) {
+        return;
+      }
+
+      current.scrollTo({
+        top: current.scrollHeight,
+        behavior: "auto",
+      });
+    });
+  }, [activeComponentIndex]);
+
+  /*
+   * ---------------------------------------------------------
    * GENERATION START
    * ---------------------------------------------------------
    *
-   * Add a full viewport of temporary bottom space.
-   *
-   * This gives the latest user prompt enough room to be
-   * positioned near the top while the new assistant response
-   * starts filling the remaining viewport.
+   * Add a temporary viewport-sized spacer so the latest user
+   * prompt can be positioned near the top portion of the
+   * viewport.
    */
   useLayoutEffect(() => {
     if (!isGenerating) {
@@ -89,6 +138,7 @@ const ChatList = ({ resolvedGenerationMode, isGeneratingCode }) => {
       return;
     }
 
+    // Only initialize this when a new generation starts.
     if (!wasGeneratingRef.current) {
       generationAnchorAppliedRef.current = false;
 
@@ -105,6 +155,8 @@ const ChatList = ({ resolvedGenerationMode, isGeneratingCode }) => {
    *
    * Smoothly position the latest user prompt around 23%
    * down the viewport.
+   *
+   * This runs once per generation.
    */
   useLayoutEffect(() => {
     if (!isGenerating) {
@@ -161,12 +213,10 @@ const ChatList = ({ resolvedGenerationMode, isGeneratingCode }) => {
    * CODE PREVIEW OPENS
    * ---------------------------------------------------------
    *
-   * The code preview itself adds a large amount of content.
-   * Therefore we no longer need the full viewport-sized
-   * generation spacer.
-   *
-   * Reduce it to only the amount necessary to preserve the
-   * current viewport position.
+   * Once the temporary code preview appears, it provides real
+   * content below the assistant response. Reduce the temporary
+   * spacer to only what is actually needed to preserve the
+   * current viewport.
    */
   useLayoutEffect(() => {
     if (!isCodePreviewOpen) {
@@ -180,9 +230,6 @@ const ChatList = ({ resolvedGenerationMode, isGeneratingCode }) => {
       return;
     }
 
-    /*
-     * Only perform this once when the preview opens.
-     */
     if (wasCodePreviewOpenRef.current) {
       return;
     }
@@ -195,10 +242,6 @@ const ChatList = ({ resolvedGenerationMode, isGeneratingCode }) => {
 
     const currentScrollTop = element.scrollTop;
 
-    /*
-     * Estimate the natural maximum scroll position without
-     * the temporary generation spacer.
-     */
     const contentHeight = element.scrollHeight - bottomSpacerHeight;
 
     const naturalMaxScrollTop = Math.max(
@@ -206,12 +249,6 @@ const ChatList = ({ resolvedGenerationMode, isGeneratingCode }) => {
       contentHeight - element.clientHeight,
     );
 
-    /*
-     * Preserve the current viewport position.
-     *
-     * Usually this will become 0 because the code preview has
-     * now created enough content below the assistant response.
-     */
     const requiredSpacerHeight = Math.max(
       0,
       currentScrollTop - naturalMaxScrollTop,
@@ -227,8 +264,8 @@ const ChatList = ({ resolvedGenerationMode, isGeneratingCode }) => {
    * GENERATION FINISH
    * ---------------------------------------------------------
    *
-   * Once generation finishes, remove any remaining temporary
-   * spacer while preserving the current viewport.
+   * Remove only the temporary spacer that is no longer needed,
+   * while preserving the current viewport position.
    */
   useLayoutEffect(() => {
     if (isGenerating) {
@@ -277,9 +314,8 @@ const ChatList = ({ resolvedGenerationMode, isGeneratingCode }) => {
    * RESTORE SCROLL POSITION
    * ---------------------------------------------------------
    *
-   * After the spacer changes size, explicitly restore the
-   * previous viewport position so the browser doesn't clamp
-   * scrollTop and cause a visible jump.
+   * After the temporary spacer changes size, restore the
+   * previous viewport position so no snap occurs.
    */
   useLayoutEffect(() => {
     const element = chatListRef.current;
