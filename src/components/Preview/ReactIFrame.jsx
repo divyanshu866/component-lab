@@ -9,6 +9,7 @@ const ReactIFrame = ({ isMobile }) => {
     reactPreviewDocument,
     previewKey,
     isGenerating,
+    isGeneratingCode,
     showPreview,
     isMaximised,
     setIsMaximised,
@@ -35,7 +36,7 @@ const ReactIFrame = ({ isMobile }) => {
       URL.revokeObjectURL(url);
     };
   }, [reactPreviewDocument]);
-  const showGeneratingIndicator = isGenerating && showPreview;
+  const showGeneratingIndicator = isGeneratingCode && showPreview;
   return (
     <div
       className={`${targetTech != "REACT" && "hidden"} absolute top-0 right-0 ${

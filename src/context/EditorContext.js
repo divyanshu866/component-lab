@@ -33,6 +33,8 @@ export function EditorProvider({ children }) {
   const [activeMessages, setActiveMessages] = useState([]);
 
   const [isGenerating, setIsGenerating] = useState(false);
+  const [isGeneratingCode, setIsGeneratingCode] = useState(false);
+
   const [showPreview, setShowPreview] = useState(false);
   const [isMaximised, setIsMaximised] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
@@ -176,6 +178,8 @@ export function EditorProvider({ children }) {
         setChangeDesc,
         isGenerating,
         setIsGenerating,
+        isGeneratingCode,
+        setIsGeneratingCode,
         showPreview,
         setShowPreview,
         saveComponent,

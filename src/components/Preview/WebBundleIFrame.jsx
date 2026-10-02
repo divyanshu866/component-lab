@@ -10,6 +10,7 @@ const WebBundleIFrame = ({ isMobile }) => {
     htmlPreviewDocument,
     previewKey,
     isGenerating,
+    isGeneratingCode,
     showPreview,
     isMaximised,
     setIsMaximised,
@@ -36,7 +37,7 @@ const WebBundleIFrame = ({ isMobile }) => {
       URL.revokeObjectURL(url);
     };
   }, [htmlPreviewDocument]);
-  const showGeneratingIndicator = isGenerating && showPreview;
+  const showGeneratingIndicator = isGeneratingCode && showPreview;
   return (
     <div
       className={`${targetTech != "HTML" && "hidden"} absolute top-0 right-0 ${

@@ -25,7 +25,6 @@ const AIEditor = ({ user, isMobile }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
   const [generationMode, setGenerationMode] = useState("AUTO");
-  const [isGeneratingCode, setIsGeneratingCode] = useState(false);
   const [resolvedGenerationMode, setResolvedGenerationMode] = useState("ASK");
   const [webSearchEnabeled, setWebSearchEnabeled] = useState(false);
   const {
@@ -46,6 +45,8 @@ const AIEditor = ({ user, isMobile }) => {
     changeDesc,
     setChangeDesc,
     isGenerating,
+    isGeneratingCode,
+    setIsGeneratingCode,
     showPreview,
     setShowPreview,
     updatePreview,
