@@ -3,7 +3,7 @@ import { useEditorContext } from "@/context/EditorContext";
 import AILoader from "@/components/AILoader";
 import PreviewHeader from "@/components/Preview/PreviewHeader";
 import { useEffect, useState } from "react";
-
+import GeneratingIndicator from "./GenerationIndicator";
 const WebBundleIFrame = ({ isMobile }) => {
   const [previewUrl, setPreviewUrl] = useState(null);
   const {
@@ -36,6 +36,7 @@ const WebBundleIFrame = ({ isMobile }) => {
       URL.revokeObjectURL(url);
     };
   }, [htmlPreviewDocument]);
+  const showGeneratingIndicator = isGenerating && showPreview;
   return (
     <div
       className={`${targetTech != "HTML" && "hidden"} absolute top-0 right-0 ${
@@ -43,12 +44,12 @@ const WebBundleIFrame = ({ isMobile }) => {
           ? isMobile
             ? "w-full h-full absolute mt-10 bg-white"
             : isMaximised
-              ? "w-full justify-self-end"
-              : "w-[35%]"
+              ? "w-full justify-self-end bg-backgroundLight"
+              : "w-[35%] bg-backgroundLight"
           : "w-0 opacity-0"
       } ${
         isMobile ? "" : ""
-      }  flex flex-col h-full justify-center items-center border-l overflow-hidden border-gray-200 dark:border-darkBorder relative transition-all duration-400`}
+      }  flex flex-col h-full justify-center items-center border-l overflow-hidden border-darkBorder relative transition-all duration-400`}
     >
       <PreviewHeader
         isMaximised={isMaximised}
@@ -64,7 +65,17 @@ const WebBundleIFrame = ({ isMobile }) => {
           isGenerating ? "" : ""
         } transition-all duration-75`}
       />
-      <AILoader isActive={isGenerating} />
+      {/* Generating indicator overlay */}
+      <div
+        aria-hidden={!showGeneratingIndicator}
+        className={`transition-opacity duration-300 ${
+          showGeneratingIndicator
+            ? "pointer-events-auto opacity-100"
+            : "pointer-events-none opacity-0"
+        }`}
+      >
+        {showGeneratingIndicator && <GeneratingIndicator />}
+      </div>
     </div>
   );
 };

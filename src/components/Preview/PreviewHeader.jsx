@@ -3,7 +3,7 @@ import React from "react";
 
 function PreviewHeader({ isMaximised, setIsMaximised }) {
   return (
-    <div className="w-full h-12 flex justify-between items-center px-3 border-b border-lightBorder">
+    <div className="w-full h-12 flex justify-between items-center px-3 border-b border-lightBorder z-20">
       <div className="w-full h-full flex flex-nowrap justify-start items-center text-sm text-neutral-500 py-2 gap-2">
         <Play height={12} width={12} className="text-green-400" />
         <p>Live Preview</p>

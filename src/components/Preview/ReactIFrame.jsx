@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { useEditorContext } from "@/context/EditorContext";
 import PreviewHeader from "./PreviewHeader";
-
+import GeneratingIndicator from "./GenerationIndicator";
 const ReactIFrame = ({ isMobile }) => {
   const [previewUrl, setPreviewUrl] = useState(null);
   const {
@@ -35,6 +35,7 @@ const ReactIFrame = ({ isMobile }) => {
       URL.revokeObjectURL(url);
     };
   }, [reactPreviewDocument]);
+  const showGeneratingIndicator = isGenerating && showPreview;
   return (
     <div
       className={`${targetTech != "REACT" && "hidden"} absolute top-0 right-0 ${
@@ -42,12 +43,12 @@ const ReactIFrame = ({ isMobile }) => {
           ? isMobile
             ? "w-full h-full absolute mt-10 bg-white"
             : isMaximised
-              ? "w-full justify-self-end"
-              : "w-[35%]"
+              ? "w-full justify-self-end bg-backgroundLight"
+              : "w-[35%] bg-backgroundLight"
           : "w-0 opacity-0"
       } ${
         isMobile ? "" : ""
-      }  flex flex-col h-full justify-center items-center border-l overflow-hidden border-gray-200 dark:border-darkBorder relative transition-all duration-400`}
+      }  flex flex-col h-full justify-center items-center border-l overflow-hidden border-darkBorder relative transition-all duration-400`}
     >
       <PreviewHeader
         isMaximised={isMaximised}
@@ -62,6 +63,17 @@ const ReactIFrame = ({ isMobile }) => {
           isGenerating ? "" : ""
         } transition-all duration-75`}
       />
+      {/* Generating indicator overlay */}
+      <div
+        aria-hidden={!showGeneratingIndicator}
+        className={`transition-opacity duration-300 ${
+          showGeneratingIndicator
+            ? "pointer-events-auto opacity-100"
+            : "pointer-events-none opacity-0"
+        }`}
+      >
+        {showGeneratingIndicator && <GeneratingIndicator />}
+      </div>
     </div>
   );
 };
