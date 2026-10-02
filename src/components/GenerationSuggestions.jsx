@@ -55,7 +55,7 @@ export default function GenerationSuggestions({
 
   return (
     <section aria-label="Example prompts" className="mx-auto">
-      <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-white/10">
+      <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-white/5">
         {suggestions.map((suggestion) => {
           const Icon = suggestion.icon;
 
@@ -77,7 +77,7 @@ export default function GenerationSuggestions({
                 rounded-full
                 border
                 border-lightBorder
-                bg-backgroundLight/50
+                bg-purple-400/40
                 px-4
                 py-1
                 text-left
