@@ -118,7 +118,7 @@ const AIEditorTabs = ({
         onClick={() => setActiveEditor("AI")}
         aria-pressed={activeEditor === "AI"}
         className={`
-          group relative flex h-9 items-center gap-2
+          group relative flex h-8 items-center gap-2
           rounded-lg border
           px-3.5
           text-[12px] font-medium
