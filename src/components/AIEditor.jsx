@@ -1072,8 +1072,32 @@ const AIEditor = ({ user, isMobile }) => {
           <div
             className={`mx-auto flex w-full max-w-4xl flex-col overflow-y-auto overscroll-contain px-3 sm:px-6 lg:px-8 ${
               reworkUI
-                ? "pointer-events-none max-h-[min(48dvh,20rem)] gap-2 pt-2 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:gap-2.5 sm:pt-3 sm:pb-4"
-                : "max-h-[min(70dvh,36rem)] gap-2.5 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:max-h-[min(60dvh,38rem)] sm:gap-3 sm:pt-4 sm:pb-5"
+                ? `
+        pointer-events-none
+        max-h-[min(48dvh,20rem)]
+        gap-2
+        pt-2
+        pb-[max(0.75rem,env(safe-area-inset-bottom))]
+        max-[639px]:gap-1.5
+        max-[639px]:pt-1
+        max-[639px]:pb-[max(0.5rem,env(safe-area-inset-bottom))]
+        sm:gap-2.5
+        sm:pt-3
+        sm:pb-4
+      `
+                : `
+        max-h-[min(70dvh,36rem)]
+        gap-2.5
+        pt-3
+        pb-[max(0.75rem,env(safe-area-inset-bottom))]
+        max-[639px]:gap-1.5
+        max-[639px]:pt-1.5
+        max-[639px]:pb-[max(0.5rem,env(safe-area-inset-bottom))]
+        sm:max-h-[min(60dvh,38rem)]
+        sm:gap-3
+        sm:pt-4
+        sm:pb-5
+      `
             }`}
           >
             {/* Target technology */}
@@ -1092,7 +1116,12 @@ const AIEditor = ({ user, isMobile }) => {
               !isGenerating && (
                 <div
                   aria-label="Prompt suggestions"
-                  className="pointer-events-auto min-w-0 max-w-full"
+                  className="
+          pointer-events-auto
+          min-w-0
+          max-w-full
+          max-[639px]:-mt-0.5
+        "
                 >
                   <GenerationSuggestions
                     disabled={isGenerating}
@@ -1105,16 +1134,31 @@ const AIEditor = ({ user, isMobile }) => {
 
             {/* Type / style filters */}
             {!reworkUI && showFilters && (
-              <div className="grid w-full grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-2.5">
+              <div
+                className="
+        grid
+        w-full
+        grid-cols-1
+        gap-2
+        max-[639px]:gap-1.5
+        sm:grid-cols-2
+        sm:gap-2.5
+      "
+              >
                 {/* Component type */}
                 <label className="group block min-w-0">
                   <span
                     className="
-            mb-1.5 block px-0.5
+            mb-1.5
+            block
+            px-0.5
             text-[11px]
             font-medium
             tracking-[0.01em]
             text-white/45
+            max-[639px]:mb-1
+            max-[639px]:text-[10px]
+            max-[639px]:tracking-normal
           "
                   >
                     Component type
@@ -1143,6 +1187,7 @@ const AIEditor = ({ user, isMobile }) => {
               outline-none
               transition-all
               duration-150
+              [color-scheme:dark]
 
               hover:border-white/[0.14]
               hover:bg-white/[0.035]
@@ -1151,9 +1196,19 @@ const AIEditor = ({ user, isMobile }) => {
               focus:bg-violet-400/[0.025]
               focus:ring-2
               focus:ring-violet-400/10
+
+              max-[639px]:h-9
+              max-[639px]:rounded-[10px]
+              max-[639px]:px-3
+              max-[639px]:pr-8
+              max-[639px]:text-[16px]
+              max-[639px]:font-medium
             "
                     >
-                      <option value="Custom type" className="bg-[#18171d]">
+                      <option
+                        value="Custom type"
+                        className="bg-[#18171d] text-white"
+                      >
                         Describe type in prompt
                       </option>
 
@@ -1161,7 +1216,7 @@ const AIEditor = ({ user, isMobile }) => {
                         <option
                           key={`${type.name}-${index}`}
                           value={type.name}
-                          className="bg-[#18171d]"
+                          className="bg-[#18171d] text-white"
                         >
                           {type.name}
                         </option>
@@ -1178,10 +1233,15 @@ const AIEditor = ({ user, isMobile }) => {
               -translate-y-1/2
               items-center
               text-white/30
+              max-[639px]:right-2.5
             "
                       aria-hidden="true"
                     >
-                      <svg viewBox="0 0 20 20" fill="none" className="h-4 w-4">
+                      <svg
+                        viewBox="0 0 20 20"
+                        fill="none"
+                        className="h-4 w-4 max-[639px]:h-3.5 max-[639px]:w-3.5"
+                      >
                         <path
                           d="m6 8 4 4 4-4"
                           stroke="currentColor"
@@ -1198,11 +1258,16 @@ const AIEditor = ({ user, isMobile }) => {
                 <label className="group block min-w-0">
                   <span
                     className="
-            mb-1.5 block px-0.5
+            mb-1.5
+            block
+            px-0.5
             text-[11px]
             font-medium
             tracking-[0.01em]
             text-white/45
+            max-[639px]:mb-1
+            max-[639px]:text-[10px]
+            max-[639px]:tracking-normal
           "
                   >
                     Visual style
@@ -1231,6 +1296,7 @@ const AIEditor = ({ user, isMobile }) => {
               outline-none
               transition-all
               duration-150
+              [color-scheme:dark]
 
               hover:border-white/[0.14]
               hover:bg-white/[0.035]
@@ -1239,9 +1305,19 @@ const AIEditor = ({ user, isMobile }) => {
               focus:bg-violet-400/[0.025]
               focus:ring-2
               focus:ring-violet-400/10
+
+              max-[639px]:h-9
+              max-[639px]:rounded-[10px]
+              max-[639px]:px-3
+              max-[639px]:pr-8
+              max-[639px]:text-[16px]
+              max-[639px]:font-medium
             "
                     >
-                      <option value="Custom style" className="bg-[#18171d]">
+                      <option
+                        value="Custom style"
+                        className="bg-[#18171d] text-white"
+                      >
                         Describe style in prompt
                       </option>
 
@@ -1249,7 +1325,7 @@ const AIEditor = ({ user, isMobile }) => {
                         <option
                           key={`${style.name}-${index}`}
                           value={style.name}
-                          className="bg-[#18171d]"
+                          className="bg-[#18171d] text-white"
                         >
                           {style.name}
                         </option>
@@ -1266,10 +1342,15 @@ const AIEditor = ({ user, isMobile }) => {
               -translate-y-1/2
               items-center
               text-white/30
+              max-[639px]:right-2.5
             "
                       aria-hidden="true"
                     >
-                      <svg viewBox="0 0 20 20" fill="none" className="h-4 w-4">
+                      <svg
+                        viewBox="0 0 20 20"
+                        fill="none"
+                        className="h-4 w-4 max-[639px]:h-3.5 max-[639px]:w-3.5"
+                      >
                         <path
                           d="m6 8 4 4 4-4"
                           stroke="currentColor"
@@ -1295,7 +1376,6 @@ const AIEditor = ({ user, isMobile }) => {
       border
       transition-all
       duration-200
-
       focus-within:ring-2
       focus-within:ring-violet-400/10
 
@@ -1308,6 +1388,9 @@ const AIEditor = ({ user, isMobile }) => {
             p-2.5
             shadow-[0_-16px_40px_-24px_rgba(0,0,0,0.95)]
             focus-within:border-violet-400/40
+
+            max-[639px]:rounded-[15px]
+            max-[639px]:p-1.5
           `
           : `
             rounded-[20px]
@@ -1319,6 +1402,9 @@ const AIEditor = ({ user, isMobile }) => {
             p-2.5
             shadow-[0_12px_40px_-28px_rgba(0,0,0,0.9)]
             focus-within:border-violet-400/35
+
+            max-[639px]:rounded-[16px]
+            max-[639px]:p-1.5
           `
       }
     `}
@@ -1345,6 +1431,7 @@ const AIEditor = ({ user, isMobile }) => {
         w-full
         min-w-0
         resize-none
+        overflow-y-auto
         bg-transparent
         px-2
         text-[15px]
@@ -1364,6 +1451,14 @@ const AIEditor = ({ user, isMobile }) => {
             ? "max-h-[140px] min-h-10 py-1"
             : "max-h-[220px] min-h-12 py-2"
         }
+
+        max-[639px]:max-h-[120px]
+        max-[639px]:min-h-9
+        max-[639px]:px-1.5
+        max-[639px]:py-2
+        max-[639px]:text-[16px]
+        max-[639px]:leading-5
+        max-[639px]:tracking-[-0.003em]
       `}
                 onChange={(e) => {
                   setChangeDesc(e.target.value);
@@ -1408,6 +1503,11 @@ const AIEditor = ({ user, isMobile }) => {
         ${reworkUI ? "mt-0.5 pt-2" : "mt-1.5 pt-2"}
 
         sm:gap-1.5
+
+        max-[639px]:mt-1
+        max-[639px]:gap-0.5
+        max-[639px]:pt-1.5
+        max-[639px]:px-0
       `}
               >
                 {/* Generation mode */}
@@ -1432,6 +1532,7 @@ const AIEditor = ({ user, isMobile }) => {
           text-white/55
           outline-none
           transition-all
+          [color-scheme:dark]
 
           hover:bg-white/[0.045]
           hover:text-white/75
@@ -1443,13 +1544,18 @@ const AIEditor = ({ user, isMobile }) => {
           disabled:opacity-50
 
           ${reworkUI ? "h-9" : "h-10"}
+
+          max-[639px]:h-8
+          max-[639px]:rounded-[8px]
+          max-[639px]:px-1.5
+          max-[639px]:text-[13px]
         `}
                 >
-                  <option value="AUTO" className="bg-[#18171d]">
+                  <option value="AUTO" className="bg-[#18171d] text-white">
                     Auto
                   </option>
 
-                  <option value="ASK" className="bg-[#18171d]">
+                  <option value="ASK" className="bg-[#18171d] text-white">
                     Ask
                   </option>
                 </select>
@@ -1485,12 +1591,17 @@ const AIEditor = ({ user, isMobile }) => {
                 ? "bg-violet-400/[0.10] text-violet-300"
                 : "text-white/40 hover:bg-white/[0.045] hover:text-white/70"
             }
+
+            max-[639px]:h-8
+            max-[639px]:w-8
+            max-[639px]:rounded-[8px]
           `}
                   >
                     <SlidersHorizontal
                       size={16}
                       strokeWidth={1.7}
                       aria-hidden="true"
+                      className="max-[639px]:h-[15px] max-[639px]:w-[15px]"
                     />
                   </button>
                 )}
@@ -1505,6 +1616,8 @@ const AIEditor = ({ user, isMobile }) => {
                   }}
                   className={`
           flex
+          h-9
+          w-9
           shrink-0
           items-center
           justify-center
@@ -1516,16 +1629,23 @@ const AIEditor = ({ user, isMobile }) => {
           focus-visible:ring-2
           focus-visible:ring-violet-400/30
 
-          ${reworkUI ? "h-9 w-9" : "h-9 w-9"}
-
           ${
             webSearchEnabeled
               ? "bg-violet-400/[0.10] text-violet-300"
               : "text-white/40 hover:bg-white/[0.045] hover:text-white/70"
           }
+
+          max-[639px]:h-8
+          max-[639px]:w-8
+          max-[639px]:rounded-[8px]
         `}
                 >
-                  <Search size={16} strokeWidth={1.7} aria-hidden="true" />
+                  <Search
+                    size={16}
+                    strokeWidth={1.7}
+                    aria-hidden="true"
+                    className="max-[639px]:h-[15px] max-[639px]:w-[15px]"
+                  />
                 </button>
 
                 {/* Submit */}
@@ -1544,6 +1664,8 @@ const AIEditor = ({ user, isMobile }) => {
                   disabled={isGenerating || !changeDesc.trim()}
                   className={`
           flex
+          h-10
+          w-10
           shrink-0
           items-center
           justify-center
@@ -1569,6 +1691,10 @@ const AIEditor = ({ user, isMobile }) => {
           disabled:hover:bg-violet-600
 
           ${reworkUI ? "h-9 w-9" : "h-10 w-10"}
+
+          max-[639px]:h-8
+          max-[639px]:w-8
+          max-[639px]:rounded-[9px]
         `}
                 >
                   {isGenerating ? (
@@ -1581,12 +1707,19 @@ const AIEditor = ({ user, isMobile }) => {
               border-2
               border-white/30
               border-t-white
+              max-[639px]:h-3.5
+              max-[639px]:w-3.5
             "
                       aria-hidden="true"
                     />
                   ) : (
                     <ArrowUp
-                      className="h-[18px] w-[18px]"
+                      className="
+              h-[18px]
+              w-[18px]
+              max-[639px]:h-[16px]
+              max-[639px]:w-[16px]
+            "
                       strokeWidth={2}
                       aria-hidden="true"
                     />
