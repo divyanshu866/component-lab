@@ -1,6 +1,6 @@
 import { generateWithGemini } from "./gemini";
 import { generateWithOpenAI } from "./openai";
-import { generateWithZAI } from "./ZAI";
+import { generateWithZAI } from "./zai";
 export async function generate(
   systemPrompt,
   contents,
