@@ -1,5 +1,4 @@
 import { EyeClosed, Maximize2, Minimize2, Play } from "lucide-react";
-import React from "react";
 
 function PreviewHeader({ isMaximised, setIsMaximised, setShowPreview }) {
   return (
@@ -17,7 +16,7 @@ function PreviewHeader({ isMaximised, setIsMaximised, setShowPreview }) {
         </button>
         <button
           onClick={() => setIsMaximised(!isMaximised)}
-          className={`hidden sm:visible bg-gray-200 dark:bg-darkSecondary text-gray-800 dark:text-gray-200 px-1.5 py-1.5 rounded hover:bg-gray-300 border dark:border-lightBorder dark:hover:bg-darkBorder transition-all duration-150 cursor-pointer`}
+          className={`hidden sm:flex bg-gray-200 dark:bg-darkSecondary text-gray-800 dark:text-gray-200 px-1.5 py-1.5 rounded hover:bg-gray-300 border dark:border-lightBorder dark:hover:bg-darkBorder transition-all duration-150 cursor-pointer`}
         >
           {isMaximised ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
         </button>
