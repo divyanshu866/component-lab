@@ -6,7 +6,6 @@ import {
   CreditCard,
   Image,
   LayoutDashboard,
-  MessageSquare,
   Sparkles,
   WandSparkles,
 } from "lucide-react";
@@ -54,88 +53,39 @@ export default function GenerationSuggestions({
   };
 
   return (
-    <section aria-label="Example prompts" className="mx-auto">
-      <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-white/5">
-        {suggestions.map((suggestion) => {
-          const Icon = suggestion.icon;
-
-          return (
+    <section
+      aria-label="Example prompts"
+      className="
+        w-full
+        min-w-0
+      "
+    >
+      <div className="relative min-w-0">
+        <div
+          aria-label="Example generation prompts"
+          className="flex min-w-0 gap-2 overflow-x-auto pb-1 pr-1 snap-x snap-mandatory sm:flex-wrap sm:overflow-visible sm:pb-0 sm:pr-0"
+        >
+          {suggestions.map(({ title, prompt, icon: Icon }) => (
             <button
-              key={suggestion.title}
+              key={title}
               type="button"
+              onClick={() => handleGenerate(prompt)}
               disabled={disabled}
-              onClick={() => handleGenerate(suggestion.prompt)}
-              title={suggestion.prompt}
-              aria-label={`Generate ${suggestion.title}`}
-              className="
-                group
-                inline-flex
-                h-9
-                shrink-0
-                items-center
-                gap-2
-                rounded-full
-                border
-                border-lightBorder
-                bg-purple-400/40
-                px-4
-                py-1
-                text-left
-                transition-all
-                duration-150
-                hover:border-violet-300/[0.18]
-                hover:bg-violet-300/[0.045]
-                active:scale-[0.98]
-                focus-visible:outline-none
-                focus-visible:ring-1
-                focus-visible:ring-violet-400/50
-                disabled:pointer-events-none
-                disabled:opacity-40
-              "
+              className="group inline-flex min-h-10 shrink-0 snap-start items-center gap-2 rounded-xl border border-white/[0.075] bg-white/[0.022] px-3.5 py-2 text-left text-[12.5px] font-medium text-white/75 transition-all duration-150 hover:-translate-y-0.5 hover:border-violet-400/20 hover:bg-white/[0.045] hover:text-white hover:shadow-[0_6px_18px_rgba(0,0,0,0.16)] focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-400/40 disabled:pointer-events-none disabled:opacity-40 sm:min-h-9 sm:rounded-lg sm:px-3"
             >
-              <Icon
-                className="
-                  h-3.5
-                  w-3.5
-                  shrink-0
-                  text-white
-                  transition-colors
-                  duration-150
-                  group-hover:text-violet-300
-                "
-                strokeWidth={1.7}
-              />
-
-              <span
-                className="
-                  text-[11.5px]
-                  font-medium
-                  tracking-[-0.005em]
-                  text-white
-                  transition-colors
-                  duration-150
-                  group-hover:text-white/85
-                "
-              >
-                {suggestion.title}
+              <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md border border-white/[0.06] bg-white/[0.025] text-white/45 transition-colors group-hover:border-violet-400/15 group-hover:bg-violet-400/[0.07] group-hover:text-violet-200 sm:h-5.5 sm:w-5.5">
+                <Icon className="h-3.5 w-3.5" strokeWidth={1.8} />
               </span>
 
+              <span className="whitespace-nowrap">{title}</span>
+
               <ArrowUpRight
-                className="
-                  h-3 w-3
-                  shrink-0
-                  text-white
-                  transition-all
-                  duration-150
-                  group-hover:-translate-y-0.5
-                  group-hover:translate-x-0.5
-                  group-hover:text-violet-300/70
-                "
+                className="h-3.5 w-3.5 shrink-0 text-white/25 transition-all duration-150 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-violet-300"
                 strokeWidth={1.8}
               />
             </button>
-          );
-        })}
+          ))}
+        </div>
       </div>
     </section>
   );

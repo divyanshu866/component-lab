@@ -163,7 +163,7 @@ const UserMessage = ({ message }) => {
             rounded-br-md
             border
             border-white/10
-            bg-purple-700/90
+            bg-violet-600/70
             px-4
             py-3
             text-[15px]

@@ -3,6 +3,7 @@ import {
   Brain,
   Check,
   ChevronDown,
+  Cpu,
   Lock,
   SlidersHorizontal,
 } from "lucide-react";
@@ -151,7 +152,7 @@ export default function ModelSelector({
       }
     `}
           >
-            <Brain
+            <Cpu
               size={12.5}
               strokeWidth={1.9}
               className={`

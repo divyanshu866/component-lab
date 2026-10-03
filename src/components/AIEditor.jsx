@@ -145,7 +145,7 @@ const AIEditor = ({ user, isMobile }) => {
     {
       name: "Pagination",
       icon: "more-horizontal",
-      description: "Navigate between data pages",
+      description: "Navigate between pages",
     },
     {
       name: "Breadcrumbs",
@@ -170,7 +170,7 @@ const AIEditor = ({ user, isMobile }) => {
     {
       name: "Date Picker",
       icon: "calendar-clock",
-      description: "Compact date or range input",
+      description: "Compact date or range date selector",
     },
     {
       name: "Time Picker",
@@ -1042,45 +1042,20 @@ const AIEditor = ({ user, isMobile }) => {
           {!reworkUI && !showPreview && (
             <section
               aria-labelledby="welcome-heading"
-              className="mx-auto w-full max-w-4xl px-5 pb-10 mt-auto sm:my-auto sm:px-5 sm:py-10 md:px-10 md:my-auto md:pb-14"
+              className="mx-auto my-auto w-full max-w-4xl px-4 sm:my-auto sm:px-5 sm:py-10 md:my-auto md:px-10 md:pb-14"
             >
-              <div className="mb-3 flex items-center gap-2.5 text-[10px] font-semibold uppercase tracking-[0.16em] text-violet-300 sm:mb-5 sm:gap-3 sm:text-[11px] sm:tracking-[0.2em]">
-                <span
-                  aria-hidden="true"
-                  className="h-px w-6 bg-violet-400 sm:w-8"
-                />
-                A blank canvas
-              </div>
-
-              <h1
-                id="welcome-heading"
-                className="max-w-3xl text-balance text-[clamp(1.75rem,8vw,2.25rem)] font-semibold leading-[1.06] tracking-[-0.045em] text-zinc-50 sm:text-5xl lg:text-6xl"
-              >
-                Start with the part{" "}
-                <span className="text-violet-300">you can picture.</span>
-              </h1>
-
-              <div className="mt-5 border-0 border-white/10 pt-3 sm:mt-8 sm:pt-5">
-                <p className="mb-3 text-xs font-medium text-zinc-500 sm:mb-3">
-                  Or pick a place to begin
-                </p>
-                <div
-                  aria-label="Prompt suggestions"
-                  className="flex min-w-0 max-w-full flex-wrap gap-2"
+              <div className="mx-auto max-w-2xl">
+                <h1
+                  id="welcome-heading"
+                  className="text-balance text-center text-[clamp(1.75rem,8vw,2.25rem)] font-medium leading-[1.06] tracking-[-0.045em] text-zinc-50 sm:text-5xl lg:text-6xl"
                 >
-                  {activeComponent.id === "" &&
-                    activeMessages.length === 0 &&
-                    !isGenerating && (
-                      <div className="min-w-0 max-w-full">
-                        <GenerationSuggestions
-                          disabled={isGenerating}
-                          onGenerate={(prompt) => {
-                            generateComponent(prompt);
-                          }}
-                        />
-                      </div>
-                    )}
-                </div>
+                  Start with the part{" "}
+                  <span className="text-violet-300">you can picture.</span>
+                </h1>
+                {/* <p className="mx-auto mt-3 max-w-lg text-center text-sm leading-6 text-zinc-400 sm:mt-4 sm:text-base">
+                  Describe the little detail, the rough idea, or the whole
+                  interface. We’ll shape it together.
+                </p> */}
               </div>
             </section>
           )}
@@ -1090,25 +1065,40 @@ const AIEditor = ({ user, isMobile }) => {
           className={`z-5 w-full ${
             reworkUI
               ? "pointer-events-none absolute inset-x-0 bottom-0 bg-transparent"
-              : showPreview
-                ? "shrink-0 border-t border-white/10 bg-[#09090b]"
-                : "shrink-0 border-t border-white/10 bg-[#09090b]/95"
+              : ""
           }`}
         >
           <div
             className={`mx-auto flex w-full max-w-4xl flex-col overflow-y-auto overscroll-contain px-3 sm:px-6 lg:px-8 ${
               reworkUI
-                ? "pointer-events-none max-h-[min(48dvh,20rem)] gap-1.5 pt-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] sm:gap-2 sm:pt-3 sm:pb-3"
+                ? "pointer-events-none max-h-[min(48dvh,20rem)] gap-2 pt-2 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:gap-2.5 sm:pt-3 sm:pb-4"
                 : "max-h-[min(70dvh,36rem)] pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:max-h-[min(60dvh,38rem)] sm:pt-4 sm:pb-5"
             }`}
           >
             <div
               className={`flex min-w-0 items-center justify-center ${
-                reworkUI ? "pointer-events-auto" : "mb-3 sm:mb-2"
+                reworkUI ? "pointer-events-auto" : "mb-2"
               }`}
             >
               <TargetTechTabs />
             </div>
+
+            {!reworkUI &&
+              activeComponent.id === "" &&
+              activeMessages.length === 0 &&
+              !isGenerating && (
+                <div
+                  aria-label="Prompt suggestions"
+                  className="pointer-events-auto mb-2 min-w-0 max-w-full"
+                >
+                  <GenerationSuggestions
+                    disabled={isGenerating}
+                    onGenerate={(prompt) => {
+                      generateComponent(prompt);
+                    }}
+                  />
+                </div>
+              )}
 
             {!reworkUI && showFilters && (
               <div className="mb-3 grid w-full grid-cols-1 gap-2 sm:mb-4 sm:grid-cols-2">
@@ -1165,14 +1155,16 @@ const AIEditor = ({ user, isMobile }) => {
             )}
 
             <div
-              className={`flex w-full min-w-0 flex-col border transition-colors focus-within:border-violet-400/50 focus-within:ring-2 focus-within:ring-violet-400/10 ${
+              className={`pointer-events-auto flex w-full min-w-0 flex-col border transition-colors focus-within:border-violet-400/50 focus-within:ring-2 focus-within:ring-violet-400/10 ${
                 reworkUI
-                  ? "pointer-events-auto rounded-xl p-1.5 shadow-[0_-12px_32px_-14px_rgba(0,0,0,0.7)] sm:p-2"
-                  : "rounded-2xl p-2 shadow-sm sm:p-3"
+                  ? "rounded-2xl border-violet-300/20 bg-[#17151d] p-2.5 shadow-[0_-14px_36px_-18px_rgba(0,0,0,0.9)] sm:p-3"
+                  : "rounded-b-4xl rounded-t-lg p-2 sm:p-3"
               } ${
-                generationMode === "ASK"
-                  ? "border-emerald-400/35 bg-[#14201b]"
-                  : "border-white/15 bg-[#18181b]"
+                reworkUI
+                  ? "shadow-[0_-14px_36px_-18px_rgba(0,0,0,0.9)]"
+                  : generationMode === "ASK"
+                    ? "border-emerald-400/35 bg-[#14201b]"
+                    : "border-lightBorder bg-white/3"
               }`}
             >
               <label htmlFor="prompt" className="sr-only">
@@ -1192,7 +1184,7 @@ const AIEditor = ({ user, isMobile }) => {
                 }
                 className={`m-0 w-full min-w-0 resize-none bg-transparent px-2 text-base text-zinc-100 outline-none placeholder:text-zinc-500 disabled:cursor-not-allowed disabled:opacity-50 sm:text-sm ${
                   reworkUI
-                    ? "max-h-[140px] min-h-9 py-1.5 leading-6"
+                    ? "max-h-[140px] min-h-10 py-2 leading-5"
                     : "max-h-[220px] min-h-12 py-2 leading-6"
                 }`}
                 onChange={(e) => {
@@ -1223,8 +1215,8 @@ const AIEditor = ({ user, isMobile }) => {
               />
 
               <div
-                className={`flex w-full min-w-0 items-center justify-end gap-1 border-t border-white/10 sm:gap-2 ${
-                  reworkUI ? "mt-0.5 pt-1" : "mt-1 pt-2"
+                className={`flex w-full min-w-0 items-center justify-end gap-1.5 border-t border-white/10 sm:gap-2 ${
+                  reworkUI ? "mt-1.5 pt-2" : "mt-1 pt-2"
                 }`}
               >
                 <select
