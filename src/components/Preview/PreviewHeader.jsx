@@ -11,7 +11,7 @@ function PreviewHeader({ isMaximised, setIsMaximised, setShowPreview }) {
         <button
           onClick={() => {
             setShowPreview(false);
-            setIsMaximised(false);
+            if (isMaximised) setIsMaximised(false);
           }}
           className={`bg-darkSecondary text-gray-200 px-1.5 py-1.5 rounded  border border-lightBorder hover:bg-darkBorder transition-all duration-150 cursor-pointer`}
         >
