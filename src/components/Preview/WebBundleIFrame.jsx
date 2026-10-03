@@ -1,7 +1,6 @@
 "use client";
 
 import { useEditorContext } from "@/context/EditorContext";
-import AILoader from "@/components/AILoader";
 import PreviewHeader from "@/components/Preview/PreviewHeader";
 import { useEffect, useState } from "react";
 import GeneratingIndicator from "./GenerationIndicator";
