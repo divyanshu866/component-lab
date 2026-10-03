@@ -65,7 +65,6 @@ const WebBundleIFrame = ({ isMobile }) => {
         isMaximised={isMaximised}
         setIsMaximised={setIsMaximised}
         setShowPreview={setShowPreview}
-        isMobile={isMobile}
       />
       <iframe
         key={previewKey}
