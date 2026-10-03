@@ -107,7 +107,7 @@ const markdownComponents = {
 
   ul: ({ children, className }) => (
     <ul
-      className={`my-4 list-disc space-y-2 pl-5 text-[14px] leading-[1.75] text-neutral-200 marker:text-violet-300/80 sm:pl-6 sm:text-[15px] [&>li>ul]:my-2 [&>li>ol]:my-2 [&>li>p]:mb-2 [&>li>p:last-child]:mb-0 [&.contains-task-list]:list-none [&.contains-task-list]:pl-0 ${className ?? ""}`}
+      className={`my-4 list-disc space-y-2 pl-5 text-[14px] leading-[1.75] text-neutral-200 marker:text-neutral-400 sm:pl-6 sm:text-[15px] [&>li>ul]:my-2 [&>li>ol]:my-2 [&>li>p]:mb-2 [&>li>p:last-child]:mb-0 [&.contains-task-list]:list-none [&.contains-task-list]:pl-0 ${className ?? ""}`}
     >
       {children}
     </ul>
@@ -116,7 +116,7 @@ const markdownComponents = {
   ol: ({ children, className, start }) => (
     <ol
       start={start}
-      className={`my-4 list-decimal space-y-2 pl-5 text-[14px] leading-[1.75] text-neutral-200 marker:font-medium marker:text-violet-300/80 sm:pl-6 sm:text-[15px] [&>li>ul]:my-2 [&>li>ol]:my-2 [&>li>p]:mb-2 [&>li>p:last-child]:mb-0 ${className ?? ""}`}
+      className={`my-4 list-decimal space-y-2 pl-5 text-[14px] leading-[1.75] text-neutral-200 marker:font-medium marker:text-neutral-400 sm:pl-6 sm:text-[15px] [&>li>ul]:my-2 [&>li>ol]:my-2 [&>li>p]:mb-2 [&>li>p:last-child]:mb-0 ${className ?? ""}`}
     >
       {children}
     </ol>
@@ -124,7 +124,7 @@ const markdownComponents = {
 
   li: ({ children, className }) => (
     <li
-      className={`pl-1 [&>p]:mb-2 [&>p:last-child]:mb-0 [&.task-list-item]:list-none [&.task-list-item]:pl-0 ${className ?? ""}`}
+      className={`pl-1 [&>p]:mb-2 [&>p:last-child]:mb-0 [&.task-list-item]:list-none [&.task-list-item]:pl-0 [&.task-list-item:has(input:checked)]:text-emerald-300 [&.task-list-item:has(input:not(:checked))]:text-amber-200 ${className ?? ""}`}
     >
       {children}
     </li>
@@ -142,7 +142,22 @@ const markdownComponents = {
         readOnly
         disabled
         aria-label={isChecked ? "Completed" : "Not completed"}
-        className="mr-2 inline-block h-3.5 w-3.5 translate-y-[1px] accent-violet-500 disabled:cursor-default disabled:opacity-100"
+        style={
+          isChecked
+            ? {
+                backgroundImage:
+                  'url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 16 16%27%3E%3Cpath fill=%27none%27 stroke=%27white%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27 stroke-width=%272.5%27 d=%27m3 8 3.2 3.2L13 4.5%27/%3E%3C/svg%3E")',
+                backgroundPosition: "center",
+                backgroundRepeat: "no-repeat",
+                backgroundSize: "10px 10px",
+              }
+            : undefined
+        }
+        className={`mr-2 inline-block h-3.5 w-3.5 translate-y-[1px] appearance-none rounded-[3px] border-2 disabled:cursor-default disabled:opacity-100 ${
+          isChecked
+            ? "border-emerald-400 bg-emerald-500"
+            : "border-amber-400 bg-amber-400/20"
+        }`}
       />
     );
   },
@@ -193,7 +208,7 @@ const markdownComponents = {
     if (!isBlock) {
       return (
         <code
-          className="rounded border border-white/[0.12] bg-white/[0.07] px-1.5 py-0.5 font-mono text-[12px] font-medium leading-[1.5] text-violet-200 break-words sm:text-[12.5px]"
+          className="rounded bg-white/[0.1] px-1.5 py-0.5 font-mono text-[12px] font-medium leading-[1.5] text-violet-300/80 break-words sm:text-[12.5px]"
           {...props}
         >
           {children}

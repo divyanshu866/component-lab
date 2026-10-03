@@ -49,7 +49,7 @@ const AssistantHeader = ({ isGenerating, aiRequest }) => {
 
   return (
     <div className="mb-3 flex items-center gap-2.5">
-      <div
+      {/* <div
         className="
           flex
           h-7
@@ -70,13 +70,9 @@ const AssistantHeader = ({ isGenerating, aiRequest }) => {
           alt=""
           aria-hidden="true"
         />
-      </div>
+      </div> */}
 
       <div className="flex min-w-0 flex-wrap items-center gap-x-2.5 gap-y-1">
-        <span className="text-[13px] font-medium leading-5 tracking-[0.01em] text-violet-400">
-          ComponentLab
-        </span>
-
         {isGenerating ? (
           <span
             className="
@@ -163,7 +159,7 @@ const UserMessage = ({ message }) => {
             rounded-br-md
             border
             border-white/10
-            bg-violet-600/70
+            bg-violet-600/50
             px-4
             py-3
             text-[15px]

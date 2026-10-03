@@ -1069,6 +1069,7 @@ const AIEditor = ({ user, isMobile }) => {
               : ""
           }`}
         >
+          {/* Composer + TargetTech + GenerationSuggestions + Filters */}
           <div
             className={`mx-auto flex w-full max-w-4xl flex-col overflow-y-auto overscroll-contain px-3 sm:px-6 lg:px-8 ${
               reworkUI
