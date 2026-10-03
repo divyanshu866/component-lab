@@ -155,55 +155,30 @@ body {
   }
 }
 
-@keyframes cl-pending-shimmer {
-  from {
-    background-position: 100% 0;
-  }
+/* -------------------------------------------------------------------------- */
+/* ComponentLab pending assistant                                              */
+/* -------------------------------------------------------------------------- */
 
+@keyframes shimmer {
   to {
-    background-position: -100% 0;
+    background-position: 200% center;
   }
 }
 
-@keyframes cl-pending-enter {
-  from {
-    opacity: 0;
-    transform: translateY(3px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.cl-pending-shimmer {
+.shimmer-text {
   width: fit-content;
-  color: rgba(255, 255, 255, 0.78);
-  background-image: linear-gradient(
-    100deg,
-    rgba(255, 255, 255, 0.65) 35%,
-    rgba(255, 255, 255, 0.98) 50%,
-    rgba(255, 255, 255, 0.65) 65%
+  color: transparent;
+  background: linear-gradient(
+    90deg,
+    #94a3b8 0%,
+    #e2e8f0 35%,
+    #ffffff 50%,
+    #94a3b8 70%
   );
-  background-size: 250% 100%;
+  background-size: 200% auto;
   background-clip: text;
   -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  animation: cl-pending-shimmer 3s linear infinite;
-}
-
-.cl-pending-enter {
-  animation:
-    cl-pending-enter 250ms ease-out both,
-    cl-pending-shimmer 3s linear infinite;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .cl-pending-enter,
-  .cl-pending-shimmer {
-    animation: none;
-  }
+  animation: shimmer 2.2s linear infinite;
 }
 
 /* Generation indicator */
@@ -215,7 +190,6 @@ body {
   100% {
     transform: rotate(-28deg);
   }
-
   34% {
     transform: rotate(5deg);
   }
@@ -229,7 +203,6 @@ body {
     opacity: 0;
     transform: scale(0.65);
   }
-
   34% {
     opacity: 1;
     transform: scale(1);
@@ -241,7 +214,6 @@ body {
   20% {
     opacity: 0.45;
   }
-
   50%,
   100% {
     opacity: 1;
