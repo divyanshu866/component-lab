@@ -34,7 +34,7 @@ const AIEditorTabs = ({
   return (
     <div
       className={`
-        relative flex h-12 w-full min-w-0 items-center
+        relative flex h-10 w-full min-w-0 items-center
         border-b border-white/[0.065]
         bg-backgroundDark
         px-2 sm:px-3

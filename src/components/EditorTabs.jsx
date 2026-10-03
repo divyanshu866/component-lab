@@ -11,7 +11,7 @@ const EditorTabs = ({
 }) => {
   const [activeEditorSpace, setActiveEditorSpace] = useState("AI");
   return (
-    <div className="flex w-full dark:bg-transparent border-b border-gray-200 dark:border-lightBorder p-2">
+    <div className="flex w-full bg-transparent border-b border-lightBorder p-2">
       <div className="flex ml-3 mr-auto h-full gap-2">
         <button
           onClick={() => setActiveEditorSpace("CODE")}

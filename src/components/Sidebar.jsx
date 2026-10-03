@@ -197,11 +197,13 @@ export default function Sidebar() {
       aria-hidden={sidebarCollapsed}
       className={`${
         isMobile ? "absolute inset-y-0 left-0 z-100" : "relative"
-      } flex h-full shrink-0 flex-col overflow-hidden bg-backgroundLight transition-[width] duration-200 ease-in-out ${
+      } flex h-full shrink-0 flex-col overflow-hidden bg-backgroundLight transition-[width] duration-200 ease-out ${
         sidebarCollapsed
           ? "w-0 border-0"
           : `${
-              isMobile ? "w-[min(16.25rem,calc(100vw-1rem))]" : "w-[16.25rem]"
+              isMobile
+                ? "border-b w-[min(16.25rem,calc(100vw-1rem))]"
+                : "w-[16.25rem]"
             } rounded-xl border-r border-darkBorder`
       }`}
     >

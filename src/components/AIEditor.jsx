@@ -1027,6 +1027,7 @@ const AIEditor = ({ user, isMobile }) => {
         setSelectedEffort={setSelectedEffort}
         userPlan={generationUsage?.plan}
         reworkUI={reworkUI}
+        isMobile={isMobile}
         onPlanRequired={(model) => {
           setPlanRequiredModel(model);
         }}
@@ -1047,7 +1048,7 @@ const AIEditor = ({ user, isMobile }) => {
               <div className="mx-auto max-w-2xl">
                 <h1
                   id="welcome-heading"
-                  className="text-balance text-center text-[clamp(1.75rem,8vw,2.25rem)] font-medium leading-[1.06] tracking-[-0.045em] text-zinc-50 sm:text-5xl lg:text-6xl"
+                  className="text-balance text-center text-[clamp(1.75rem,8vw,2.25rem)] font-medium leading-[1.06] tracking-[-0.045em] text-zinc-50 text4xl sm:text-5xl lg:text-6xl"
                 >
                   Start with the part{" "}
                   <span className="text-violet-300">you can picture.</span>
@@ -1072,24 +1073,26 @@ const AIEditor = ({ user, isMobile }) => {
             className={`mx-auto flex w-full max-w-4xl flex-col overflow-y-auto overscroll-contain px-3 sm:px-6 lg:px-8 ${
               reworkUI
                 ? "pointer-events-none max-h-[min(48dvh,20rem)] gap-2 pt-2 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:gap-2.5 sm:pt-3 sm:pb-4"
-                : "max-h-[min(70dvh,36rem)] pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:max-h-[min(60dvh,38rem)] sm:pt-4 sm:pb-5"
+                : "max-h-[min(70dvh,36rem)] gap-2.5 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:max-h-[min(60dvh,38rem)] sm:gap-3 sm:pt-4 sm:pb-5"
             }`}
           >
+            {/* Target technology */}
             <div
               className={`flex min-w-0 items-center justify-center ${
-                reworkUI ? "pointer-events-auto" : "mb-2"
+                reworkUI ? "pointer-events-auto" : "mb-0.5"
               }`}
             >
               <TargetTechTabs />
             </div>
 
+            {/* Generation suggestions */}
             {!reworkUI &&
               activeComponent.id === "" &&
               activeMessages.length === 0 &&
               !isGenerating && (
                 <div
                   aria-label="Prompt suggestions"
-                  className="pointer-events-auto mb-2 min-w-0 max-w-full"
+                  className="pointer-events-auto min-w-0 max-w-full"
                 >
                   <GenerationSuggestions
                     disabled={isGenerating}
@@ -1100,76 +1103,231 @@ const AIEditor = ({ user, isMobile }) => {
                 </div>
               )}
 
+            {/* Type / style filters */}
             {!reworkUI && showFilters && (
-              <div className="mb-3 grid w-full grid-cols-1 gap-2 sm:mb-4 sm:grid-cols-2">
-                <label className="block min-w-0">
-                  <span className="mb-1.5 block text-xs font-medium text-zinc-400">
+              <div className="grid w-full grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-2.5">
+                {/* Component type */}
+                <label className="group block min-w-0">
+                  <span
+                    className="
+            mb-1.5 block px-0.5
+            text-[11px]
+            font-medium
+            tracking-[0.01em]
+            text-white/45
+          "
+                  >
                     Component type
                   </span>
-                  <select
-                    value={selectedType}
-                    onChange={(e) => setSelectedType(e.target.value)}
-                    name="type"
-                    className="h-11 w-full min-w-0 cursor-pointer rounded-xl border border-white/15 bg-[#18181b] px-3 text-sm text-zinc-100 outline-none transition hover:border-white/25 focus-visible:border-violet-400 focus-visible:ring-2 focus-visible:ring-violet-400/20"
-                  >
-                    <option value="Custom type" className="bg-[#18181b]">
-                      Describe type in prompt
-                    </option>
-                    {componentTypes.map((type, index) => (
-                      <option
-                        key={`${type.name}-${index}`}
-                        value={type.name}
-                        className="bg-[#18181b]"
-                      >
-                        {type.name}
+
+                  <div className="relative">
+                    <select
+                      value={selectedType}
+                      onChange={(e) => setSelectedType(e.target.value)}
+                      name="type"
+                      className="
+              h-10.5
+              w-full
+              min-w-0
+              cursor-pointer
+              appearance-none
+              rounded-[11px]
+              border
+              border-white/[0.09]
+              bg-white/[0.025]
+              px-3.5
+              pr-9
+              text-[13px]
+              font-medium
+              text-white/85
+              outline-none
+              transition-all
+              duration-150
+
+              hover:border-white/[0.14]
+              hover:bg-white/[0.035]
+
+              focus:border-violet-400/45
+              focus:bg-violet-400/[0.025]
+              focus:ring-2
+              focus:ring-violet-400/10
+            "
+                    >
+                      <option value="Custom type" className="bg-[#18171d]">
+                        Describe type in prompt
                       </option>
-                    ))}
-                  </select>
+
+                      {componentTypes.map((type, index) => (
+                        <option
+                          key={`${type.name}-${index}`}
+                          value={type.name}
+                          className="bg-[#18171d]"
+                        >
+                          {type.name}
+                        </option>
+                      ))}
+                    </select>
+
+                    <span
+                      className="
+              pointer-events-none
+              absolute
+              right-3
+              top-1/2
+              flex
+              -translate-y-1/2
+              items-center
+              text-white/30
+            "
+                      aria-hidden="true"
+                    >
+                      <svg viewBox="0 0 20 20" fill="none" className="h-4 w-4">
+                        <path
+                          d="m6 8 4 4 4-4"
+                          stroke="currentColor"
+                          strokeWidth="1.5"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                    </span>
+                  </div>
                 </label>
 
-                <label className="block min-w-0">
-                  <span className="mb-1.5 block text-xs font-medium text-zinc-400">
+                {/* Visual style */}
+                <label className="group block min-w-0">
+                  <span
+                    className="
+            mb-1.5 block px-0.5
+            text-[11px]
+            font-medium
+            tracking-[0.01em]
+            text-white/45
+          "
+                  >
                     Visual style
                   </span>
-                  <select
-                    value={selectedStyle}
-                    onChange={(e) => setSelectedStyle(e.target.value)}
-                    name="style"
-                    className="h-11 w-full min-w-0 cursor-pointer rounded-xl border border-white/15 bg-[#18181b] px-3 text-sm text-zinc-100 outline-none transition hover:border-white/25 focus-visible:border-violet-400 focus-visible:ring-2 focus-visible:ring-violet-400/20"
-                  >
-                    <option value="Custom style" className="bg-[#18181b]">
-                      Describe style in prompt
-                    </option>
-                    {styleOptions.map((style, index) => (
-                      <option
-                        key={`${style.name}-${index}`}
-                        value={style.name}
-                        className="bg-[#18181b]"
-                      >
-                        {style.name}
+
+                  <div className="relative mb-2">
+                    <select
+                      value={selectedStyle}
+                      onChange={(e) => setSelectedStyle(e.target.value)}
+                      name="style"
+                      className="
+              h-10.5
+              w-full
+              min-w-0
+              cursor-pointer
+              appearance-none
+              rounded-[11px]
+              border
+              border-white/[0.09]
+              bg-white/[0.025]
+              px-3.5
+              pr-9
+              text-[13px]
+              font-medium
+              text-white/85
+              outline-none
+              transition-all
+              duration-150
+
+              hover:border-white/[0.14]
+              hover:bg-white/[0.035]
+
+              focus:border-violet-400/45
+              focus:bg-violet-400/[0.025]
+              focus:ring-2
+              focus:ring-violet-400/10
+            "
+                    >
+                      <option value="Custom style" className="bg-[#18171d]">
+                        Describe style in prompt
                       </option>
-                    ))}
-                  </select>
+
+                      {styleOptions.map((style, index) => (
+                        <option
+                          key={`${style.name}-${index}`}
+                          value={style.name}
+                          className="bg-[#18171d]"
+                        >
+                          {style.name}
+                        </option>
+                      ))}
+                    </select>
+
+                    <span
+                      className="
+              pointer-events-none
+              absolute
+              right-3
+              top-1/2
+              flex
+              -translate-y-1/2
+              items-center
+              text-white/30
+            "
+                      aria-hidden="true"
+                    >
+                      <svg viewBox="0 0 20 20" fill="none" className="h-4 w-4">
+                        <path
+                          d="m6 8 4 4 4-4"
+                          stroke="currentColor"
+                          strokeWidth="1.5"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                    </span>
+                  </div>
                 </label>
               </div>
             )}
 
+            {/* Composer */}
             <div
-              className={`pointer-events-auto flex w-full min-w-0 flex-col border transition-colors focus-within:border-violet-400/50 focus-within:ring-2 focus-within:ring-violet-400/10 ${
-                reworkUI
-                  ? "rounded-2xl border-violet-300/20 bg-[#17151d] p-2.5 shadow-[0_-14px_36px_-18px_rgba(0,0,0,0.9)] sm:p-3"
-                  : "rounded-b-4xl rounded-t-lg p-2 sm:p-3"
-              } ${
-                reworkUI
-                  ? "shadow-[0_-14px_36px_-18px_rgba(0,0,0,0.9)]"
-                  : generationMode === "ASK"
-                    ? "border-emerald-400/35 bg-[#14201b]"
-                    : "border-lightBorder bg-white/3"
-              }`}
+              className={`
+      pointer-events-auto
+      flex
+      w-full
+      min-w-0
+      flex-col
+      border
+      transition-all
+      duration-200
+
+      focus-within:ring-2
+      focus-within:ring-violet-400/10
+
+      ${
+        reworkUI
+          ? `
+            rounded-[18px]
+            border-violet-300/[0.16]
+            bg-[#120f15]
+            p-2.5
+            shadow-[0_-16px_40px_-24px_rgba(0,0,0,0.95)]
+            focus-within:border-violet-400/40
+          `
+          : `
+            rounded-[20px]
+            ${
+              generationMode === "ASK"
+                ? "border-emerald-400/[0.28] bg-[#111915]/90"
+                : "border-white/[0.09] bg-darkBorder/30"
+            }
+            p-2.5
+            shadow-[0_12px_40px_-28px_rgba(0,0,0,0.9)]
+            focus-within:border-violet-400/35
+          `
+      }
+    `}
             >
               <label htmlFor="prompt" className="sr-only">
                 Describe your component or changes
               </label>
+
+              {/* Prompt input */}
               <textarea
                 ref={promptAreaRef}
                 name="prompt"
@@ -1182,11 +1340,31 @@ const AIEditor = ({ user, isMobile }) => {
                     ? "Describe changes..."
                     : "Describe the component..."
                 }
-                className={`m-0 w-full min-w-0 resize-none bg-transparent px-2 text-base text-zinc-100 outline-none placeholder:text-zinc-500 disabled:cursor-not-allowed disabled:opacity-50 sm:text-sm ${
-                  reworkUI
-                    ? "max-h-[140px] min-h-10 py-2 leading-5"
-                    : "max-h-[220px] min-h-12 py-2 leading-6"
-                }`}
+                className={`
+        m-0
+        w-full
+        min-w-0
+        resize-none
+        bg-transparent
+        px-2
+        text-[15px]
+        font-normal
+        leading-6
+        tracking-[-0.005em]
+        text-white/[0.88]
+        outline-none
+        placeholder:text-white/[0.30]
+        disabled:cursor-not-allowed
+        disabled:opacity-50
+
+        sm:text-[14px]
+
+        ${
+          reworkUI
+            ? "max-h-[140px] min-h-10 py-1"
+            : "max-h-[220px] min-h-12 py-2"
+        }
+      `}
                 onChange={(e) => {
                   setChangeDesc(e.target.value);
 
@@ -1214,29 +1392,69 @@ const AIEditor = ({ user, isMobile }) => {
                 }}
               />
 
+              {/* Composer controls */}
               <div
-                className={`flex w-full min-w-0 items-center justify-end gap-1.5 border-t border-white/10 sm:gap-2 ${
-                  reworkUI ? "mt-1.5 pt-2" : "mt-1 pt-2"
-                }`}
+                className={`
+        flex
+        w-full
+        min-w-0
+        items-center
+        justify-end
+        gap-1
+        border-t
+        border-white/[0.07]
+        px-0.5
+
+        ${reworkUI ? "mt-0.5 pt-2" : "mt-1.5 pt-2"}
+
+        sm:gap-1.5
+      `}
               >
+                {/* Generation mode */}
                 <select
                   name="generation-mode"
                   aria-label="Generation mode"
                   value={generationMode}
                   disabled={isGenerating}
                   onChange={(e) => setGenerationMode(e.target.value)}
-                  className={`min-w-0 cursor-pointer rounded-lg border border-transparent bg-transparent px-2 text-sm font-medium text-zinc-300 outline-none transition hover:bg-white/10 focus-visible:border-violet-400 disabled:cursor-not-allowed disabled:opacity-50 ${
-                    reworkUI ? "h-9" : "h-10"
-                  }`}
+                  className={`
+          min-w-0
+          cursor-pointer
+          appearance-none
+          rounded-lg
+          border
+          border-transparent
+          bg-transparent
+          px-2
+          text-[13px]
+          font-medium
+          tracking-[-0.005em]
+          text-white/55
+          outline-none
+          transition-all
+
+          hover:bg-white/[0.045]
+          hover:text-white/75
+
+          focus-visible:border-violet-400/30
+          focus-visible:bg-violet-400/[0.04]
+
+          disabled:cursor-not-allowed
+          disabled:opacity-50
+
+          ${reworkUI ? "h-9" : "h-10"}
+        `}
                 >
-                  <option value="AUTO" className="bg-[#18181b]">
+                  <option value="AUTO" className="bg-[#18171d]">
                     Auto
                   </option>
-                  <option value="ASK" className="bg-[#18181b]">
+
+                  <option value="ASK" className="bg-[#18171d]">
                     Ask
                   </option>
                 </select>
 
+                {/* Filters */}
                 {!reworkUI && (
                   <button
                     type="button"
@@ -1247,16 +1465,37 @@ const AIEditor = ({ user, isMobile }) => {
                       setSelectedType("Custom type");
                       setSelectedStyle("Custom style");
                     }}
-                    className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-400 ${
-                      showFilters
-                        ? "bg-violet-500/15 text-violet-300"
-                        : "text-zinc-400 hover:bg-white/10 hover:text-zinc-100"
-                    }`}
+                    className={`
+            flex
+            h-9
+            w-9
+            shrink-0
+            items-center
+            justify-center
+            rounded-[9px]
+            transition-all
+            duration-150
+
+            focus-visible:outline-none
+            focus-visible:ring-2
+            focus-visible:ring-violet-400/30
+
+            ${
+              showFilters
+                ? "bg-violet-400/[0.10] text-violet-300"
+                : "text-white/40 hover:bg-white/[0.045] hover:text-white/70"
+            }
+          `}
                   >
-                    <SlidersHorizontal size={17} aria-hidden="true" />
+                    <SlidersHorizontal
+                      size={16}
+                      strokeWidth={1.7}
+                      aria-hidden="true"
+                    />
                   </button>
                 )}
 
+                {/* Web search */}
                 <button
                   type="button"
                   aria-label="Toggle web search"
@@ -1264,17 +1503,32 @@ const AIEditor = ({ user, isMobile }) => {
                   onClick={() => {
                     setWebSearchEnabeled((prev) => !prev);
                   }}
-                  className={`flex shrink-0 items-center justify-center rounded-lg transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-400 ${
-                    reworkUI ? "h-9 w-9" : "h-10 w-10"
-                  } ${
-                    webSearchEnabeled
-                      ? "bg-violet-500/15 text-violet-300"
-                      : "text-zinc-400 hover:bg-white/10 hover:text-zinc-100"
-                  }`}
+                  className={`
+          flex
+          shrink-0
+          items-center
+          justify-center
+          rounded-[9px]
+          transition-all
+          duration-150
+
+          focus-visible:outline-none
+          focus-visible:ring-2
+          focus-visible:ring-violet-400/30
+
+          ${reworkUI ? "h-9 w-9" : "h-9 w-9"}
+
+          ${
+            webSearchEnabeled
+              ? "bg-violet-400/[0.10] text-violet-300"
+              : "text-white/40 hover:bg-white/[0.045] hover:text-white/70"
+          }
+        `}
                 >
-                  <Search size={17} aria-hidden="true" />
+                  <Search size={16} strokeWidth={1.7} aria-hidden="true" />
                 </button>
 
+                {/* Submit */}
                 <button
                   type="button"
                   aria-label={isGenerating ? "Generating" : "Send prompt"}
@@ -1288,39 +1542,58 @@ const AIEditor = ({ user, isMobile }) => {
                     setIsExpanded(false);
                   }}
                   disabled={isGenerating || !changeDesc.trim()}
-                  className={`flex shrink-0 items-center justify-center rounded-xl bg-violet-600 text-white transition hover:bg-violet-500 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-300 focus-visible:ring-offset-2 focus-visible:ring-offset-[#18181b] disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-violet-600 ${
-                    reworkUI ? "h-9 w-9" : "h-10 w-10"
-                  }`}
+                  className={`
+          flex
+          shrink-0
+          items-center
+          justify-center
+          rounded-[11px]
+          bg-violet-600
+          text-white
+          shadow-[0_4px_16px_-8px_rgba(124,58,237,0.8)]
+          transition-all
+          duration-150
+
+          hover:bg-violet-500
+          active:scale-[0.96]
+
+          focus-visible:outline-none
+          focus-visible:ring-2
+          focus-visible:ring-violet-300/60
+          focus-visible:ring-offset-2
+          focus-visible:ring-offset-[#111114]
+
+          disabled:cursor-not-allowed
+          disabled:opacity-35
+          disabled:shadow-none
+          disabled:hover:bg-violet-600
+
+          ${reworkUI ? "h-9 w-9" : "h-10 w-10"}
+        `}
                 >
                   {isGenerating ? (
                     <span
-                      className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white"
+                      className="
+              h-4
+              w-4
+              animate-spin
+              rounded-full
+              border-2
+              border-white/30
+              border-t-white
+            "
                       aria-hidden="true"
                     />
                   ) : (
-                    <ArrowUp className="h-5 w-5" aria-hidden="true" />
+                    <ArrowUp
+                      className="h-[18px] w-[18px]"
+                      strokeWidth={2}
+                      aria-hidden="true"
+                    />
                   )}
                 </button>
               </div>
             </div>
-
-            {showPreview &&
-              activeComponent.id === "" &&
-              activeMessages.length === 0 &&
-              !isGenerating && (
-                <div
-                  className={`mt-3 min-w-0 sm:mt-4 ${
-                    reworkUI ? "pointer-events-auto" : ""
-                  }`}
-                >
-                  <GenerationSuggestions
-                    disabled={isGenerating}
-                    onGenerate={(prompt) => {
-                      generateComponent(prompt);
-                    }}
-                  />
-                </div>
-              )}
           </div>
         </div>
       </div>

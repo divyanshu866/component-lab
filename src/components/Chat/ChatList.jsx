@@ -345,7 +345,7 @@ const ChatList = ({ resolvedGenerationMode, isGeneratingCode }) => {
   }
 
   return (
-    <div className="relative h-full w-full overflow-hidden bg-backgroundDark pt-8 pb-12">
+    <div className="relative h-full w-full overflow-hidden bg-backgroundDark pt-4 pb-16">
       <div
         ref={chatListRef}
         className="

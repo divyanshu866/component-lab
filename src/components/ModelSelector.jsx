@@ -49,6 +49,7 @@ export default function ModelSelector({
   userPlan = "FREE",
   onPlanRequired,
   reworkUI = false,
+  isMobile,
 }) {
   const [open, setOpen] = useState(false);
   const containerRef = useRef(null);
@@ -90,8 +91,8 @@ export default function ModelSelector({
     <div
       ref={containerRef}
       className={`${
-        reworkUI ? "border-b backdrop-blur-sm" : ""
-      } absolute left-0 top-0 z-10 flex h-12 w-full items-center gap-1 border-darkBorder bg-transparent px-2 pl-4 text-xs`}
+        reworkUI ? "border-transparent backdrop-blur-sm" : "border-darkBorder"
+      } absolute left-0 top-0 z-10 flex h-10 w-full items-center gap-1 border-b bg-transparent px-2 pl-4 text-xs`}
     >
       <div className="relative">
         {/* Selected model */}
@@ -131,54 +132,6 @@ export default function ModelSelector({
     }
   `}
         >
-          {/* Accent mark */}
-          <span
-            className={`
-      relative
-      flex
-      h-5.5
-      w-5.5
-      shrink-0
-      items-center
-      justify-center
-      rounded-md
-      border
-      transition-all
-      duration-150
-      ${
-        open
-          ? "border-violet-300/20 bg-violet-400/[0.09]"
-          : "border-white/[0.07] bg-white/[0.028] group-hover:border-violet-300/15 group-hover:bg-violet-400/[0.055]"
-      }
-    `}
-          >
-            <Cpu
-              size={12.5}
-              strokeWidth={1.9}
-              className={`
-        transition-colors duration-150
-        ${
-          open
-            ? "text-violet-200/90"
-            : "text-violet-300/70 group-hover:text-violet-200/85"
-        }
-      `}
-            />
-
-            <span
-              className={`
-        absolute
-        bottom-[3px]
-        right-[3px]
-        h-1
-        w-1
-        rounded-full
-        transition-opacity duration-150
-        ${selectedModel ? "bg-violet-300/60 opacity-100" : "opacity-0"}
-      `}
-            />
-          </span>
-
           {/* Model + effort */}
           <span className="flex min-w-0 flex-1 items-center gap-2">
             <span
@@ -258,7 +211,7 @@ export default function ModelSelector({
         </button>
 
         {open && (
-          <div className="absolute left-0 top-full z-50 mt-1 w-[290px] overflow-hidden rounded-2xl border border-white/10 bg-[#101116] p-2 shadow-[0_20px_60px_rgba(0,0,0,0.55)]">
+          <div className="absolute left-0 top-full z-50 mt-1 w-[290px] overflow-hidden rounded-2xl border border-lightBorder bg-backgroundLight p-2 shadow-[0_20px_60px_rgba(0,0,0,0.55)]">
             {/* Models */}
             <div className="space-y-1">
               {AI_MODELS.map((model) => {

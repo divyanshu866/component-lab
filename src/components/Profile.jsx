@@ -71,7 +71,7 @@ const Profile = ({ user }) => {
   const isPro = plan === "PRO";
 
   return (
-    <div ref={containerRef} className="relative z-[105] mr-2">
+    <div ref={containerRef} className="relative z-[105]">
       <button
         type="button"
         aria-label={open ? "Close account menu" : "Open account menu"}
@@ -79,7 +79,7 @@ const Profile = ({ user }) => {
         aria-expanded={open}
         onClick={() => setOpen((current) => !current)}
         className={[
-          "relative flex h-10 w-10 items-center justify-center rounded-full",
+          "relative flex h-full w-7 items-center justify-center rounded-full",
           "cursor-pointer border bg-white/[0.04] outline-none",
           "transition-colors duration-200",
           "focus-visible:ring-2 focus-visible:ring-violet-400/60 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0b0f]",
@@ -108,7 +108,7 @@ const Profile = ({ user }) => {
           className={[
             "absolute right-0 top-[calc(100%+0.75rem)]",
             "w-[min(22rem,calc(100vw-1.5rem))] max-h-[min(80vh,38rem)] overflow-y-auto",
-            "rounded-2xl border border-white/10 bg-[#101116]",
+            "rounded-2xl border border-lightBorder bg-backgroundLight",
             "shadow-[0_20px_60px_rgba(0,0,0,0.55)]",
           ].join(" ")}
         >
