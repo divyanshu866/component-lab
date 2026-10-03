@@ -91,8 +91,8 @@ export default function ModelSelector({
     <div
       ref={containerRef}
       className={`${
-        reworkUI ? "border-transparent backdrop-blur-sm" : "border-darkBorder"
-      } absolute left-0 top-0 z-10 flex h-10 w-full items-center gap-1 border-b bg-transparent px-2 pl-4 text-xs`}
+        reworkUI && "backdrop-blur-sm"
+      } absolute left-0 top-0 z-10 flex h-10 w-full items-center gap-1 border-b border-transparent bg-transparent px-2 pl-4 text-xs`}
     >
       <div className="relative">
         {/* Selected model */}
@@ -109,8 +109,7 @@ export default function ModelSelector({
     min-w-[178px]
     items-center
     gap-2.5
-    border
-    border-transparent
+
     rounded-lg
     px-1
     pr-2.5
@@ -120,15 +119,9 @@ export default function ModelSelector({
     ${
       open
         ? `
-          border
-          border-lightBorder
           bg-transparent
         `
-        : `
-          bg-transparent
-          hover:bg-backgroundLight
-          hover:border-lightBorder
-        `
+        : ``
     }
   `}
         >
